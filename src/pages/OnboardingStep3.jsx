@@ -23,7 +23,8 @@ const OnboardingStep3 = () => {
   const availableSkills = [
     'Java', 'Python', 'Communication', 'UI/UX', 'Project Management', 
     'React', 'Node.js', 'SQL', 'Data Analysis', 'Leadership',
-    'Marketing', 'Sales', 'Public Speaking', 'C++', 'Machine Learning'
+    'Marketing', 'Sales', 'Public Speaking', 'C++', 'Machine Learning',
+    'None / Just Starting' // Moved to the last position
   ];
 
   useEffect(() => {
@@ -65,16 +66,30 @@ const OnboardingStep3 = () => {
   const isSkillSelected = (name) => skills.some(s => s.name === name);
 
   const toggleSkill = (skillName) => {
+    // 1. If deselecting an existing skill
     if (isSkillSelected(skillName)) {
-      // Remove if exists
       setSkills(prev => prev.filter(s => s.name !== skillName));
-    } else {
-      // Open modal to select level
-      setPendingSkill(skillName);
-      setExperience('intermediate'); // Reset default level for modal
-      setShowExperienceModal(true);
-      setSkillInput(''); // Clear search after selecting
+      return;
     }
+
+    // 2. Special handling for "None / Just Starting"
+    if (skillName === 'None / Just Starting') {
+        // Clear all other skills and add only this one
+        setSkills([{ name: 'None / Just Starting', level: 'beginner' }]);
+        setSkillInput('');
+        return;
+    }
+
+    // 3. If adding a normal skill, first remove "None" if it exists
+    if (isSkillSelected('None / Just Starting')) {
+        setSkills([]); // Clear "None" before adding new skill
+    }
+
+    // 4. Open modal for normal skills
+    setPendingSkill(skillName);
+    setExperience('intermediate'); // Reset default level for modal
+    setShowExperienceModal(true);
+    setSkillInput(''); // Clear search after selecting
   };
 
   // Add skill with selected level
@@ -139,7 +154,7 @@ const OnboardingStep3 = () => {
           <div className="p-8 flex flex-col gap-8 flex-1 overflow-y-auto custom-scrollbar">
             <div className="space-y-1.5">
               <h1 className="text-[#1A1A1A] text-3xl font-bold tracking-tight">Your skills & experience</h1>
-              <p className="text-[#64748B] text-base font-normal">Add your technical skills and verify your experience level.</p>
+              <p className="text-[#64748B] text-base font-normal">Add your technical skills. If you are new, select <strong>"None / Just Starting"</strong>.</p>
             </div>
 
             <div className="flex flex-col gap-6">
@@ -186,23 +201,26 @@ const OnboardingStep3 = () => {
               {skills.length > 0 && (
                 <div className="flex flex-col gap-3 p-4 bg-slate-50 rounded-xl border border-slate-200">
                     <div className="flex items-center justify-between">
-                         <label className="text-[#1A1A1A] text-sm font-bold">Your Selections</label>
+                         <label className="text-[#1A1A1A] text-sm font-bold">Skill Inventory</label>
                          <span className="text-[10px] text-slate-500 font-medium">{skills.length} skills added</span>
                     </div>
                     
                     {/* CART SCROLLBAR ADDED HERE */}
                     <div className="flex flex-col gap-2 max-h-[180px] overflow-y-auto pr-1 custom-scrollbar">
                         {skills.map((item, index) => (
-                            <div key={index} className="flex items-center justify-between bg-white p-3 rounded-lg border border-slate-200 shadow-sm">
+                            <div key={index} className="flex items-center justify-between bg-white p-3 rounded-lg border border-slate-200 shadow-sm group">
                                 <div className="flex flex-col">
                                     <span className="text-sm font-bold text-slate-800">{item.name}</span>
                                     <span className="text-[10px] uppercase text-slate-500 font-semibold tracking-wider">{item.level}</span>
                                 </div>
+                                
+                                {/* DELETE BUTTON (X) */}
                                 <button 
                                     onClick={() => toggleSkill(item.name)}
-                                    className="text-slate-400 hover:text-red-500 transition-colors p-1 rounded-full hover:bg-red-50"
+                                    className="text-slate-400 hover:text-red-500 hover:bg-red-50 p-1.5 rounded-full transition-all opacity-70 group-hover:opacity-100"
+                                    title="Remove Skill"
                                 >
-                                    <span className="material-symbols-outlined text-[18px]">delete</span>
+                                    <span className="material-symbols-outlined text-[18px] font-bold">close</span>
                                 </button>
                             </div>
                         ))}

@@ -109,7 +109,7 @@ const Signup = () => {
               <p className="text-blue-100/80 text-xs font-normal mt-1">Start your internship journey today.</p>
             </div>
 
-            <button className="flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-[#0474C4] text-white gap-3 text-xs font-bold hover:brightness-110 transition-all shadow-md">
+            <button className="flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-[#0474C4] text-white gap-3 text-xs font-bold hover:brightness-110 transition-all shadow-md border border-white/5">
               <svg className="w-4 h-4" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"></path>
                 <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"></path>
@@ -137,16 +137,17 @@ const Signup = () => {
               <label className="flex flex-col w-full group gap-1">
                 <p className="text-blue-100 text-[10px] font-medium pl-1">Register As</p>
                 <div className="relative">
+                  {/* UPDATED: White bg, dark text */}
                   <select 
                       name="role"
                       value={formData.role}
                       onChange={handleChange}
-                      className="flex w-full appearance-none rounded-lg text-white border border-[#374151] bg-[#1F2937] h-9 px-3 text-xs outline-none focus:ring-1 focus:ring-[#0474C4] cursor-pointer"
+                      className="flex w-full appearance-none rounded-lg text-slate-900 border border-slate-300 bg-white h-9 px-3 text-xs outline-none focus:ring-1 focus:ring-[#0474C4] cursor-pointer"
                   >
                       <option value="student">Student</option>
                       <option value="professional">Professional</option>
                   </select>
-                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-400">
+                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-slate-500">
                     <svg className="fill-current h-3 w-3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
                   </div>
                 </div>
@@ -156,23 +157,25 @@ const Signup = () => {
               <div className="grid grid-cols-2 gap-3">
                   <label className="flex flex-col w-full group gap-1">
                     <p className="text-blue-100 text-[10px] font-medium pl-1">First Name</p>
+                    {/* UPDATED: White bg, dark text */}
                     <input 
                         name="firstName"
                         value={formData.firstName}
                         onChange={handleChange}
                         required
-                        className="flex w-full rounded-lg text-white border border-[#374151] bg-[#1F2937] h-9 placeholder-[#9CA3AF] px-3 text-xs outline-none focus:ring-1 focus:ring-[#0474C4]" 
+                        className="flex w-full rounded-lg text-slate-900 border border-slate-300 bg-white h-9 placeholder:text-slate-400 px-3 text-xs outline-none focus:ring-1 focus:ring-[#0474C4]" 
                         placeholder="First Name" 
                     />
                   </label>
                   <label className="flex flex-col w-full group gap-1">
                     <p className="text-blue-100 text-[10px] font-medium pl-1">Last Name</p>
+                    {/* UPDATED: White bg, dark text */}
                     <input 
                         name="lastName"
                         value={formData.lastName}
                         onChange={handleChange}
                         required
-                        className="flex w-full rounded-lg text-white border border-[#374151] bg-[#1F2937] h-9 placeholder-[#9CA3AF] px-3 text-xs outline-none focus:ring-1 focus:ring-[#0474C4]" 
+                        className="flex w-full rounded-lg text-slate-900 border border-slate-300 bg-white h-9 placeholder:text-slate-400 px-3 text-xs outline-none focus:ring-1 focus:ring-[#0474C4]" 
                         placeholder="Last Name" 
                     />
                   </label>
@@ -181,13 +184,14 @@ const Signup = () => {
               {/* EMAIL */}
               <label className="flex flex-col w-full group gap-1">
                 <p className="text-blue-100 text-[10px] font-medium pl-1">Email Address</p>
+                {/* UPDATED: White bg, dark text */}
                 <input 
                   name="email"
                   type="email"
                   value={formData.email}
                   onChange={handleChange}
                   required
-                  className="flex w-full rounded-lg text-white border border-[#374151] bg-[#1F2937] h-9 placeholder-[#9CA3AF] px-3 text-xs outline-none focus:ring-1 focus:ring-[#0474C4]" 
+                  className="flex w-full rounded-lg text-slate-900 border border-slate-300 bg-white h-9 placeholder:text-slate-400 px-3 text-xs outline-none focus:ring-1 focus:ring-[#0474C4]" 
                   placeholder="Enter your email" 
                 />
               </label>
@@ -196,17 +200,18 @@ const Signup = () => {
               <div className="relative w-full group">
                 <label className="flex flex-col gap-1">
                   <p className="text-blue-100 text-[10px] font-medium pl-1">Password</p>
+                  {/* UPDATED: White bg, dark text */}
                   <input 
                     name="password"
                     value={formData.password}
                     onChange={handleChange}
                     required
-                    className="password-input flex w-full rounded-lg text-white border border-[#374151] bg-[#1F2937] h-9 placeholder-[#9CA3AF] px-3 pr-10 text-xs outline-none focus:ring-1 focus:ring-[#0474C4]" 
+                    className="password-input flex w-full rounded-lg text-slate-900 border border-slate-300 bg-white h-9 placeholder:text-slate-400 px-3 pr-10 text-xs outline-none focus:ring-1 focus:ring-[#0474C4]" 
                     placeholder="Create a password" 
                     type={showPassword ? "text" : "password"} 
                   />
                 </label>
-                <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-[28px] text-gray-400 hover:text-[#0474C4] z-20">
+                <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-[28px] text-slate-400 hover:text-[#0474C4] z-20 transition-colors">
                   <span className="material-symbols-outlined text-base">{showPassword ? 'visibility' : 'visibility_off'}</span>
                 </button>
               </div>
@@ -215,17 +220,18 @@ const Signup = () => {
               <div className="relative w-full group">
                 <label className="flex flex-col gap-1">
                   <p className="text-blue-100 text-[10px] font-medium pl-1">Confirm Password</p>
+                  {/* UPDATED: White bg, dark text */}
                   <input 
                     name="confirmPassword"
                     value={formData.confirmPassword}
                     onChange={handleChange}
                     required
-                    className="password-input flex w-full rounded-lg text-white border border-[#374151] bg-[#1F2937] h-9 placeholder-[#9CA3AF] px-3 pr-10 text-xs outline-none focus:ring-1 focus:ring-[#0474C4]" 
+                    className="password-input flex w-full rounded-lg text-slate-900 border border-slate-300 bg-white h-9 placeholder:text-slate-400 px-3 pr-10 text-xs outline-none focus:ring-1 focus:ring-[#0474C4]" 
                     placeholder="Confirm password" 
                     type={showConfirmPassword ? "text" : "password"} 
                   />
                 </label>
-                <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)} className="absolute right-3 top-[28px] text-gray-400 hover:text-[#0474C4] z-20">
+                <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)} className="absolute right-3 top-[28px] text-slate-400 hover:text-[#0474C4] z-20 transition-colors">
                   <span className="material-symbols-outlined text-base">{showConfirmPassword ? 'visibility' : 'visibility_off'}</span>
                 </button>
               </div>
@@ -281,10 +287,7 @@ const Signup = () => {
             <div className="absolute w-[600px] h-[600px] bg-white rounded-full top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-[0.3] blur-[100px]"></div>
         </div>
 
-        {/* Animation Container 
-            - Center position adjusted with mb-20 to clear bottom text
-            - Scale adjusted for 100% viewport without scroll
-        */}
+        {/* Animation Container */}
         <div className="relative w-full max-w-[650px] aspect-square flex items-center justify-center z-10 perspective-[1000px] scale-[0.8] xl:scale-[0.9] mb-20">
             
             {/* MOVING DOTS */}
