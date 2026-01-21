@@ -52,7 +52,7 @@ const OnboardingStep3 = () => {
       
       localStorage.setItem('onboarding_step3', JSON.stringify({ skills }));
 
-      // UPDATED: Navigate to Welcome Dashboard
+      // Navigate to Welcome Dashboard
       navigate('/dashboard/welcome');
     } catch (error) {
       console.error(error);
@@ -90,16 +90,14 @@ const OnboardingStep3 = () => {
   );
 
   return (
-    <div className="bg-[#06457F] text-[#0F172A] h-screen w-full flex flex-col font-display antialiased selection:bg-[#2563EB] selection:text-white overflow-y-auto no-scrollbar relative">
+    <div className="bg-[#06457F] text-[#0F172A] h-screen w-full flex flex-col font-display antialiased selection:bg-[#2563EB] selection:text-white overflow-hidden relative justify-center items-center p-4">
       
+      {/* CSS for custom scrollbars */}
       <style dangerouslySetInnerHTML={{ __html: `
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        
-        /* Restoring scrollbar specifically for the list */
-        .list-scrollbar::-webkit-scrollbar { width: 6px; }
-        .list-scrollbar::-webkit-scrollbar-track { background: rgba(0,0,0,0.05); }
-        .list-scrollbar::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.2); border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: rgba(0,0,0,0.05); }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.25); }
       `}} />
 
       {/* LOGO - Fixed Top Left (Square Gradient Rocket) */}
@@ -120,14 +118,11 @@ const OnboardingStep3 = () => {
         <div className="absolute bottom-[-10%] right-[-10%] w-[600px] h-[600px] bg-cyan-400/10 blur-[120px] rounded-full" />
       </div>
 
-      {/* Main Content Area */}
-      <div className="relative z-10 flex-1 flex items-center justify-center p-4 py-8">
-        
-        {/* CARD CONTAINER */}
-        <div className="w-full max-w-[720px] bg-white/95 backdrop-blur-sm border border-white/50 rounded-2xl shadow-2xl flex flex-col max-h-[85vh] overflow-y-auto no-scrollbar">
+      {/* CARD CONTAINER - FIXED MAX HEIGHT WITH STICKY FOOTER */}
+      <div className="relative z-10 w-full max-w-[720px] max-h-[85vh] bg-white/95 backdrop-blur-sm border border-white/50 rounded-2xl shadow-2xl flex flex-col overflow-hidden">
           
-          {/* Progress Header */}
-          <div className="px-8 pt-8 pb-2">
+          {/* 1. Header (Fixed at Top) */}
+          <div className="px-8 pt-8 pb-2 shrink-0">
             <div className="flex justify-between items-center mb-2">
               <p className="text-[#1A365D] text-xs font-medium leading-none">Step 3 of 3</p>
               <div className="flex items-center gap-2">
@@ -140,14 +135,14 @@ const OnboardingStep3 = () => {
             </div>
           </div>
 
-          {/* Body Content */}
-          <div className="p-8 flex flex-col gap-8">
+          {/* 2. Body Content (Scrollable) */}
+          <div className="p-8 flex flex-col gap-8 flex-1 overflow-y-auto custom-scrollbar">
             <div className="space-y-1.5">
               <h1 className="text-[#1A1A1A] text-3xl font-bold tracking-tight">Your skills & experience</h1>
               <p className="text-[#64748B] text-base font-normal">Add your technical skills and verify your experience level.</p>
             </div>
 
-            <form className="flex flex-col gap-6" onSubmit={(e) => e.preventDefault()}>
+            <div className="flex flex-col gap-6">
               
               {/* SKILLS SELECTION */}
               <div className="flex flex-col gap-2.5">
@@ -163,7 +158,7 @@ const OnboardingStep3 = () => {
                   />
                 </div>
                 
-                {/* Search Results / Suggestions List - ALWAYS VISIBLE */}
+                {/* Search Results / Suggestions List */}
                 <div className="flex flex-wrap gap-2 mt-1 min-h-[40px]">
                   {filteredSkills.length > 0 ? (
                     filteredSkills.map((skillName) => (
@@ -187,7 +182,7 @@ const OnboardingStep3 = () => {
                 </div>
               </div>
 
-              {/* SELECTED SKILLS LIST (Confirmation) - Scrollbar Enabled */}
+              {/* SELECTED SKILLS LIST (The Cart) */}
               {skills.length > 0 && (
                 <div className="flex flex-col gap-3 p-4 bg-slate-50 rounded-xl border border-slate-200">
                     <div className="flex items-center justify-between">
@@ -195,7 +190,8 @@ const OnboardingStep3 = () => {
                          <span className="text-[10px] text-slate-500 font-medium">{skills.length} skills added</span>
                     </div>
                     
-                    <div className="flex flex-col gap-2 max-h-[160px] overflow-y-auto pr-1 list-scrollbar">
+                    {/* CART SCROLLBAR ADDED HERE */}
+                    <div className="flex flex-col gap-2 max-h-[180px] overflow-y-auto pr-1 custom-scrollbar">
                         {skills.map((item, index) => (
                             <div key={index} className="flex items-center justify-between bg-white p-3 rounded-lg border border-slate-200 shadow-sm">
                                 <div className="flex flex-col">
@@ -213,9 +209,12 @@ const OnboardingStep3 = () => {
                     </div>
                 </div>
               )}
+            </div>
+          </div>
 
-              {/* FOOTER BUTTONS */}
-              <div className="flex flex-col-reverse sm:flex-row items-center justify-between pt-2 mt-2 gap-4 sm:gap-0">
+          {/* 3. Footer (Sticky at Bottom) */}
+          <div className="p-8 pt-4 border-t border-slate-100 bg-white shrink-0">
+             <div className="flex flex-col-reverse sm:flex-row items-center justify-between gap-4 sm:gap-0">
                 <button 
                   type="button" 
                   onClick={() => navigate('/onboarding/step-2')}
@@ -245,16 +244,14 @@ const OnboardingStep3 = () => {
                   </button>
                 </div>
               </div>
-
-            </form>
           </div>
-        </div>
+
       </div>
 
       {/* --- EXPERIENCE LEVEL POP-UP MODAL --- */}
       {showExperienceModal && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-[#0F172A]/60 backdrop-blur-sm p-4 animate-in fade-in duration-200">
-          <div className="w-full max-w-lg max-h-[90vh] overflow-y-auto no-scrollbar bg-white rounded-2xl shadow-2xl p-8 border border-white/50 animate-in zoom-in-95 slide-in-from-bottom-5 duration-300 relative">
+          <div className="w-full max-w-lg max-h-[90vh] overflow-y-auto custom-scrollbar bg-white rounded-2xl shadow-2xl p-8 border border-white/50 animate-in zoom-in-95 slide-in-from-bottom-5 duration-300 relative">
             
             <button 
                 onClick={() => { setShowExperienceModal(false); setPendingSkill(''); }}
