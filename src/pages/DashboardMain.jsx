@@ -5,21 +5,22 @@ const DashboardMain = () => {
   const navigate = useNavigate();
 
   // --------------------------------
-  // DASHBOARD STATE
+  // DASHBOARD STATE (NEW USER PRESET)
   // --------------------------------
   const [userName, setUserName] = useState("Baskar");
-  const [currentPhase, setCurrentPhase] = useState("Phase 2 – Foundations");
-  const [phaseProgress, setPhaseProgress] = useState(35);
-  const [aiInsight, setAiInsight] = useState("Completing 2 more tasks this week will keep you on track for your monthly goal. Consistency is key!");
+  const [currentPhase, setCurrentPhase] = useState("Career Roadmap"); // Changed for New User
+  const [phaseProgress, setPhaseProgress] = useState(0); // 0% for New User
+  const [aiInsight, setAiInsight] = useState("Welcome to Career Orbit! Let's generate your personalized roadmap to get started.");
 
   // --------------------------------
-  // CHATBOT STATE
+  // CHATBOT STATE & LOGIC
   // --------------------------------
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
   const [chatInput, setChatInput] = useState("");
+  const [isTyping, setIsTyping] = useState(false); // Added for animation
   const [chatMessages, setChatMessages] = useState([
-    { id: 1, sender: 'ai', text: 'Hi Baskar! I am your AI Career Assistant. Need help with your roadmap or a quick mock interview?' }
+    { id: 1, sender: 'ai', text: 'Hi Baskar! I am your AI Career Assistant. Ready to generate your new roadmap?' }
   ]);
   const chatEndRef = useRef(null);
 
@@ -37,13 +38,96 @@ const DashboardMain = () => {
     if (isChatOpen && chatEndRef.current) {
       chatEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
-  }, [chatMessages, isChatOpen, isExpanded]);
+  }, [chatMessages, isChatOpen, isExpanded, isTyping]);
+
+  // --- MOCK LLM LOGIC ---
+  const mockLlmResponse = async (userText) => {
+    // Simulate Network Latency
+    const delay = Math.floor(Math.random() * 1000) + 1500;
+    await new Promise(resolve => setTimeout(resolve, delay));
+
+    const lowerInput = userText.toLowerCase();
+
+    if (lowerInput.includes('start') || lowerInput.includes('journey')) {
+       return "I'm excited to help you begin! I've analyzed your profile. Please select 'View Roadmap' below to see your personalized learning path.";
+    }
+    if (lowerInput.includes('roadmap') || lowerInput.includes('generate')) {
+      return "I'm generating a personalized roadmap for you based on your goal. It starts with Foundations. Redirecting you there now...";
+    }
+    if (lowerInput.includes('resume')) return "Opening the AI Resume Builder to help you craft a professional CV...";
+    if (lowerInput.includes('mentor')) return "Let's find you a mentor. Redirecting you to our mentorship network...";
+    if (lowerInput.includes('interview')) return "Preparing a mock interview session for you...";
+    if (lowerInput.includes('course') || lowerInput.includes('lms')) return "Opening the Learning Management System library...";
+    if (lowerInput.includes('practice') || lowerInput.includes('code')) return "Opening the Coding Practice Ground. Get ready to code!";
+
+    return "That sounds like a solid plan. I'm here to help you navigate your career journey. What would you like to tackle next?";
+  };
+
+  const handleChatSubmit = async (e, overrideText = null) => {
+    if (e) e.preventDefault();
+    const textToSend = overrideText || chatInput;
+    if (!textToSend.trim()) return;
+
+    // 1. Add User Message
+    const newUserMsg = { id: Date.now(), sender: 'user', text: textToSend };
+    setChatMessages(prev => [...prev, newUserMsg]);
+    setChatInput("");
+    setIsTyping(true); // Start typing animation
+
+    // --- NAVIGATION HANDLERS (Delay for effect) ---
+    const lowerText = textToSend.toLowerCase();
+    
+    // 1. Roadmap
+    if(overrideText === 'View Roadmap' || lowerText.includes('generate roadmap')) {
+        setTimeout(() => { navigate('/dashboard/roadmap'); setIsTyping(false); }, 1500);
+    }
+    // 2. Resume
+    else if(overrideText === 'Resume Builder' || lowerText.includes('resume')) {
+        setTimeout(() => { navigate('/resume'); setIsTyping(false); }, 1500);
+    }
+    // 3. Mentors
+    else if(overrideText === 'Find a Mentor' || lowerText.includes('mentor')) {
+        setTimeout(() => { navigate('/mentors'); setIsTyping(false); }, 1500);
+    }
+    // 4. Mock Interview
+    else if(overrideText === 'Mock Interview' || lowerText.includes('interview')) {
+        setTimeout(() => { navigate('/mock-interview'); setIsTyping(false); }, 1500);
+    }
+    // 5. LMS Courses
+    else if(overrideText === 'LMS Courses' || lowerText.includes('course')) {
+        setTimeout(() => { navigate('/lms-courses'); setIsTyping(false); }, 1500);
+    }
+    // 6. Practice Ground
+    else if(overrideText === 'Practice Ground' || lowerText.includes('practice')) {
+        setTimeout(() => { navigate('/practice-ground'); setIsTyping(false); }, 1500);
+    }
+
+    try {
+        // 2. Get AI Response
+        const aiResponseText = await mockLlmResponse(textToSend);
+        
+        // 3. Add AI Message
+        const newAiMsg = { id: Date.now() + 1, sender: 'ai', text: aiResponseText };
+        setChatMessages(prev => [...prev, newAiMsg]);
+    } catch (error) {
+        console.error("Chat Error", error);
+    } finally {
+        // Only stop typing immediately if we aren't navigating (the timeouts handle the navigating stop)
+        if (!['View Roadmap', 'Resume Builder', 'Find a Mentor', 'Mock Interview', 'LMS Courses', 'Practice Ground'].includes(overrideText)) {
+            setIsTyping(false); 
+        }
+    }
+  };
 
   // --------------------------------
   // NAVIGATION & HANDLERS
   // --------------------------------
-  const handleContinuePhase = () => {
-    navigate('/dashboard/roadmap');
+  
+  // Triggers the chatbot to open and asks the user to confirm generation
+  const handleGenerateClick = () => {
+    setIsChatOpen(true);
+    setIsExpanded(true); // Pop up in center
+    handleChatSubmit(null, "I am ready to start my journey."); 
   };
 
   const handleNavigate = (page) => {
@@ -57,25 +141,11 @@ const DashboardMain = () => {
       navigate('/mock-interview');
     } else if (page === 'LMS Courses') {
       navigate('/lms-courses');
+    } else if (page === 'Practice Ground') {
+      navigate('/practice-ground');
     } else {
       navigate(`/${page.toLowerCase().replace(/\s+/g, '-')}`);
     }
-  };
-
-  const handleChatSubmit = (e) => {
-    e.preventDefault();
-    if (!chatInput.trim()) return;
-
-    // Add User Message
-    const newUserMsg = { id: Date.now(), sender: 'user', text: chatInput };
-    setChatMessages(prev => [...prev, newUserMsg]);
-    setChatInput("");
-
-    // Simulate AI Response
-    setTimeout(() => {
-        const newAiMsg = { id: Date.now() + 1, sender: 'ai', text: "I'm analyzing your request regarding your career path..." };
-        setChatMessages(prev => [...prev, newAiMsg]);
-    }, 1000);
   };
 
   return (
@@ -100,6 +170,24 @@ const DashboardMain = () => {
             to { transform: translateY(0) scale(1); opacity: 1; }
         }
         .chat-animate { animation: slideUpFade 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+
+        /* AI Bubble Styles (From ChatbotPage) */
+        .message-bubble-ai {
+          background-color: rgba(4, 116, 196, 0.25);
+          box-shadow: 0 0 10px rgba(4, 116, 196, 0.4), inset 0 0 4px rgba(255, 255, 255, 0.2);
+          border: 1.5px solid rgba(255, 255, 255, 0.4);
+          color: white;
+        }
+        .message-bubble-user {
+          background-color: rgba(255, 255, 255, 0.1);
+          border: 1px solid rgba(255, 255, 255, 0.2);
+          color: #E2E8F0;
+        }
+        /* Typing Dot Animation */
+        @keyframes blink { 0% { opacity: 0.2; } 20% { opacity: 1; } 100% { opacity: 0.2; } }
+        .typing-dot { animation: blink 1.4s infinite both; }
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
       `}} />
 
       {/* LEFT SIDEBAR */}
@@ -191,16 +279,16 @@ const DashboardMain = () => {
               <p className="text-[#D1D5DB] text-lg font-normal">Here’s your current career progress</p>
             </div>
 
-            {/* PHASE CARD */}
+            {/* PHASE CARD - UPDATED FOR NEW USER */}
             <div className="bg-[#0A4F8F] rounded-xl p-6 md:p-8 shadow-xl border border-white/5 relative overflow-hidden group">
               <div className="absolute -right-20 -top-20 w-80 h-80 bg-[#0474C4]/20 rounded-full blur-[80px] pointer-events-none mix-blend-screen"></div>
               <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-8">
                 <div className="flex-1 space-y-6">
                   <div className="flex flex-wrap items-center gap-3">
-                    <span className="px-3 py-1 rounded text-xs font-semibold bg-[#0474C4] text-white shadow-sm">Current Phase</span>
+                    <span className="px-3 py-1 rounded text-xs font-semibold bg-[#0474C4] text-white shadow-sm">Start Your Journey</span>
                     <span className="text-sm text-[#D1D5DB] flex items-center gap-1">
                       <span className="material-symbols-outlined text-[16px]">schedule</span>
-                      On Track
+                      Not Started
                     </span>
                   </div>
                   <h2 className="text-3xl font-bold text-white tracking-tight">{currentPhase}</h2>
@@ -215,53 +303,68 @@ const DashboardMain = () => {
                   </div>
                   <div className="flex items-center gap-4 pt-2 p-3 rounded-lg bg-black/10 border border-white/5 max-w-xl backdrop-blur-sm">
                     <div className="bg-[#1E1E1E] p-2 rounded-lg border border-[#3A3A3A] shrink-0 text-[#0474C4] flex items-center justify-center">
-                      <span className="material-symbols-outlined text-[24px]">check_circle</span>
+                      <span className="material-symbols-outlined text-[24px]">flag</span>
                     </div>
                     <div>
                       <p className="text-xs text-[#D1D5DB] uppercase tracking-wider font-semibold mb-0.5">Next Task</p>
-                      <p className="text-white font-medium text-base">Update LinkedIn Headline & Summary</p>
+                      <p className="text-white font-medium text-base">Generate your first roadmap</p>
                     </div>
                   </div>
                 </div>
                 <div className="shrink-0 flex items-end">
-                  <button onClick={handleContinuePhase} className="w-full sm:w-auto bg-[#0474C4] hover:bg-[#0360a3] text-white font-bold text-base px-8 py-3.5 rounded-lg shadow-lg shadow-[#0474C4]/20 transition-all flex items-center justify-center gap-2 transform hover:-translate-y-0.5 active:translate-y-0">
-                    <span>Continue Phase</span>
-                    <span className="material-symbols-outlined text-[20px]">arrow_forward</span>
+                  {/* GENERATE BUTTON FOR NEW USER - OPENS CHAT */}
+                  <button onClick={handleGenerateClick} className="w-full sm:w-auto bg-[#0474C4] hover:bg-[#0360a3] text-white font-bold text-base px-8 py-3.5 rounded-lg shadow-lg shadow-[#0474C4]/20 transition-all flex items-center justify-center gap-2 transform hover:-translate-y-0.5 active:translate-y-0">
+                    <span>Generate Roadmap</span>
+                    <span className="material-symbols-outlined text-[20px]">auto_awesome</span>
                   </button>
                 </div>
               </div>
             </div>
 
-            {/* QUICK ACTIONS */}
+            {/* QUICK ACTIONS - UNIFORM GRID */}
             <section>
               <h3 className="text-xl font-bold text-white mb-5 flex items-center gap-2 tracking-tight">
                 <span className="material-symbols-outlined text-amber-400">bolt</span> Quick Actions
               </h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              {/* Changed to 3 columns to handle 6 items uniformly */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 
-                {/* --- NEW BUTTON: View RoadMap --- */}
-                {/* ------------------------------- */}
-
-                <button onClick={() => navigate('/resume')} className="flex flex-col items-start gap-4 p-5 rounded-xl bg-violet-600/10 hover:bg-violet-600/20 border border-violet-500/20 hover:border-violet-500/50 transition-all group text-left h-full">
-                  <div className="p-2.5 rounded-lg bg-violet-500/20 group-hover:bg-violet-500 group-hover:text-white text-violet-400 transition-colors duration-300 shadow-sm shadow-violet-500/10"><span className="material-symbols-outlined text-[28px]">edit_document</span></div>
-                  <div><span className="font-bold text-white block text-lg tracking-tight group-hover:text-violet-200 transition-colors">Resume Builder</span><span className="text-sm text-violet-200/70 mt-1 block">Update your CV with AI</span></div>
-                </button>
-                <button onClick={() => navigate('/mentors')} className="flex flex-col items-start gap-4 p-5 rounded-xl bg-emerald-600/10 hover:bg-emerald-600/20 border border-emerald-500/20 hover:border-emerald-500/50 transition-all group text-left h-full">
-                  <div className="p-2.5 rounded-lg bg-emerald-500/20 group-hover:bg-emerald-500 group-hover:text-white text-emerald-400 transition-colors duration-300 shadow-sm shadow-emerald-500/10"><span className="material-symbols-outlined text-[28px]">person_add</span></div>
-                  <div><span className="font-bold text-white block text-lg tracking-tight group-hover:text-emerald-200 transition-colors">Book a Mentor</span><span className="text-sm text-emerald-200/70 mt-1 block">Get 1:1 guidance</span></div>
-                </button>
-                <button onClick={() => navigate('/mock-interview')} className="flex flex-col items-start gap-4 p-5 rounded-xl bg-orange-600/10 hover:bg-orange-600/20 border border-orange-500/20 hover:border-orange-500/50 transition-all group text-left h-full">
-                  <div className="p-2.5 rounded-lg bg-orange-500/20 group-hover:bg-orange-500 group-hover:text-white text-orange-400 transition-colors duration-300 shadow-sm shadow-orange-500/10"><span className="material-symbols-outlined text-[28px]">video_camera_front</span></div>
-                  <div><span className="font-bold text-white block text-lg tracking-tight group-hover:text-orange-200 transition-colors">Mock Interview</span><span className="text-sm text-orange-200/70 mt-1 block">Practice with AI</span></div>
-                </button>
-                <button onClick={() => navigate('/lms-courses')} className="flex flex-col items-start gap-4 p-5 rounded-xl bg-pink-600/10 hover:bg-pink-600/20 border border-pink-500/20 hover:border-pink-500/50 transition-all group text-left h-full">
-                  <div className="p-2.5 rounded-lg bg-pink-500/20 group-hover:bg-pink-500 group-hover:text-white text-pink-400 transition-colors duration-300 shadow-sm shadow-pink-500/10"><span className="material-symbols-outlined text-[28px]">school</span></div>
-                  <div><span className="font-bold text-white block text-lg tracking-tight group-hover:text-pink-200 transition-colors">Browse Courses</span><span className="text-sm text-pink-200/70 mt-1 block">Skill up today</span></div>
-                </button>
+                {/* 1. Roadmap */}
                 <button onClick={() => navigate('/dashboard/roadmap')} className="flex flex-col items-start gap-4 p-5 rounded-xl bg-blue-600/10 hover:bg-blue-600/20 border border-blue-500/20 hover:border-blue-500/50 transition-all group text-left h-full">
                   <div className="p-2.5 rounded-lg bg-blue-500/20 group-hover:bg-blue-500 group-hover:text-white text-blue-400 transition-colors duration-300 shadow-sm shadow-blue-500/10"><span className="material-symbols-outlined text-[28px]">map</span></div>
                   <div><span className="font-bold text-white block text-lg tracking-tight group-hover:text-blue-200 transition-colors">View RoadMap</span><span className="text-sm text-blue-200/70 mt-1 block">Track your journey</span></div>
                 </button>
+                
+                {/* 2. Resume */}
+                <button onClick={() => navigate('/resume')} className="flex flex-col items-start gap-4 p-5 rounded-xl bg-violet-600/10 hover:bg-violet-600/20 border border-violet-500/20 hover:border-violet-500/50 transition-all group text-left h-full">
+                  <div className="p-2.5 rounded-lg bg-violet-500/20 group-hover:bg-violet-500 group-hover:text-white text-violet-400 transition-colors duration-300 shadow-sm shadow-violet-500/10"><span className="material-symbols-outlined text-[28px]">edit_document</span></div>
+                  <div><span className="font-bold text-white block text-lg tracking-tight group-hover:text-violet-200 transition-colors">Resume Builder</span><span className="text-sm text-violet-200/70 mt-1 block">Update your CV with AI</span></div>
+                </button>
+
+                {/* 3. Mentors */}
+                <button onClick={() => navigate('/mentors')} className="flex flex-col items-start gap-4 p-5 rounded-xl bg-emerald-600/10 hover:bg-emerald-600/20 border border-emerald-500/20 hover:border-emerald-500/50 transition-all group text-left h-full">
+                  <div className="p-2.5 rounded-lg bg-emerald-500/20 group-hover:bg-emerald-500 group-hover:text-white text-emerald-400 transition-colors duration-300 shadow-sm shadow-emerald-500/10"><span className="material-symbols-outlined text-[28px]">person_add</span></div>
+                  <div><span className="font-bold text-white block text-lg tracking-tight group-hover:text-emerald-200 transition-colors">Book a Mentor</span><span className="text-sm text-emerald-200/70 mt-1 block">Get 1:1 guidance</span></div>
+                </button>
+
+                {/* 4. Mock Interview */}
+                <button onClick={() => navigate('/mock-interview')} className="flex flex-col items-start gap-4 p-5 rounded-xl bg-orange-600/10 hover:bg-orange-600/20 border border-orange-500/20 hover:border-orange-500/50 transition-all group text-left h-full">
+                  <div className="p-2.5 rounded-lg bg-orange-500/20 group-hover:bg-orange-500 group-hover:text-white text-orange-400 transition-colors duration-300 shadow-sm shadow-orange-500/10"><span className="material-symbols-outlined text-[28px]">video_camera_front</span></div>
+                  <div><span className="font-bold text-white block text-lg tracking-tight group-hover:text-orange-200 transition-colors">Mock Interview</span><span className="text-sm text-orange-200/70 mt-1 block">Practice with AI</span></div>
+                </button>
+
+                {/* 5. LMS Courses */}
+                <button onClick={() => navigate('/lms-courses')} className="flex flex-col items-start gap-4 p-5 rounded-xl bg-pink-600/10 hover:bg-pink-600/20 border border-pink-500/20 hover:border-pink-500/50 transition-all group text-left h-full">
+                  <div className="p-2.5 rounded-lg bg-pink-500/20 group-hover:bg-pink-500 group-hover:text-white text-pink-400 transition-colors duration-300 shadow-sm shadow-pink-500/10"><span className="material-symbols-outlined text-[28px]">school</span></div>
+                  <div><span className="font-bold text-white block text-lg tracking-tight group-hover:text-pink-200 transition-colors">Browse Courses</span><span className="text-sm text-pink-200/70 mt-1 block">Skill up today</span></div>
+                </button>
+
+                {/* 6. Practice Ground (ADDED) */}
+                <button onClick={() => navigate('/practice-ground')} className="flex flex-col items-start gap-4 p-5 rounded-xl bg-indigo-600/10 hover:bg-indigo-600/20 border border-indigo-500/20 hover:border-indigo-500/50 transition-all group text-left h-full">
+                  <div className="p-2.5 rounded-lg bg-indigo-500/20 group-hover:bg-indigo-500 group-hover:text-white text-indigo-400 transition-colors duration-300 shadow-sm shadow-indigo-500/10"><span className="material-symbols-outlined text-[28px]">code</span></div>
+                  <div><span className="font-bold text-white block text-lg tracking-tight group-hover:text-indigo-200 transition-colors">Practice Ground</span><span className="text-sm text-indigo-200/70 mt-1 block">Solve Coding Problems</span></div>
+                </button>
+
               </div>
             </section>
 
@@ -330,7 +433,7 @@ const DashboardMain = () => {
       </div>
 
       {/* ======================================================= */}
-      {/* EXPANDABLE CHATBOT CART (EXACT MATCH) */}
+      {/* EXPANDABLE CHATBOT CART (UPDATED CONTENT & STYLE) */}
       {/* ======================================================= */}
       <div 
         className={
@@ -344,10 +447,10 @@ const DashboardMain = () => {
         {isChatOpen && (
             <div className={
                 isExpanded
-                ? "w-full max-w-5xl h-[85vh] bg-[#06457F] rounded-2xl border border-white/30 shadow-[0_0_50px_rgba(4,116,196,0.5)] flex flex-col overflow-hidden chat-animate"
-                : "w-[380px] h-[550px] bg-[#06457F] rounded-2xl border border-white/20 ring-1 ring-cyan-500/40 shadow-2xl flex flex-col overflow-hidden chat-animate origin-bottom-right"
+                ? "w-full max-w-5xl h-[80vh] max-h-[90vh] bg-[#06457F] rounded-2xl border border-white/30 shadow-[0_0_50px_rgba(4,116,196,0.5)] flex flex-col overflow-hidden chat-animate"
+                : "w-[380px] h-[550px] max-h-[calc(100vh-8rem)] bg-[#06457F] rounded-2xl border border-white/20 ring-1 ring-cyan-500/40 shadow-2xl flex flex-col overflow-hidden chat-animate origin-bottom-right"
             }>
-                {/* Header - Separate Color for 'Cart' feel */}
+                {/* Header */}
                 <div className="p-4 bg-[#0B3D91] flex items-center justify-between border-b border-white/10 shrink-0">
                     <div className="flex items-center gap-3">
                         {/* Professional Chatbot Icon in Header */}
@@ -375,19 +478,55 @@ const DashboardMain = () => {
                     </div>
                 </div>
 
-                {/* Messages Area */}
+                {/* Messages Area with Custom Styles */}
                 <div className="flex-1 bg-[#06457F] overflow-y-auto p-4 space-y-4">
                     {chatMessages.map((msg) => (
                         <div key={msg.id} className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
-                            <div className={`max-w-[85%] rounded-2xl px-4 py-2.5 text-sm ${
+                            <div className={`max-w-[85%] px-4 py-2.5 text-sm ${
                                 msg.sender === 'user' 
-                                ? 'bg-[#0474C4] text-white rounded-br-none' 
-                                : 'bg-white/10 border border-white/10 text-white rounded-bl-none'
+                                ? 'message-bubble-user rounded-2xl rounded-br-none' 
+                                : 'message-bubble-ai rounded-2xl rounded-bl-none'
                             }`}>
                                 {msg.text}
                             </div>
                         </div>
                     ))}
+                    
+                    {/* Typing Indicator */}
+                    {isTyping && (
+                        <div className="flex justify-start">
+                            <div className="message-bubble-ai rounded-2xl rounded-bl-none px-4 py-3 flex items-center gap-1">
+                                <span className="w-1.5 h-1.5 bg-white rounded-full typing-dot"></span>
+                                <span className="w-1.5 h-1.5 bg-white rounded-full typing-dot"></span>
+                                <span className="w-1.5 h-1.5 bg-white rounded-full typing-dot"></span>
+                            </div>
+                        </div>
+                    )}
+                    
+                    {/* Suggestion Chips (Only if not typing) */}
+                    {!isTyping && chatMessages[chatMessages.length - 1]?.sender === 'ai' && (
+                        <div className="flex flex-wrap gap-2 pt-2">
+                            <button onClick={(e) => handleChatSubmit(e, 'View Roadmap')} className="text-xs bg-white/10 hover:bg-white/20 border border-white/20 rounded-full px-3 py-1.5 text-white transition-colors">
+                                View Roadmap
+                            </button>
+                            <button onClick={(e) => handleChatSubmit(e, 'Resume Builder')} className="text-xs bg-white/10 hover:bg-white/20 border border-white/20 rounded-full px-3 py-1.5 text-white transition-colors">
+                                Resume Builder
+                            </button>
+                            <button onClick={(e) => handleChatSubmit(e, 'Mock Interview')} className="text-xs bg-white/10 hover:bg-white/20 border border-white/20 rounded-full px-3 py-1.5 text-white transition-colors">
+                                Mock Interview
+                            </button>
+                            <button onClick={(e) => handleChatSubmit(e, 'Find a Mentor')} className="text-xs bg-white/10 hover:bg-white/20 border border-white/20 rounded-full px-3 py-1.5 text-white transition-colors">
+                                Find a Mentor
+                            </button>
+                            <button onClick={(e) => handleChatSubmit(e, 'LMS Courses')} className="text-xs bg-white/10 hover:bg-white/20 border border-white/20 rounded-full px-3 py-1.5 text-white transition-colors">
+                                LMS Courses
+                            </button>
+                            <button onClick={(e) => handleChatSubmit(e, 'Practice Ground')} className="text-xs bg-white/10 hover:bg-white/20 border border-white/20 rounded-full px-3 py-1.5 text-white transition-colors">
+                                Practice Ground
+                            </button>
+                        </div>
+                    )}
+                    
                     <div ref={chatEndRef} />
                 </div>
 
@@ -398,16 +537,17 @@ const DashboardMain = () => {
                         value={chatInput}
                         onChange={(e) => setChatInput(e.target.value)}
                         placeholder="Ask me anything..." 
+                        disabled={isTyping}
                         className="flex-1 bg-[#06457F] border border-white/20 rounded-lg px-3 py-2 text-sm text-white placeholder-white/40 focus:outline-none focus:border-[#0474C4]"
                     />
-                    <button type="submit" className="p-2 bg-[#0474C4] hover:bg-[#0360a3] text-white rounded-lg flex items-center justify-center transition-colors">
+                    <button type="submit" disabled={isTyping} className="p-2 bg-[#0474C4] hover:bg-[#0360a3] text-white rounded-lg flex items-center justify-center transition-colors disabled:opacity-50">
                         <span className="material-symbols-outlined text-[20px]">send</span>
                     </button>
                 </form>
             </div>
         )}
 
-        {/* Toggle Button (FAB) - Hide when Expanded to avoid clutter */}
+        {/* Toggle Button (FAB) */}
         {!isExpanded && (
             <button 
                 onClick={() => setIsChatOpen(!isChatOpen)}
@@ -417,7 +557,6 @@ const DashboardMain = () => {
                     <span className="material-symbols-outlined text-[32px]">keyboard_arrow_down</span>
                 ) : (
                     <div className="relative">
-                        {/* CUSTOM SVG ICON - Professional Robot Face */}
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12.375m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 01-2.555-.337A5.972 5.972 0 015.41 20.97a5.969 5.969 0 01-.474-.065 4.48 4.48 0 00.978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.159 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25z" />
                         </svg>

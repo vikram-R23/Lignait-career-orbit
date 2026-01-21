@@ -36,7 +36,6 @@ import LmsPracticeGround from './pages/LmsPracticeGround';
 import LmsCodingPractice from './pages/LmsCodingPractice';
 import LmsCodingPlatform from './pages/LmsCodingPlatform';
 import LmsCodingResult from './pages/LmsCodingResult';
-import ChatbotPage from './pages/ChatbotPage';
 
 
 function App() {
@@ -94,7 +93,6 @@ function App() {
         <Route path="/coding-practice" element={<LmsCodingPractice />} />
         <Route path="/coding-platform" element={<LmsCodingPlatform />} />
         <Route path="/coding-result" element={<LmsCodingResult />} />
-         <Route path="/chatbot" element={<ChatbotPage />} /> 
 
         {/* Catch-all to prevent blank screens on typos */}
         <Route path="*" element={<Navigate to="/dashboard/main" replace />} />

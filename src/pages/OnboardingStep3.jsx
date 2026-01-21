@@ -19,6 +19,13 @@ const OnboardingStep3 = () => {
   
   const [skillInput, setSkillInput] = useState('');
 
+  // Pre-defined list of available skills to search through
+  const availableSkills = [
+    'Java', 'Python', 'Communication', 'UI/UX', 'Project Management', 
+    'React', 'Node.js', 'SQL', 'Data Analysis', 'Leadership',
+    'Marketing', 'Sales', 'Public Speaking', 'C++', 'Machine Learning'
+  ];
+
   useEffect(() => {
     const savedData = localStorage.getItem('onboarding_step3');
     if (savedData) {
@@ -45,7 +52,8 @@ const OnboardingStep3 = () => {
       
       localStorage.setItem('onboarding_step3', JSON.stringify({ skills }));
 
-      navigate('/chatbot');
+      // UPDATED: Navigate to Welcome Dashboard
+      navigate('/dashboard/welcome');
     } catch (error) {
       console.error(error);
     } finally {
@@ -65,6 +73,7 @@ const OnboardingStep3 = () => {
       setPendingSkill(skillName);
       setExperience('intermediate'); // Reset default level for modal
       setShowExperienceModal(true);
+      setSkillInput(''); // Clear search after selecting
     }
   };
 
@@ -75,9 +84,24 @@ const OnboardingStep3 = () => {
     setPendingSkill('');
   };
 
+  // Filter skills based on search input
+  const filteredSkills = availableSkills.filter(skill => 
+    skill.toLowerCase().includes(skillInput.toLowerCase())
+  );
+
   return (
-    <div className="bg-[#06457F] text-[#0F172A] min-h-screen flex flex-col font-display antialiased selection:bg-[#2563EB] selection:text-white overflow-hidden relative">
+    <div className="bg-[#06457F] text-[#0F172A] h-screen w-full flex flex-col font-display antialiased selection:bg-[#2563EB] selection:text-white overflow-y-auto no-scrollbar relative">
       
+      <style dangerouslySetInnerHTML={{ __html: `
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        /* Restoring scrollbar specifically for the list */
+        .list-scrollbar::-webkit-scrollbar { width: 6px; }
+        .list-scrollbar::-webkit-scrollbar-track { background: rgba(0,0,0,0.05); }
+        .list-scrollbar::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.2); border-radius: 10px; }
+      `}} />
+
       {/* LOGO - Fixed Top Left (Square Gradient Rocket) */}
       <div className="absolute top-6 left-8 z-50 select-none">
         <div className="flex items-center gap-3">
@@ -100,7 +124,7 @@ const OnboardingStep3 = () => {
       <div className="relative z-10 flex-1 flex items-center justify-center p-4 py-8">
         
         {/* CARD CONTAINER */}
-        <div className="w-full max-w-[720px] bg-white/95 backdrop-blur-sm border border-white/50 rounded-2xl shadow-2xl flex flex-col">
+        <div className="w-full max-w-[720px] bg-white/95 backdrop-blur-sm border border-white/50 rounded-2xl shadow-2xl flex flex-col max-h-[85vh] overflow-y-auto no-scrollbar">
           
           {/* Progress Header */}
           <div className="px-8 pt-8 pb-2">
@@ -138,26 +162,32 @@ const OnboardingStep3 = () => {
                     placeholder="Search or add skills..."
                   />
                 </div>
-                <div className="flex flex-wrap gap-2 mt-1">
-                  {['Java', 'Python', 'Communication', 'UI/UX', 'Project Management'].map((skillName) => (
-                    <button 
-                      key={skillName}
-                      type="button"
-                      onClick={() => toggleSkill(skillName)}
-                      className={`flex items-center gap-1.5 px-3.5 py-2 rounded-lg border text-xs font-bold transition-all duration-200 active:scale-95 ${
-                        isSkillSelected(skillName)
-                        ? 'bg-[#2563EB]/10 border-[#2563EB] text-[#2563EB]' 
-                        : 'bg-white border-[#E2E8F0] text-[#64748B] hover:bg-[#F1F5F9]'
-                      }`}
-                    >
-                      {skillName}
-                      <span className="material-symbols-outlined text-[14px]">{isSkillSelected(skillName) ? 'check' : 'add'}</span>
-                    </button>
-                  ))}
+                
+                {/* Search Results / Suggestions List - ALWAYS VISIBLE */}
+                <div className="flex flex-wrap gap-2 mt-1 min-h-[40px]">
+                  {filteredSkills.length > 0 ? (
+                    filteredSkills.map((skillName) => (
+                        <button 
+                          key={skillName}
+                          type="button"
+                          onClick={() => toggleSkill(skillName)}
+                          className={`flex items-center gap-1.5 px-3.5 py-2 rounded-lg border text-xs font-bold transition-all duration-200 active:scale-95 ${
+                            isSkillSelected(skillName)
+                            ? 'bg-[#2563EB]/10 border-[#2563EB] text-[#2563EB]' 
+                            : 'bg-white border-[#E2E8F0] text-[#64748B] hover:bg-[#F1F5F9]'
+                          }`}
+                        >
+                          {skillName}
+                          <span className="material-symbols-outlined text-[14px]">{isSkillSelected(skillName) ? 'check' : 'add'}</span>
+                        </button>
+                    ))
+                  ) : (
+                    <p className="text-xs text-gray-400 w-full pl-1">No matching skills found.</p>
+                  )}
                 </div>
               </div>
 
-              {/* NEW SECTION: SELECTED SKILLS LIST */}
+              {/* SELECTED SKILLS LIST (Confirmation) - Scrollbar Enabled */}
               {skills.length > 0 && (
                 <div className="flex flex-col gap-3 p-4 bg-slate-50 rounded-xl border border-slate-200">
                     <div className="flex items-center justify-between">
@@ -165,7 +195,7 @@ const OnboardingStep3 = () => {
                          <span className="text-[10px] text-slate-500 font-medium">{skills.length} skills added</span>
                     </div>
                     
-                    <div className="flex flex-col gap-2 max-h-[160px] overflow-y-auto pr-1 custom-scrollbar">
+                    <div className="flex flex-col gap-2 max-h-[160px] overflow-y-auto pr-1 list-scrollbar">
                         {skills.map((item, index) => (
                             <div key={index} className="flex items-center justify-between bg-white p-3 rounded-lg border border-slate-200 shadow-sm">
                                 <div className="flex flex-col">
@@ -224,7 +254,7 @@ const OnboardingStep3 = () => {
       {/* --- EXPERIENCE LEVEL POP-UP MODAL --- */}
       {showExperienceModal && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-[#0F172A]/60 backdrop-blur-sm p-4 animate-in fade-in duration-200">
-          <div className="w-full max-w-lg bg-white rounded-2xl shadow-2xl p-8 border border-white/50 animate-in zoom-in-95 slide-in-from-bottom-5 duration-300 relative">
+          <div className="w-full max-w-lg max-h-[90vh] overflow-y-auto no-scrollbar bg-white rounded-2xl shadow-2xl p-8 border border-white/50 animate-in zoom-in-95 slide-in-from-bottom-5 duration-300 relative">
             
             <button 
                 onClick={() => { setShowExperienceModal(false); setPendingSkill(''); }}
