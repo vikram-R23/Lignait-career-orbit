@@ -138,16 +138,17 @@ const Login = () => {
               <div className="flex flex-col w-full group gap-1.5">
                 <span className="text-white text-xs font-semibold pl-1">Email Address</span>
                 <div className="relative">
+                  {/* UPDATED: Changed bg to white and text to slate-900 (dark) */}
                   <input 
                       ref={emailInputRef}
                       name="email"
                       type="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      className="flex w-full rounded-xl text-white border border-[#1e3a8a] bg-[#1e1e21] focus:border-[#0474C4] focus:ring-1 focus:ring-[#0474C4] h-11 placeholder:text-gray-500 px-4 text-sm transition-all outline-none" 
-                      placeholder="name@example.com" 
+                      className="flex w-full rounded-xl text-slate-900 border border-slate-300 bg-white focus:border-[#0474C4] focus:ring-1 focus:ring-[#0474C4] h-11 placeholder:text-slate-400 px-4 text-sm transition-all outline-none" 
+                      placeholder="Enter your email" 
                   />
-                  <span onClick={focusEmail} className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 text-xl cursor-pointer">mail</span>
+                  <span onClick={focusEmail} className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 text-xl cursor-pointer hover:text-[#0474C4] transition-colors">mail</span>
                 </div>
               </div>
 
@@ -157,18 +158,19 @@ const Login = () => {
                   <a className="text-[#bae6fd] hover:text-white text-xs font-medium transition-colors cursor-pointer" href="/forgot-password">Forgot Password?</a>
                 </div>
                 <div className="relative">
+                  {/* UPDATED: Changed bg to white and text to slate-900 (dark) */}
                   <input 
                       name="password"
                       type={showPassword ? "text" : "password"}
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      className="flex w-full rounded-xl text-white border border-[#1e3a8a] bg-[#1e1e21] focus:border-[#0474C4] focus:ring-1 focus:ring-[#0474C4] h-11 placeholder:text-gray-500 px-4 pr-12 text-sm transition-all outline-none" 
+                      className="flex w-full rounded-xl text-slate-900 border border-slate-300 bg-white focus:border-[#0474C4] focus:ring-1 focus:ring-[#0474C4] h-11 placeholder:text-slate-400 px-4 pr-12 text-sm transition-all outline-none password-input" 
                       placeholder="Enter your password" 
                   />
                   <button 
                       type="button" 
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white transition-colors"
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-[#0474C4] transition-colors"
                   >
                       <span className="material-symbols-outlined text-xl">{showPassword ? 'visibility' : 'visibility_off'}</span>
                   </button>
@@ -273,8 +275,12 @@ const Login = () => {
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap');
         @import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap');
 
-        .password-input::-ms-reveal, .password-input::-ms-clear { display: none !important; }
-        
+        /* Force hide MS Edge/IE reveal button */
+        .password-input::-ms-reveal,
+        .password-input::-ms-clear {
+          display: none !important;
+        }
+
         .float-icon-enhanced {
             display: flex; align-items: center; justify-content: center;
             border-radius: 9999px; border-width: 2px;
