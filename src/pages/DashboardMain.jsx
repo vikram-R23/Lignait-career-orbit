@@ -275,7 +275,7 @@ const DashboardMain = () => {
           <div className="px-8 pb-12 flex flex-col gap-8">
             {/* GREETING */}
             <div className="mt-2">
-              <h1 className="text-[32px] font-bold text-white mb-2 leading-tight tracking-tight">Good evening, {userName} 👋</h1>
+              <h1 className="text-[32px] font-bold text-white mb-2 leading-tight tracking-tight">Hello, {userName} 👋</h1>
               <p className="text-[#D1D5DB] text-lg font-normal">Here’s your current career progress</p>
             </div>
 
