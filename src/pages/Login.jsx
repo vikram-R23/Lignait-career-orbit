@@ -2,27 +2,57 @@ import React, { useState, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 
 // ==========================================
-// MOCK AUTH SERVICE & LLM SIMULATION
+// STATIC STYLES (Extracted & Memoized)
+// ==========================================
+// Moving styles out of the main render loop prevents input glitches/lag
+const LoginStyles = React.memo(() => (
+  <style dangerouslySetInnerHTML={{ __html: `
+    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap');
+
+    /* Force hide MS Edge/IE reveal button */
+    .password-input::-ms-reveal,
+    .password-input::-ms-clear {
+      display: none !important;
+    }
+
+    .float-icon-enhanced {
+        display: flex; align-items: center; justify-content: center;
+        border-radius: 9999px; border-width: 2px;
+        transition: transform 0.3s;
+    }
+    .float-icon-enhanced:hover { transform: scale(1.1); }
+
+    @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+    @keyframes float { 0%, 100% { transform: translateY(-4px); } 50% { transform: translateY(4px); } }
+    @keyframes wave { 0%, 100% { transform: rotate(0deg); } 25% { transform: rotate(-10deg); } 75% { transform: rotate(10deg); } }
+
+    .animate-spin-slow { animation: spin 60s linear infinite; }
+    .animate-spin-reverse-slow { animation: spin 80s linear reverse infinite; }
+    .animate-float { animation: float 3s ease-in-out infinite; }
+    .animate-wave { animation: wave 1.5s ease-in-out infinite; }
+    
+    /* Custom Scrollbar for Left Panel */
+    .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: #06457F; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #0474C4; border-radius: 10px; }
+  `}} />
+));
+
+// ==========================================
+// MOCK AUTH SERVICE
 // ==========================================
 const authService = {
   login: async (formData) => {
     console.log("API: Initiating secure handshake...");
-    
-    // 1. Simulate Network Latency (API)
     await new Promise((resolve) => setTimeout(resolve, 1500));
+    console.log("LLM: Analyzing user behavior pattern...");
+    await new Promise((resolve) => setTimeout(resolve, 800));
 
-    // 2. Simulate LLM/AI Analysis (Dummy Logic)
-    console.log("LLM: Analyzing user behavior pattern for security anomalies...");
-    const aiAnalysisTime = 800;
-    await new Promise((resolve) => setTimeout(resolve, aiAnalysisTime));
-
-    // 3. Mock Validation Logic
     if (formData.password.length > 5) {
-      console.log("API: Authentication Successful. Token Generated.");
-      // NOTE: setting isNewUser to true ensures flow goes to Onboarding as requested
       return { success: true, token: 'mock-jwt-token-12345', user: { name: 'User', isNewUser: true } };
     } else {
-      console.warn("API: Authentication Failed. Invalid Credentials.");
       throw new Error("Invalid credentials");
     }
   }
@@ -45,6 +75,14 @@ const Login = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     setErrorMessage('');
+
+    // Input Validation
+    if (!email.trim() || !password.trim()) {
+        setStatus('error');
+        setErrorMessage('Email and Password are required.');
+        return; 
+    }
+
     setStatus('loading');
 
     try {
@@ -57,12 +95,10 @@ const Login = () => {
       }
 
       setTimeout(() => {
-        // FORCE NAVIGATION TO ONBOARDING STEP 1
         navigate('/onboarding/step-1'); 
       }, 800);
 
     } catch (err) {
-      // Seamless bypass for demo purposes if backend fails
       console.warn("Demo Mode: Redirecting to onboarding...");
       setStatus('success'); 
       setTimeout(() => {
@@ -74,10 +110,13 @@ const Login = () => {
   return (
     <div className="font-display bg-[#06457F] text-white min-h-screen w-full flex flex-col lg:flex-row relative overflow-x-hidden selection:bg-[#0474C4] selection:text-white">
       
+      {/* Optimized Styles Component */}
+      <LoginStyles />
+
       {/* ================= LEFT PANEL (CONTENT) ================= */}
       <div className="w-full lg:w-1/2 flex flex-col relative z-20 bg-[#06457F] border-r border-[#043360] min-h-screen">
         
-        {/* LOGO - Fixed Top Left */}
+        {/* LOGO */}
         <div className="absolute top-8 left-8 sm:left-12 z-50 select-none">
             <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#0474C4] to-cyan-400 flex items-center justify-center shadow-lg shadow-blue-500/30">
@@ -128,7 +167,7 @@ const Login = () => {
                </div>
             )}
             {status === 'error' && (
-               <div className="bg-red-500/20 border border-red-500 text-red-200 p-2.5 rounded-lg text-xs text-center flex items-center justify-center gap-2 font-medium">
+               <div className="bg-red-500/20 border border-red-500 text-red-200 p-2.5 rounded-lg text-xs text-center flex items-center justify-center gap-2 font-medium animate-pulse">
                  <span className="material-symbols-outlined text-sm">error</span> {errorMessage}
                </div>
             )}
@@ -138,7 +177,6 @@ const Login = () => {
               <div className="flex flex-col w-full group gap-1.5">
                 <span className="text-white text-xs font-semibold pl-1">Email Address</span>
                 <div className="relative">
-                  {/* UPDATED: Changed bg to white and text to slate-900 (dark) */}
                   <input 
                       ref={emailInputRef}
                       name="email"
@@ -146,7 +184,7 @@ const Login = () => {
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       className="flex w-full rounded-xl text-slate-900 border border-slate-300 bg-white focus:border-[#0474C4] focus:ring-1 focus:ring-[#0474C4] h-11 placeholder:text-slate-400 px-4 text-sm transition-all outline-none" 
-                      placeholder="Enter your email" 
+                      placeholder="name@example.com" 
                   />
                   <span onClick={focusEmail} className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 text-xl cursor-pointer hover:text-[#0474C4] transition-colors">mail</span>
                 </div>
@@ -158,7 +196,6 @@ const Login = () => {
                   <a className="text-[#bae6fd] hover:text-white text-xs font-medium transition-colors cursor-pointer" href="/forgot-password">Forgot Password?</a>
                 </div>
                 <div className="relative">
-                  {/* UPDATED: Changed bg to white and text to slate-900 (dark) */}
                   <input 
                       name="password"
                       type={showPassword ? "text" : "password"}
@@ -186,14 +223,12 @@ const Login = () => {
               </button>
             </form>
 
-            {/* Create Account */}
             <div className="text-center pt-2">
               <p className="text-[#bae6fd] text-xs">
                   New here? <Link to="/signup" className="text-white font-bold hover:underline decoration-2 underline-offset-4 ml-1">Create Account</Link>
               </p>
             </div>
 
-            {/* Copyright */}
             <div className="text-center mt-6">
                <p className="text-blue-300/50 text-[10px] font-medium tracking-wide">© 2026 Career Orbit. All rights reserved.</p>
             </div>
@@ -204,61 +239,42 @@ const Login = () => {
 
       {/* ================= RIGHT PANEL (ANIMATION) ================= */}
       <div className="hidden lg:flex lg:w-1/2 bg-[#A8C4EC] relative items-center justify-center overflow-hidden h-screen sticky top-0">
-        
-        {/* ANIMATION CONTAINER */}
         <div className="relative w-[800px] h-[800px] flex items-center justify-center z-10 scale-[0.75] -translate-y-12 transition-transform duration-500">
-            
-            {/* 1. Smallest Ring - Code Icon (Blue) */}
             <div className="absolute w-[300px] h-[300px] rounded-full border-[2px] border-cyan-900/90 border-dashed animate-spin-slow shadow-[0_0_20px_rgba(6,182,212,0.15)]" style={{animationDuration: '60s'}}>
-                {/* Fixed Top Center Position (12 o'clock) */}
                 <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2" style={{ animation: 'spin 60s linear infinite reverse' }}>
                     <div className="float-icon-enhanced w-12 h-12 border-cyan-400 shadow-[0_0_15px_rgba(34,211,238,0.4)] bg-[#0f172a]">
                         <span className="material-symbols-outlined text-cyan-300 text-[20px]">terminal</span>
                     </div>
                 </div>
             </div>
-
-            {/* 2. Medium Ring - Group Icon (Green) */}
             <div className="absolute w-[460px] h-[460px] rounded-full border-[1.5px] border-purple-950/90 animate-spin-reverse-slow" style={{animationDuration: '80s'}}>
-                 {/* Fixed Right Center Position (3 o'clock) */}
                  <div className="absolute top-1/2 right-0 translate-x-1/2 -translate-y-1/2" style={{ animation: 'spin 80s linear infinite' }}>
                     <div className="float-icon-enhanced w-12 h-12 border-emerald-400 shadow-[0_0_15px_rgba(52,211,153,0.4)] bg-[#0f172a]">
                         <span className="material-symbols-outlined text-emerald-400 text-[20px]">group</span>
                     </div>
                  </div>
             </div>
-
-            {/* 3. Large Ring - Trophy Icon (Purple) */}
             <div className="absolute w-[600px] h-[600px] rounded-full border-[2px] border-fuchsia-950/90 border-dashed animate-spin-slow shadow-[0_0_35px_rgba(217,70,239,0.15)]" style={{animationDuration: '100s'}}>
-                {/* Fixed Bottom Center Position (6 o'clock) */}
                 <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2" style={{ animation: 'spin 100s linear infinite reverse' }}>
                     <div className="float-icon-enhanced w-11 h-11 border-purple-400 shadow-[0_0_15px_rgba(192,132,252,0.4)] bg-[#0f172a]">
                         <span className="material-symbols-outlined text-purple-400 text-[20px]">emoji_events</span>
                     </div>
                 </div>
             </div>
-
-            {/* 4. Largest Ring - Document Icon (Pink) */}
             <div className="absolute w-[800px] h-[800px] rounded-full border-[1.5px] border-indigo-950/90 animate-spin-reverse-slow" style={{animationDuration: '120s'}}>
-                {/* Fixed Left Center Position (9 o'clock) */}
                 <div className="absolute top-1/2 left-0 -translate-x-1/2 -translate-y-1/2" style={{ animation: 'spin 120s linear infinite' }}>
                     <div className="float-icon-enhanced w-12 h-12 border-pink-400 shadow-[0_0_15px_rgba(244,114,182,0.4)] bg-[#0f172a]">
                         <span className="material-symbols-outlined text-pink-400 text-[22px]">article</span>
                     </div>
                 </div>
             </div>
-            
-            {/* Center Robot */}
             <div className="relative z-20 animate-float">
                 <div className="absolute inset-[-40px] bg-white/30 blur-3xl rounded-full"></div>
                 <div className="relative w-24 h-24 bg-[#06457F] rounded-full border-4 border-white/20 flex items-center justify-center shadow-[0_0_50px_rgba(6,69,127,0.3)]">
                     <span className="material-symbols-outlined text-white text-[40px] drop-shadow-md">smart_toy</span>
                 </div>
             </div>
-
         </div>
-
-        {/* Text Overlay */}
         <div className="absolute bottom-5 right-10 lg:right-16 z-50 text-right pointer-events-none">
             <h2 className="font-display font-semibold text-3xl lg:text-4xl leading-relaxed tracking-wide drop-shadow-sm">
                 <span className="block text-[#06457F]">Build skills.</span>
@@ -266,43 +282,8 @@ const Login = () => {
                 <span className="block text-black">Kickstart your career.</span>
             </h2>
         </div>
-        
         <div className="absolute inset-0 bg-gradient-to-t from-white/30 via-transparent to-transparent pointer-events-none z-30"></div>
       </div>
-
-      <style dangerouslySetInnerHTML={{ __html: `
-        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap');
-        @import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap');
-
-        /* Force hide MS Edge/IE reveal button */
-        .password-input::-ms-reveal,
-        .password-input::-ms-clear {
-          display: none !important;
-        }
-
-        .float-icon-enhanced {
-            display: flex; align-items: center; justify-content: center;
-            border-radius: 9999px; border-width: 2px;
-            transition: transform 0.3s;
-        }
-        .float-icon-enhanced:hover { transform: scale(1.1); }
-
-        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-        @keyframes float { 0%, 100% { transform: translateY(-4px); } 50% { transform: translateY(4px); } }
-        @keyframes wave { 0%, 100% { transform: rotate(0deg); } 25% { transform: rotate(-10deg); } 75% { transform: rotate(10deg); } }
-
-        .animate-spin-slow { animation: spin 60s linear infinite; }
-        .animate-spin-reverse-slow { animation: spin 80s linear reverse infinite; }
-        .animate-float { animation: float 3s ease-in-out infinite; }
-        .animate-wave { animation: wave 1.5s ease-in-out infinite; }
-        
-        /* Custom Scrollbar for Left Panel */
-        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: #06457F; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #0474C4; border-radius: 10px; }
-      `}} />
-
     </div>
   );
 };

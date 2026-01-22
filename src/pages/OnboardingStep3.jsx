@@ -188,7 +188,10 @@ const OnboardingStep3 = () => {
                           }`}
                         >
                           {skillName}
-                          <span className="material-symbols-outlined text-[14px]">{isSkillSelected(skillName) ? 'check' : 'add'}</span>
+                          {/* UPDATED: Displays 'close' (X) when selected, 'add' (+) when not */}
+                          <span className="material-symbols-outlined text-[14px]">
+                            {isSkillSelected(skillName) ? 'close' : 'add'}
+                          </span>
                         </button>
                     ))
                   ) : (
@@ -214,13 +217,13 @@ const OnboardingStep3 = () => {
                                     <span className="text-[10px] uppercase text-slate-500 font-semibold tracking-wider">{item.level}</span>
                                 </div>
                                 
-                                {/* DELETE BUTTON (X) */}
+                                {/* DELETE BUTTON (BIN ICON) */}
                                 <button 
                                     onClick={() => toggleSkill(item.name)}
                                     className="text-slate-400 hover:text-red-500 hover:bg-red-50 p-1.5 rounded-full transition-all opacity-70 group-hover:opacity-100"
                                     title="Remove Skill"
                                 >
-                                    <span className="material-symbols-outlined text-[18px] font-bold">close</span>
+                                    <span className="material-symbols-outlined text-[18px]">delete</span>
                                 </button>
                             </div>
                         ))}

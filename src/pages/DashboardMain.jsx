@@ -1,16 +1,39 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+// ====================================================================
+// SESSION CACHE VARIABLE
+// defined OUTSIDE the component.
+// 1. Persists when navigating between pages (Client-side routing).
+// 2. Resets to 'false' automatically when the user Refreshes or Re-logins.
+// ====================================================================
+let sessionRoadmapStatus = false; 
+
 const DashboardMain = () => {
   const navigate = useNavigate();
 
   // --------------------------------
-  // DASHBOARD STATE (NEW USER PRESET)
+  // DASHBOARD STATE
   // --------------------------------
+  // Initialize state using the session cache variable
+  const [isRoadmapReady, setIsRoadmapReady] = useState(sessionRoadmapStatus);
+
   const [userName, setUserName] = useState("Baskar");
-  const [currentPhase, setCurrentPhase] = useState("Career Roadmap"); // Changed for New User
-  const [phaseProgress, setPhaseProgress] = useState(0); // 0% for New User
-  const [aiInsight, setAiInsight] = useState("Welcome to Career Orbit! Let's generate your personalized roadmap to get started.");
+  
+  // Set initial UI based on the cached status
+  const [currentPhase, setCurrentPhase] = useState(
+    isRoadmapReady ? "Phase 1: Foundations" : "Career Roadmap"
+  );
+  const [phaseProgress, setPhaseProgress] = useState(
+    isRoadmapReady ? 15 : 0
+  );
+  const [aiInsight, setAiInsight] = useState(
+    isRoadmapReady 
+      ? "Roadmap active! Focus on mastering Data Structures this week." 
+      : "Welcome to Career Orbit! Let's generate your personalized roadmap to get started."
+  );
+  
+  const [showToast, setShowToast] = useState(false);
 
   // --------------------------------
   // CHATBOT STATE & LOGIC
@@ -18,22 +41,13 @@ const DashboardMain = () => {
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
   const [chatInput, setChatInput] = useState("");
-  const [isTyping, setIsTyping] = useState(false); // Added for animation
+  const [isTyping, setIsTyping] = useState(false); 
   const [chatMessages, setChatMessages] = useState([
-    { id: 1, sender: 'ai', text: 'Hi Baskar! I am your AI Career Assistant. Ready to generate your new roadmap?' }
+    { id: 1, sender: 'ai', text: isRoadmapReady ? 'Welcome back! Your roadmap is active. How can I help?' : 'Hi Baskar! I am your AI Career Assistant. Ready to generate your new roadmap?' }
   ]);
   const chatEndRef = useRef(null);
 
-  // Placeholder for data fetching
-  const fetchDashboardData = async () => {
-    // Logic for backend/LLM connectivity goes here
-  };
-
-  useEffect(() => {
-    fetchDashboardData();
-  }, []);
-
-  // Auto-scroll Chat to bottom
+  // Auto-scroll Chat
   useEffect(() => {
     if (isChatOpen && chatEndRef.current) {
       chatEndRef.current.scrollIntoView({ behavior: "smooth" });
@@ -42,25 +56,36 @@ const DashboardMain = () => {
 
   // --- MOCK LLM LOGIC ---
   const mockLlmResponse = async (userText) => {
-    // Simulate Network Latency
     const delay = Math.floor(Math.random() * 1000) + 1500;
     await new Promise(resolve => setTimeout(resolve, delay));
 
     const lowerInput = userText.toLowerCase();
 
-    if (lowerInput.includes('start') || lowerInput.includes('journey')) {
-       return "I'm excited to help you begin! I've analyzed your profile. Please select 'View Roadmap' below to see your personalized learning path.";
+    // 1. GENERATE ROADMAP LOGIC
+    // Strict check: Only generates if specifically asked
+    if (!isRoadmapReady && lowerInput.includes('generate my roadmap')) {
+      
+      // *** CRITICAL FIX: Update both State AND the Session Variable ***
+      sessionRoadmapStatus = true; // Saves status for navigation
+      setIsRoadmapReady(true);     // Updates current screen
+      
+      setCurrentPhase("Phase 1: Foundations");
+      setPhaseProgress(15);
+      setAiInsight("Roadmap generated! Focus on mastering Data Structures this week.");
+      
+      return "I've generated your personalized roadmap! Your dashboard has been updated. You can now access the 'Career Roadmap' section.";
     }
-    if (lowerInput.includes('roadmap') || lowerInput.includes('generate')) {
-      return "I'm generating a personalized roadmap for you based on your goal. It starts with Foundations. Redirecting you there now...";
-    }
-    if (lowerInput.includes('resume')) return "Opening the AI Resume Builder to help you craft a professional CV...";
-    if (lowerInput.includes('mentor')) return "Let's find you a mentor. Redirecting you to our mentorship network...";
-    if (lowerInput.includes('interview')) return "Preparing a mock interview session for you...";
-    if (lowerInput.includes('course') || lowerInput.includes('lms')) return "Opening the Learning Management System library...";
-    if (lowerInput.includes('practice') || lowerInput.includes('code')) return "Opening the Coding Practice Ground. Get ready to code!";
 
-    return "That sounds like a solid plan. I'm here to help you navigate your career journey. What would you like to tackle next?";
+    if (lowerInput.includes('start') || lowerInput.includes('journey')) {
+       return "I'm excited to help you begin! Please select 'Generate Roadmap' below to create your personalized learning path.";
+    }
+    if (lowerInput.includes('resume')) return "Opening the AI Resume Builder...";
+    if (lowerInput.includes('mentor')) return "Redirecting you to our mentorship network...";
+    if (lowerInput.includes('interview')) return "Preparing a mock interview session...";
+    if (lowerInput.includes('course')) return "Opening the Learning Management System...";
+    if (lowerInput.includes('practice')) return "Opening the Practice Ground...";
+
+    return "I'm here to help. To unlock your dashboard, please type 'generate my roadmap'.";
   };
 
   const handleChatSubmit = async (e, overrideText = null) => {
@@ -68,122 +93,92 @@ const DashboardMain = () => {
     const textToSend = overrideText || chatInput;
     if (!textToSend.trim()) return;
 
-    // 1. Add User Message
     const newUserMsg = { id: Date.now(), sender: 'user', text: textToSend };
     setChatMessages(prev => [...prev, newUserMsg]);
     setChatInput("");
-    setIsTyping(true); // Start typing animation
+    setIsTyping(true); 
 
-    // --- NAVIGATION HANDLERS (Delay for effect) ---
+    // --- NAVIGATION LOGIC ---
     const lowerText = textToSend.toLowerCase();
     
-    // 1. Roadmap
-    if(overrideText === 'View Roadmap' || lowerText.includes('generate roadmap')) {
-        setTimeout(() => { navigate('/dashboard/roadmap'); setIsTyping(false); }, 1500);
-    }
-    // 2. Resume
-    else if(overrideText === 'Resume Builder' || lowerText.includes('resume')) {
+    // Other Navigations
+    if(overrideText === 'Resume Builder' || lowerText.includes('resume')) {
         setTimeout(() => { navigate('/resume'); setIsTyping(false); }, 1500);
     }
-    // 3. Mentors
     else if(overrideText === 'Find a Mentor' || lowerText.includes('mentor')) {
         setTimeout(() => { navigate('/mentors'); setIsTyping(false); }, 1500);
     }
-    // 4. Mock Interview
     else if(overrideText === 'Mock Interview' || lowerText.includes('interview')) {
         setTimeout(() => { navigate('/mock-interview'); setIsTyping(false); }, 1500);
     }
-    // 5. LMS Courses
     else if(overrideText === 'LMS Courses' || lowerText.includes('course')) {
         setTimeout(() => { navigate('/lms-courses'); setIsTyping(false); }, 1500);
     }
-    // 6. Practice Ground
     else if(overrideText === 'Practice Ground' || lowerText.includes('practice')) {
         setTimeout(() => { navigate('/practice-ground'); setIsTyping(false); }, 1500);
     }
 
     try {
-        // 2. Get AI Response
         const aiResponseText = await mockLlmResponse(textToSend);
-        
-        // 3. Add AI Message
         const newAiMsg = { id: Date.now() + 1, sender: 'ai', text: aiResponseText };
         setChatMessages(prev => [...prev, newAiMsg]);
     } catch (error) {
         console.error("Chat Error", error);
     } finally {
-        // Only stop typing immediately if we aren't navigating (the timeouts handle the navigating stop)
-        if (!['View Roadmap', 'Resume Builder', 'Find a Mentor', 'Mock Interview', 'LMS Courses', 'Practice Ground'].includes(overrideText)) {
+        const navKeywords = ['Resume Builder', 'Find a Mentor', 'Mock Interview', 'LMS Courses', 'Practice Ground'];
+        if (!navKeywords.includes(overrideText)) {
             setIsTyping(false); 
         }
     }
   };
 
   // --------------------------------
-  // NAVIGATION & HANDLERS
+  // HANDLERS
   // --------------------------------
   
-  // Triggers the chatbot to open and asks the user to confirm generation
-  const handleGenerateClick = () => {
-    setIsChatOpen(true);
-    setIsExpanded(true); // Pop up in center
-    handleChatSubmit(null, "I am ready to start my journey."); 
-  };
-
-  const handleNavigate = (page) => {
-    if (page === 'Dashboard') {
-      navigate('/dashboard/main'); 
-    } else if (page === 'Resume') {
-      navigate('/resume');
-    } else if (page === 'Mentors') {
-      navigate('/mentors');
-    } else if (page === 'Mock Interview') {
-      navigate('/mock-interview');
-    } else if (page === 'LMS Courses') {
-      navigate('/lms-courses');
-    } else if (page === 'Practice Ground') {
-      navigate('/practice-ground');
+  const handleRoadmapNavigation = () => {
+    if (!isRoadmapReady) {
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 3000); 
     } else {
-      navigate(`/${page.toLowerCase().replace(/\s+/g, '-')}`);
+      navigate('/dashboard/roadmap');
     }
   };
 
+  const handleGenerateClick = () => {
+    setIsChatOpen(true);
+    setIsExpanded(true); 
+    // Does NOT auto-send message anymore. User must type.
+  };
+
+  const handleNavigate = (page) => {
+    if (page === 'Dashboard') navigate('/dashboard/main'); 
+    else navigate(`/${page.toLowerCase().replace(/\s+/g, '-')}`);
+  };
+
   return (
-    /* Main Wrapper */
     <div className="bg-[#06457F] h-screen w-full flex overflow-hidden font-['Space_Grotesk'] antialiased text-white selection:bg-[#0474C4] selection:text-white relative">
       
-      {/* Internal Styles for Scrollbars & Animations */}
+      {/* Toast Alert Component */}
+      <div className={`fixed top-6 left-1/2 -translate-x-1/2 z-[200] transition-all duration-300 ${showToast ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4 pointer-events-none'}`}>
+        <div className="bg-red-500 text-white px-6 py-3 rounded-lg shadow-2xl flex items-center gap-3 border border-red-400">
+            <span className="material-symbols-outlined text-[20px]">warning</span>
+            <span className="text-sm font-bold">Please generate your roadmap first via the AI Assistant.</span>
+        </div>
+      </div>
+
       <style dangerouslySetInnerHTML={{ __html: `
         @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
         .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
         .fill-1 { font-variation-settings: 'FILL' 1; }
-        
-        /* Dashboard Scrollbar */
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: #06457F; }
         ::-webkit-scrollbar-thumb { background: #0A4F8F; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #0474C4; }
-
-        /* Chat Animation */
-        @keyframes slideUpFade {
-            from { transform: translateY(20px) scale(0.95); opacity: 0; }
-            to { transform: translateY(0) scale(1); opacity: 1; }
-        }
+        @keyframes slideUpFade { from { transform: translateY(20px) scale(0.95); opacity: 0; } to { transform: translateY(0) scale(1); opacity: 1; } }
         .chat-animate { animation: slideUpFade 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-
-        /* AI Bubble Styles (From ChatbotPage) */
-        .message-bubble-ai {
-          background-color: rgba(4, 116, 196, 0.25);
-          box-shadow: 0 0 10px rgba(4, 116, 196, 0.4), inset 0 0 4px rgba(255, 255, 255, 0.2);
-          border: 1.5px solid rgba(255, 255, 255, 0.4);
-          color: white;
-        }
-        .message-bubble-user {
-          background-color: rgba(255, 255, 255, 0.1);
-          border: 1px solid rgba(255, 255, 255, 0.2);
-          color: #E2E8F0;
-        }
-        /* Typing Dot Animation */
+        .message-bubble-ai { background-color: rgba(4, 116, 196, 0.25); box-shadow: 0 0 10px rgba(4, 116, 196, 0.4), inset 0 0 4px rgba(255, 255, 255, 0.2); border: 1.5px solid rgba(255, 255, 255, 0.4); color: white; }
+        .message-bubble-user { background-color: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); color: #E2E8F0; }
         @keyframes blink { 0% { opacity: 0.2; } 20% { opacity: 1; } 100% { opacity: 0.2; } }
         .typing-dot { animation: blink 1.4s infinite both; }
         .typing-dot:nth-child(2) { animation-delay: 0.2s; }
@@ -192,8 +187,6 @@ const DashboardMain = () => {
 
       {/* LEFT SIDEBAR */}
       <aside className="w-72 flex-shrink-0 flex flex-col border-r border-slate-300 bg-white relative z-20">
-        
-        {/* Sidebar Logo */}
         <div className="p-6 flex items-center gap-3 select-none">
           <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#0474C4] to-cyan-400 flex items-center justify-center shadow-lg shadow-blue-500/30">
             <span className="material-symbols-outlined text-white text-xl">rocket_launch</span>
@@ -203,16 +196,21 @@ const DashboardMain = () => {
           </span>
         </div>
 
-        {/* Navigation Links */}
         <nav className="flex-1 px-4 py-4 flex flex-col gap-2 overflow-y-auto">
           <button className="flex items-center gap-3 px-4 py-3 rounded-lg bg-[#06457F] text-white shadow-md text-left w-full">
             <span className="material-symbols-outlined fill-1">home</span>
             <span className="font-medium">Dashboard</span>
           </button>
-          <button onClick={() => navigate('/dashboard/roadmap')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
-            <span className="material-symbols-outlined group-hover:text-[#06457F] transition-colors">map</span>
-            <span className="font-medium group-hover:text-[#06457F] transition-colors">Career Roadmap</span>
+          
+          {/* GATED LINK */}
+          <button onClick={handleRoadmapNavigation} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
+            <span className={`material-symbols-outlined group-hover:text-[#06457F] transition-colors ${!isRoadmapReady ? 'opacity-50' : ''}`}>map</span>
+            <div className="flex justify-between items-center w-full">
+                <span className={`font-medium group-hover:text-[#06457F] transition-colors ${!isRoadmapReady ? 'opacity-50' : ''}`}>Career Roadmap</span>
+                {!isRoadmapReady && <span className="material-symbols-outlined text-[14px] text-slate-400">lock</span>}
+            </div>
           </button>
+
           <button onClick={() => handleNavigate('Mentors')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
             <span className="material-symbols-outlined group-hover:text-[#06457F] transition-colors">groups</span>
             <span className="font-medium group-hover:text-[#06457F] transition-colors">Mentorship</span>
@@ -239,7 +237,6 @@ const DashboardMain = () => {
           </button>
         </nav>
 
-        {/* User Profile Section */}
         <div className="p-4 border-t border-slate-300">
           <div className="flex items-center gap-3 px-2 py-2">
             <div className="size-10 rounded-full bg-cover bg-center border border-slate-300" style={{ backgroundImage: "url('https://ui-avatars.com/api/?name=B+&background=06457F&color=fff')" }}></div>
@@ -254,7 +251,6 @@ const DashboardMain = () => {
       {/* CENTER CONTENT */}
       <div className="flex flex-1 overflow-hidden">
         <main className="flex-1 flex flex-col overflow-y-auto relative z-10 bg-[#06457F]">
-          {/* TOP HEADER */}
           <header className="h-20 flex items-center justify-between px-8 py-4 shrink-0 sticky top-0 bg-[#06457F]/95 backdrop-blur-sm z-30">
             <div className="w-full max-w-md">
               <label className="relative group block">
@@ -273,25 +269,29 @@ const DashboardMain = () => {
           </header>
 
           <div className="px-8 pb-12 flex flex-col gap-8">
-            {/* GREETING */}
             <div className="mt-2">
-              <h1 className="text-[32px] font-bold text-white mb-2 leading-tight tracking-tight">Hello, {userName} 👋</h1>
+              <h1 className="text-[32px] font-bold text-white mb-2 leading-tight tracking-tight">Welcome, {userName} 👋</h1>
               <p className="text-[#D1D5DB] text-lg font-normal">Here’s your current career progress</p>
             </div>
 
-            {/* PHASE CARD - UPDATED FOR NEW USER */}
+            {/* PHASE CARD */}
             <div className="bg-[#0A4F8F] rounded-xl p-6 md:p-8 shadow-xl border border-white/5 relative overflow-hidden group">
               <div className="absolute -right-20 -top-20 w-80 h-80 bg-[#0474C4]/20 rounded-full blur-[80px] pointer-events-none mix-blend-screen"></div>
               <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-8">
                 <div className="flex-1 space-y-6">
                   <div className="flex flex-wrap items-center gap-3">
-                    <span className="px-3 py-1 rounded text-xs font-semibold bg-[#0474C4] text-white shadow-sm">Start Your Journey</span>
+                    <span className="px-3 py-1 rounded text-xs font-semibold bg-[#0474C4] text-white shadow-sm">
+                        {isRoadmapReady ? 'In Progress' : 'Start Your Journey'}
+                    </span>
                     <span className="text-sm text-[#D1D5DB] flex items-center gap-1">
                       <span className="material-symbols-outlined text-[16px]">schedule</span>
-                      Not Started
+                      {isRoadmapReady ? 'Phase 1 Active' : 'Not Started'}
                     </span>
                   </div>
+                  
+                  {/* Updates Text dynamically based on State */}
                   <h2 className="text-3xl font-bold text-white tracking-tight">{currentPhase}</h2>
+                  
                   <div className="w-full max-w-xl space-y-2">
                     <div className="flex justify-between text-sm">
                       <span className="text-[#D1D5DB] font-medium">Phase Progress</span>
@@ -307,59 +307,64 @@ const DashboardMain = () => {
                     </div>
                     <div>
                       <p className="text-xs text-[#D1D5DB] uppercase tracking-wider font-semibold mb-0.5">Next Task</p>
-                      <p className="text-white font-medium text-base">Generate your first roadmap</p>
+                      <p className="text-white font-medium text-base">
+                          {isRoadmapReady ? 'Complete Foundation Module' : 'Generate your first roadmap'}
+                      </p>
                     </div>
                   </div>
                 </div>
                 <div className="shrink-0 flex items-end">
-                  {/* GENERATE BUTTON FOR NEW USER - OPENS CHAT */}
-                  <button onClick={handleGenerateClick} className="w-full sm:w-auto bg-[#0474C4] hover:bg-[#0360a3] text-white font-bold text-base px-8 py-3.5 rounded-lg shadow-lg shadow-[#0474C4]/20 transition-all flex items-center justify-center gap-2 transform hover:-translate-y-0.5 active:translate-y-0">
-                    <span>Generate Roadmap</span>
-                    <span className="material-symbols-outlined text-[20px]">auto_awesome</span>
-                  </button>
+                  {/* CONDITIONAL BUTTON: Generate vs View */}
+                  {!isRoadmapReady ? (
+                      <button onClick={handleGenerateClick} className="w-full sm:w-auto bg-[#0474C4] hover:bg-[#0360a3] text-white font-bold text-base px-8 py-3.5 rounded-lg shadow-lg shadow-[#0474C4]/20 transition-all flex items-center justify-center gap-2 transform hover:-translate-y-0.5 active:translate-y-0">
+                        <span>Generate Roadmap</span>
+                        <span className="material-symbols-outlined text-[20px]">auto_awesome</span>
+                      </button>
+                  ) : (
+                      <button onClick={() => navigate('/dashboard/roadmap')} className="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-base px-8 py-3.5 rounded-lg shadow-lg shadow-emerald-600/20 transition-all flex items-center justify-center gap-2 transform hover:-translate-y-0.5 active:translate-y-0">
+                        <span>Continue Learning</span>
+                        <span className="material-symbols-outlined text-[20px]">arrow_forward</span>
+                      </button>
+                  )}
                 </div>
               </div>
             </div>
 
-            {/* QUICK ACTIONS - UNIFORM GRID */}
+            {/* QUICK ACTIONS */}
             <section>
               <h3 className="text-xl font-bold text-white mb-5 flex items-center gap-2 tracking-tight">
                 <span className="material-symbols-outlined text-amber-400">bolt</span> Quick Actions
               </h3>
-              {/* Changed to 3 columns to handle 6 items uniformly */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 
-                {/* 1. Roadmap */}
-                <button onClick={() => navigate('/dashboard/roadmap')} className="flex flex-col items-start gap-4 p-5 rounded-xl bg-blue-600/10 hover:bg-blue-600/20 border border-blue-500/20 hover:border-blue-500/50 transition-all group text-left h-full">
-                  <div className="p-2.5 rounded-lg bg-blue-500/20 group-hover:bg-blue-500 group-hover:text-white text-blue-400 transition-colors duration-300 shadow-sm shadow-blue-500/10"><span className="material-symbols-outlined text-[28px]">map</span></div>
+                {/* 1. Roadmap (Gated) */}
+                <button onClick={handleRoadmapNavigation} className="flex flex-col items-start gap-4 p-5 rounded-xl bg-blue-600/10 hover:bg-blue-600/20 border border-blue-500/20 hover:border-blue-500/50 transition-all group text-left h-full">
+                  <div className="p-2.5 rounded-lg bg-blue-500/20 group-hover:bg-blue-500 group-hover:text-white text-blue-400 transition-colors duration-300 shadow-sm shadow-blue-500/10">
+                      <span className="material-symbols-outlined text-[28px]">{isRoadmapReady ? 'map' : 'lock'}</span>
+                  </div>
                   <div><span className="font-bold text-white block text-lg tracking-tight group-hover:text-blue-200 transition-colors">View RoadMap</span><span className="text-sm text-blue-200/70 mt-1 block">Track your journey</span></div>
                 </button>
                 
-                {/* 2. Resume */}
                 <button onClick={() => navigate('/resume')} className="flex flex-col items-start gap-4 p-5 rounded-xl bg-violet-600/10 hover:bg-violet-600/20 border border-violet-500/20 hover:border-violet-500/50 transition-all group text-left h-full">
                   <div className="p-2.5 rounded-lg bg-violet-500/20 group-hover:bg-violet-500 group-hover:text-white text-violet-400 transition-colors duration-300 shadow-sm shadow-violet-500/10"><span className="material-symbols-outlined text-[28px]">edit_document</span></div>
                   <div><span className="font-bold text-white block text-lg tracking-tight group-hover:text-violet-200 transition-colors">Resume Builder</span><span className="text-sm text-violet-200/70 mt-1 block">Update your CV with AI</span></div>
                 </button>
 
-                {/* 3. Mentors */}
                 <button onClick={() => navigate('/mentors')} className="flex flex-col items-start gap-4 p-5 rounded-xl bg-emerald-600/10 hover:bg-emerald-600/20 border border-emerald-500/20 hover:border-emerald-500/50 transition-all group text-left h-full">
                   <div className="p-2.5 rounded-lg bg-emerald-500/20 group-hover:bg-emerald-500 group-hover:text-white text-emerald-400 transition-colors duration-300 shadow-sm shadow-emerald-500/10"><span className="material-symbols-outlined text-[28px]">person_add</span></div>
                   <div><span className="font-bold text-white block text-lg tracking-tight group-hover:text-emerald-200 transition-colors">Book a Mentor</span><span className="text-sm text-emerald-200/70 mt-1 block">Get 1:1 guidance</span></div>
                 </button>
 
-                {/* 4. Mock Interview */}
                 <button onClick={() => navigate('/mock-interview')} className="flex flex-col items-start gap-4 p-5 rounded-xl bg-orange-600/10 hover:bg-orange-600/20 border border-orange-500/20 hover:border-orange-500/50 transition-all group text-left h-full">
                   <div className="p-2.5 rounded-lg bg-orange-500/20 group-hover:bg-orange-500 group-hover:text-white text-orange-400 transition-colors duration-300 shadow-sm shadow-orange-500/10"><span className="material-symbols-outlined text-[28px]">video_camera_front</span></div>
                   <div><span className="font-bold text-white block text-lg tracking-tight group-hover:text-orange-200 transition-colors">Mock Interview</span><span className="text-sm text-orange-200/70 mt-1 block">Practice with AI</span></div>
                 </button>
 
-                {/* 5. LMS Courses */}
                 <button onClick={() => navigate('/lms-courses')} className="flex flex-col items-start gap-4 p-5 rounded-xl bg-pink-600/10 hover:bg-pink-600/20 border border-pink-500/20 hover:border-pink-500/50 transition-all group text-left h-full">
                   <div className="p-2.5 rounded-lg bg-pink-500/20 group-hover:bg-pink-500 group-hover:text-white text-pink-400 transition-colors duration-300 shadow-sm shadow-pink-500/10"><span className="material-symbols-outlined text-[28px]">school</span></div>
                   <div><span className="font-bold text-white block text-lg tracking-tight group-hover:text-pink-200 transition-colors">Browse Courses</span><span className="text-sm text-pink-200/70 mt-1 block">Skill up today</span></div>
                 </button>
 
-                {/* 6. Practice Ground (ADDED) */}
                 <button onClick={() => navigate('/practice-ground')} className="flex flex-col items-start gap-4 p-5 rounded-xl bg-indigo-600/10 hover:bg-indigo-600/20 border border-indigo-500/20 hover:border-indigo-500/50 transition-all group text-left h-full">
                   <div className="p-2.5 rounded-lg bg-indigo-500/20 group-hover:bg-indigo-500 group-hover:text-white text-indigo-400 transition-colors duration-300 shadow-sm shadow-indigo-500/10"><span className="material-symbols-outlined text-[28px]">code</span></div>
                   <div><span className="font-bold text-white block text-lg tracking-tight group-hover:text-indigo-200 transition-colors">Practice Ground</span><span className="text-sm text-indigo-200/70 mt-1 block">Solve Coding Problems</span></div>
@@ -368,7 +373,6 @@ const DashboardMain = () => {
               </div>
             </section>
 
-            {/* RECENT ACTIVITY */}
             <section>
               <h3 className="text-xl font-bold text-white mb-4 tracking-tight">Recent Activity</h3>
               <div className="bg-[#0A4F8F]/30 rounded-xl border border-white/5 divide-y divide-white/5 backdrop-blur-sm">
@@ -387,7 +391,6 @@ const DashboardMain = () => {
           </div>
         </main>
 
-        {/* RIGHT PANEL */}
         <aside className="w-[360px] bg-[#A8C4EC] shrink-0 relative overflow-hidden hidden xl:flex flex-col border-l border-white/20">
           <div className="absolute inset-0 z-0 pointer-events-none">
             <svg className="w-full h-full" preserveAspectRatio="none" viewBox="0 0 360 900" xmlns="http://www.w3.org/2000/svg">
@@ -506,8 +509,9 @@ const DashboardMain = () => {
                     {/* Suggestion Chips (Only if not typing) */}
                     {!isTyping && chatMessages[chatMessages.length - 1]?.sender === 'ai' && (
                         <div className="flex flex-wrap gap-2 pt-2">
+                            {/* DYNAMIC CHIPS: Roadmap is only shown if NOT ready yet, or as View if ready */}
                             <button onClick={(e) => handleChatSubmit(e, 'View Roadmap')} className="text-xs bg-white/10 hover:bg-white/20 border border-white/20 rounded-full px-3 py-1.5 text-white transition-colors">
-                                View Roadmap
+                                {isRoadmapReady ? 'View Roadmap' : 'Generate Roadmap'}
                             </button>
                             <button onClick={(e) => handleChatSubmit(e, 'Resume Builder')} className="text-xs bg-white/10 hover:bg-white/20 border border-white/20 rounded-full px-3 py-1.5 text-white transition-colors">
                                 Resume Builder
