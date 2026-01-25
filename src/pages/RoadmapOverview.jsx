@@ -57,8 +57,7 @@ const CareerRoadmap = () => {
 
   const handleNavigate = (page) => {
     if (page === 'Dashboard') {
-      // FIX: Changed from '/dashboard/main' to '/dashboard' to match other modules
-      navigate('/dashboard'); 
+      navigate('/dashboard/main'); 
     } else if (page === 'Career Roadmap') {
       return; 
     } else {
@@ -71,7 +70,7 @@ const CareerRoadmap = () => {
   };
 
   const handleChatSubmit = (e) => {
-    e.preventDefault();
+    if (e) e.preventDefault();
     if (!chatInput.trim()) return;
     const newUserMsg = { id: Date.now(), sender: 'user', text: chatInput };
     setChatMessages(prev => [...prev, newUserMsg]);
@@ -111,10 +110,11 @@ const CareerRoadmap = () => {
       `}} />
 
       <div className="flex h-screen w-full">
-        {/* LEFT SIDEBAR */}
+        
+        {/* --- SIDEBAR (Updated to Match DashboardMain) --- */}
         <aside className="w-72 flex-shrink-0 flex flex-col border-r border-slate-300 bg-white relative z-20">
-          {/* UPDATED LOGO */}
           <div className="p-6 flex items-center gap-3 select-none">
+            {/* UPDATED LOGO: Square Gradient Rocket */}
             <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#0474C4] to-cyan-400 flex items-center justify-center shadow-lg shadow-blue-500/30">
                 <span className="material-symbols-outlined text-white text-xl">rocket_launch</span>
             </div>
@@ -124,61 +124,59 @@ const CareerRoadmap = () => {
           </div>
 
           <nav className="flex-1 px-4 py-4 flex flex-col gap-2 overflow-y-auto">
-            {/* 1. Dashboard */}
-            <button onClick={() => handleNavigate('Dashboard')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left">
-              <span className="material-symbols-outlined group-hover:text-[#06457F] transition-colors">home</span>
-              <span className="font-medium group-hover:text-[#06457F] transition-colors">Dashboard</span>
+            <button onClick={() => handleNavigate('Dashboard')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
+              <span className="material-symbols-outlined group-hover:text-[#06457F]">home</span>
+              <span className="font-medium">Dashboard</span>
             </button>
-
-            {/* 2. Career Roadmap (Active) */}
-            <button className="flex items-center gap-3 px-4 py-3 rounded-lg bg-[#06457F] text-white shadow-md text-left">
+            
+            <button className="flex items-center gap-3 px-4 py-3 rounded-lg bg-[#06457F] text-white shadow-md text-left w-full">
               <span className="material-symbols-outlined fill-1">map</span>
               <span className="font-medium">Career Roadmap</span>
             </button>
 
-            {/* 3. Mentors */}
-            <button onClick={() => handleNavigate('Mentors')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left">
-              <span className="material-symbols-outlined group-hover:text-[#06457F] transition-colors">groups</span>
-              <span className="font-medium group-hover:text-[#06457F] transition-colors">Mentorship</span>
+            <button onClick={() => handleNavigate('Mentors')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
+              <span className="material-symbols-outlined group-hover:text-[#06457F]">groups</span>
+              <span className="font-medium">Mentorship</span>
+            </button>
+            
+            <button onClick={() => handleNavigate('Resume')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
+              <span className="material-symbols-outlined group-hover:text-[#06457F]">description</span>
+              <span className="font-medium">Resume</span>
             </button>
 
-            {/* 4. Resume */}
-            <button onClick={() => handleNavigate('Resume')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left">
-              <span className="material-symbols-outlined group-hover:text-[#06457F] transition-colors">description</span>
-              <span className="font-medium group-hover:text-[#06457F] transition-colors">Resume</span>
+            <button onClick={() => handleNavigate('Mock Interview')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
+              <span className="material-symbols-outlined group-hover:text-[#06457F]">videocam</span>
+              <span className="font-medium">Mock Interview</span>
             </button>
 
-            {/* 5. Mock Interview */}
-            <button onClick={() => handleNavigate('Mock Interview')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left">
-              <span className="material-symbols-outlined group-hover:text-[#06457F] transition-colors">videocam</span>
-              <span className="font-medium group-hover:text-[#06457F] transition-colors">Mock Interview</span>
+            {/* NEW SECTION: My Booking */}
+            <button onClick={() => handleNavigate('My Bookings')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
+              <span className="material-symbols-outlined group-hover:text-[#06457F]">calendar_month</span>
+              <span className="font-medium">My Booking</span>
             </button>
 
-            {/* 6. LMS Courses */}
-            <button onClick={() => handleNavigate('LMS Courses')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left">
-              <span className="material-symbols-outlined group-hover:text-[#06457F] transition-colors">book</span>
-              <span className="font-medium group-hover:text-[#06457F] transition-colors">LMS Courses</span>
+            <button onClick={() => handleNavigate('LMS Courses')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
+              <span className="material-symbols-outlined group-hover:text-[#06457F]">book</span>
+              <span className="font-medium">LMS Courses</span>
             </button>
 
-            {/* 7. Practice Ground */}
-            <button onClick={() => handleNavigate('Practice Ground')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left">
-              <span className="material-symbols-outlined group-hover:text-[#06457F] transition-colors">code</span>
-              <span className="font-medium group-hover:text-[#06457F] transition-colors">Practice Ground</span>
+            <button onClick={() => handleNavigate('Practice Ground')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
+              <span className="material-symbols-outlined group-hover:text-[#06457F]">code</span>
+              <span className="font-medium">Practice Ground</span>
             </button>
 
-            {/* 8. Settings */}
-            <button onClick={() => handleNavigate('Settings')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left">
-              <span className="material-symbols-outlined group-hover:text-[#06457F] transition-colors">settings</span>
-              <span className="font-medium group-hover:text-[#06457F] transition-colors">Settings</span>
+            <button onClick={() => handleNavigate('Settings')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
+              <span className="material-symbols-outlined group-hover:text-[#06457F]">settings</span>
+              <span className="font-medium">Settings</span>
             </button>
           </nav>
 
           <div className="p-4 border-t border-slate-300">
             <div className="flex items-center gap-3 px-2 py-2">
               <div className="size-10 rounded-full bg-cover bg-center border border-slate-300" style={{ backgroundImage: "url('https://ui-avatars.com/api/?name=B+&background=06457F&color=fff')" }}></div>
-              <div className="flex flex-col">
-                <span className="text-sm font-semibold text-slate-900">Baskar Manager</span>
-                <span className="text-xs text-slate-600">Pro Member</span>
+              <div className="flex flex-col overflow-hidden">
+                <span className="text-sm font-semibold text-slate-900 truncate">Baskar Manager</span>
+                <span className="text-xs text-slate-600 truncate">Pro Member</span>
               </div>
             </div>
           </div>

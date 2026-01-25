@@ -115,6 +115,12 @@ const ResumePage = () => {
               <span className="font-medium">Mock Interview</span>
             </button>
             
+            {/* NEW SECTION: My Booking */}
+            <button onClick={() => navigate('/my-bookings')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
+              <span className="material-symbols-outlined group-hover:text-[#06457F]">calendar_month</span>
+              <span className="font-medium group-hover:text-[#06457F]">My Booking</span>
+            </button>
+
             <button onClick={() => navigate('/lms-courses')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
               <span className="material-symbols-outlined">book</span>
               <span className="font-medium">LMS Courses</span>
@@ -378,7 +384,7 @@ const ResumePage = () => {
                 ? "w-full max-w-5xl h-[85vh] bg-[#06457F] rounded-2xl border border-white/30 shadow-[0_0_50px_rgba(4,116,196,0.5)] flex flex-col overflow-hidden chat-animate"
                 : "w-[380px] h-[550px] bg-[#06457F] rounded-2xl border border-white/20 ring-1 ring-cyan-500/40 shadow-2xl flex flex-col overflow-hidden chat-animate origin-bottom-right"
             }>
-                {/* Header - Separate Color for 'Cart' feel */}
+                {/* Header */}
                 <div className="p-4 bg-[#0B3D91] flex items-center justify-between border-b border-white/10 shrink-0">
                     <div className="flex items-center gap-3">
                         {/* Professional Chatbot Icon in Header */}
@@ -438,7 +444,7 @@ const ResumePage = () => {
             </div>
         )}
 
-        {/* Toggle Button (FAB) - Hide when Expanded to avoid clutter */}
+        {/* Toggle Button (FAB) */}
         {!isExpanded && (
             <button 
                 onClick={() => setIsChatOpen(!isChatOpen)}
@@ -448,7 +454,6 @@ const ResumePage = () => {
                     <span className="material-symbols-outlined text-[32px]">keyboard_arrow_down</span>
                 ) : (
                     <div className="relative">
-                        {/* CUSTOM SVG ICON - Professional Robot Face */}
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12.375m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 01-2.555-.337A5.972 5.972 0 015.41 20.97a5.969 5.969 0 01-.474-.065 4.48 4.48 0 00.978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.159 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25z" />
                         </svg>

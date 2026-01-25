@@ -17,6 +17,7 @@ const MentorModule = () => {
   const chatEndRef = useRef(null);
 
   useEffect(() => {
+    // RESTORED ORIGINAL DATA (Exact images as requested)
     const data = [
       { id: 0, name: "Ananya Gupta", role: "Sr. Product Manager @ TechFlow", exp: "8 Yrs Exp", domain: "Technology", rating: "4.9", color: "purple", tags: ["Product Strategy", "Leadership"], available: true, img: "https://lh3.googleusercontent.com/aida-public/AB6AXuD3eP1UOs-rw6ryNDDFqDaS_iI8THcUI_ak7NihTirQld8Iq3_qSVg61Qo0zNxAwUR8aDAvkluo8jj1cJE_9x1DUUafuE-HbATcDd8IGM4hRgfCXmbJujeWWeDf2l41tSL7mN8SirPiP6SHnNA83BveGgAKVk7xSjSZqfsy8wQStXMFlSLYKVjJRlb9HbI78JxxCl1axelzyFT44-oYyeu0c2HkoRRfN9g7Bcxxqg7UcR7vHukT80C1qRwuhT0Dr7PcqSgXqHupE-k", btnColor: "bg-purple-600", hoverBtn: "hover:bg-purple-500", textColor: "text-purple-400", tagBg: "bg-purple-900/30", tagText: "text-purple-300", tagBorder: "border-purple-500/30" },
       { id: 1, name: "Sundar Rajan", role: "Staff Engineer @ Google", exp: "12 Yrs Exp", domain: "Technology", rating: "5.0", color: "blue", tags: ["System Design", "Backend"], available: false, img: "https://lh3.googleusercontent.com/aida-public/AB6AXuA3zqTVImfU49x31AcuC9BrpxJAOsETiG7T08-L5mg9_9Yo5wfuOWi4PoqF-c10e2djynKIeqwJphy4zMu-xREXj-4KXRErsSOuY45qHHRRxeieF5-JZt_9rDKJPK_ofXE7C5oeCbC8MXe1QZyCq4fCJ6PDRPy6oCcFaMpR6LCeapH6XhiSddmxOeD_AlAziSU9ggr9AohhWDYHynXmTnSfRnHEp48MItjIi7LqQhyd_zDuVEAbn_NEaewlXALuZWdvyvzmm8JxHB0", btnColor: "bg-blue-600", hoverBtn: "hover:bg-blue-500", textColor: "text-blue-400", tagBg: "bg-blue-900/30", tagText: "text-blue-300", tagBorder: "border-blue-500/30" },
@@ -36,7 +37,7 @@ const MentorModule = () => {
   }, [chatMessages, isChatOpen, isExpanded]);
 
   const handleChatSubmit = (e) => {
-    e.preventDefault();
+    if (e) e.preventDefault();
     if (!chatInput.trim()) return;
     const newUserMsg = { id: Date.now(), sender: 'user', text: chatInput };
     setChatMessages(prev => [...prev, newUserMsg]);
@@ -87,7 +88,7 @@ const MentorModule = () => {
           </div>
 
           <nav className="flex-1 px-4 py-4 flex flex-col gap-2 overflow-y-auto">
-            <button onClick={() => navigate('/dashboard')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
+            <button onClick={() => navigate('/dashboard/main')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
               <span className="material-symbols-outlined group-hover:text-[#06457F]">home</span>
               <span className="font-medium">Dashboard</span>
             </button>
@@ -106,18 +107,28 @@ const MentorModule = () => {
               <span className="material-symbols-outlined">description</span>
               <span className="font-medium">Resume</span>
             </button>
+            
             <button onClick={() => navigate('/mock-interview')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
               <span className="material-symbols-outlined">videocam</span>
               <span className="font-medium">Mock Interview</span>
             </button>
+
+            {/* MY BOOKING (ADDED) */}
+            <button onClick={() => navigate('/my-bookings')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
+              <span className="material-symbols-outlined group-hover:text-[#06457F]">calendar_month</span>
+              <span className="font-medium group-hover:text-[#06457F]">My Booking</span>
+            </button>
+
             <button onClick={() => navigate('/lms-courses')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
               <span className="material-symbols-outlined">book</span>
               <span className="font-medium">LMS Courses</span>
             </button>
+            
             <button onClick={() => navigate('/practice-ground')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
               <span className="material-symbols-outlined">code</span>
               <span className="font-medium">Practice Ground</span>
             </button>
+            
             <button onClick={() => navigate('/settings')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
               <span className="material-symbols-outlined">settings</span>
               <span className="font-medium">Settings</span>
@@ -251,9 +262,11 @@ const MentorModule = () => {
                         </div>
                     </div>
                     <div className="flex items-center gap-1">
+                        {/* EXPAND/COLLAPSE BUTTON */}
                         <button onClick={() => setIsExpanded(!isExpanded)} className="text-white/70 hover:text-white p-2 rounded-lg hover:bg-white/10 transition-colors" title={isExpanded ? "Collapse" : "Expand"}>
                             <span className="material-symbols-outlined text-[20px]">{isExpanded ? 'close_fullscreen' : 'open_in_full'}</span>
                         </button>
+                        {/* CLOSE BUTTON */}
                         <button onClick={() => { setIsChatOpen(false); setIsExpanded(false); }} className="text-white/70 hover:text-white p-2 rounded-lg hover:bg-white/10 transition-colors">
                             <span className="material-symbols-outlined text-[20px]">close</span>
                         </button>

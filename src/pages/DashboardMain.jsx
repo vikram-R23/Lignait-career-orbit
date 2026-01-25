@@ -223,6 +223,13 @@ const DashboardMain = () => {
             <span className="material-symbols-outlined group-hover:text-[#06457F] transition-colors">videocam</span>
             <span className="font-medium group-hover:text-[#06457F] transition-colors">Mock Interview</span>
           </button>
+
+          {/* NEW SECTION ADDED HERE */}
+          <button onClick={() => handleNavigate('My Bookings')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
+            <span className="material-symbols-outlined group-hover:text-[#06457F] transition-colors">calendar_month</span>
+            <span className="font-medium group-hover:text-[#06457F] transition-colors">My Booking</span>
+          </button>
+
           <button onClick={() => handleNavigate('LMS Courses')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
             <span className="material-symbols-outlined group-hover:text-[#06457F] transition-colors">book</span>
             <span className="font-medium group-hover:text-[#06457F] transition-colors">LMS Courses</span>
@@ -270,7 +277,7 @@ const DashboardMain = () => {
 
           <div className="px-8 pb-12 flex flex-col gap-8">
             <div className="mt-2">
-              <h1 className="text-[32px] font-bold text-white mb-2 leading-tight tracking-tight">Welcome, {userName} 👋</h1>
+              <h1 className="text-[32px] font-bold text-white mb-2 leading-tight tracking-tight">Good evening, {userName} 👋</h1>
               <p className="text-[#D1D5DB] text-lg font-normal">Here’s your current career progress</p>
             </div>
 

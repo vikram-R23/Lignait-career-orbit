@@ -29,9 +29,13 @@ const PhaseDetail = () => {
 
   // Helper for Sidebar Navigation
   const handleNavigate = (page) => {
-    if (page === 'Dashboard') navigate('/dashboard/main');
-    else if (page === 'Career Roadmap') navigate('/dashboard/roadmap');
-    else navigate(`/${page.toLowerCase().replace(/\s+/g, '-')}`);
+    if (page === 'Dashboard') {
+        navigate('/dashboard/main');
+    } else if (page === 'Career Roadmap') {
+        navigate('/dashboard/roadmap');
+    } else {
+        navigate(`/${page.toLowerCase().replace(/\s+/g, '-')}`);
+    }
   };
 
   // Auto-scroll Chat
@@ -42,7 +46,7 @@ const PhaseDetail = () => {
   }, [chatMessages, isChatOpen, isExpanded]);
 
   const handleChatSubmit = (e) => {
-    e.preventDefault();
+    if (e) e.preventDefault();
     if (!chatInput.trim()) return;
     const newUserMsg = { id: Date.now(), sender: 'user', text: chatInput };
     setChatMessages(prev => [...prev, newUserMsg]);
@@ -109,64 +113,63 @@ const PhaseDetail = () => {
 
       <div className="relative flex h-screen w-full flex-row overflow-hidden">
         
-        {/* FULL 8-SECTION SIDEBAR (MATCHES DASHBOARD) */}
+        {/* --- SIDEBAR (Exact Match to Mentor & Dashboard) --- */}
         <aside className="w-72 flex-shrink-0 flex flex-col border-r border-slate-300 bg-white relative z-20">
           <div className="p-6 flex items-center gap-3 select-none">
-            <div className="size-10 rounded-full bg-gradient-to-tr from-[#06457F] to-[#0474C4] p-[1px]">
-              <div className="h-full w-full rounded-full bg-white flex items-center justify-center">
-                <span className="material-symbols-outlined text-[#06457F]">rocket_launch</span>
-              </div>
+            {/* UPDATED LOGO: Square Gradient Rocket */}
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#0474C4] to-cyan-400 flex items-center justify-center shadow-lg shadow-blue-500/30">
+                <span className="material-symbols-outlined text-white text-xl">rocket_launch</span>
             </div>
-            <h1 className="text-xl font-bold tracking-tight text-slate-900">Career Orbit</h1>
+            <span className="text-2xl font-black tracking-tight text-[#0F172A]">
+                Career <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#0474C4] to-cyan-500">Orbit</span>
+            </span>
           </div>
 
           <nav className="flex-1 px-4 py-4 flex flex-col gap-2 overflow-y-auto">
-            {/* 1. Dashboard */}
             <button onClick={() => handleNavigate('Dashboard')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
-              <span className="material-symbols-outlined group-hover:text-[#06457F] transition-colors">home</span>
-              <span className="font-medium group-hover:text-[#06457F] transition-colors">Dashboard</span>
+              <span className="material-symbols-outlined group-hover:text-[#06457F]">home</span>
+              <span className="font-medium group-hover:text-[#06457F]">Dashboard</span>
             </button>
-
-            {/* 2. Career Roadmap (Active) */}
+            
             <button onClick={() => handleNavigate('Career Roadmap')} className="flex items-center gap-3 px-4 py-3 rounded-lg bg-[#06457F] text-white shadow-md text-left w-full">
               <span className="material-symbols-outlined fill">map</span>
               <span className="font-medium">Career Roadmap</span>
             </button>
 
-            {/* 3. Mentors */}
             <button onClick={() => handleNavigate('Mentors')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
-              <span className="material-symbols-outlined group-hover:text-[#06457F] transition-colors">groups</span>
-              <span className="font-medium group-hover:text-[#06457F] transition-colors">Mentorship</span>
+              <span className="material-symbols-outlined group-hover:text-[#06457F]">groups</span>
+              <span className="font-medium group-hover:text-[#06457F]">Mentorship</span>
             </button>
-
-            {/* 4. Resume */}
+            
             <button onClick={() => handleNavigate('Resume')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
-              <span className="material-symbols-outlined group-hover:text-[#06457F] transition-colors">description</span>
-              <span className="font-medium group-hover:text-[#06457F] transition-colors">Resume</span>
+              <span className="material-symbols-outlined group-hover:text-[#06457F]">description</span>
+              <span className="font-medium group-hover:text-[#06457F]">Resume</span>
             </button>
 
-            {/* 5. Mock Interview */}
             <button onClick={() => handleNavigate('Mock Interview')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
-              <span className="material-symbols-outlined group-hover:text-[#06457F] transition-colors">videocam</span>
-              <span className="font-medium group-hover:text-[#06457F] transition-colors">Mock Interview</span>
+              <span className="material-symbols-outlined group-hover:text-[#06457F]">videocam</span>
+              <span className="font-medium group-hover:text-[#06457F]">Mock Interview</span>
             </button>
 
-            {/* 6. LMS Courses */}
+            {/* MY BOOKING (ADDED) */}
+            <button onClick={() => handleNavigate('My Bookings')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
+              <span className="material-symbols-outlined group-hover:text-[#06457F]">calendar_month</span>
+              <span className="font-medium group-hover:text-[#06457F]">My Booking</span>
+            </button>
+
             <button onClick={() => handleNavigate('LMS Courses')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
-              <span className="material-symbols-outlined group-hover:text-[#06457F] transition-colors">book</span>
-              <span className="font-medium group-hover:text-[#06457F] transition-colors">LMS Courses</span>
+              <span className="material-symbols-outlined group-hover:text-[#06457F]">book</span>
+              <span className="font-medium group-hover:text-[#06457F]">LMS Courses</span>
             </button>
 
-            {/* 7. Practice Ground */}
             <button onClick={() => handleNavigate('Practice Ground')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
-              <span className="material-symbols-outlined group-hover:text-[#06457F] transition-colors">code</span>
-              <span className="font-medium group-hover:text-[#06457F] transition-colors">Practice Ground</span>
+              <span className="material-symbols-outlined group-hover:text-[#06457F]">code</span>
+              <span className="font-medium group-hover:text-[#06457F]">Practice Ground</span>
             </button>
 
-            {/* 8. Settings */}
             <button onClick={() => handleNavigate('Settings')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
-              <span className="material-symbols-outlined group-hover:text-[#06457F] transition-colors">settings</span>
-              <span className="font-medium group-hover:text-[#06457F] transition-colors">Settings</span>
+              <span className="material-symbols-outlined group-hover:text-[#06457F]">settings</span>
+              <span className="font-medium group-hover:text-[#06457F]">Settings</span>
             </button>
           </nav>
 
