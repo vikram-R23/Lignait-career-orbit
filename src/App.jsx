@@ -7,6 +7,20 @@ import ResetPassword from './pages/ResetPassword';
 import OnboardingStep1 from './pages/OnboardingStep1';
 import OnboardingStep2 from './pages/OnboardingStep2';
 import OnboardingStep3 from './pages/OnboardingStep3';
+import OnboardJobSeekerRole from './pages/OnboardJobSeekerRole';
+import OnboardJobSeekerExperienceLevel from './pages/OnboardJobSeekerExperienceLevel';
+import JobSeekerRoleChallenge from './pages/JobSeekerRoleChallenge'; // Adjust path if needed
+import JobSeekerSkillAssessment from './pages/JobSeekerSkillAssessment';
+import JobSeekerPreferences from './pages/JobSeekerPreferences';
+import JobSeekerWelcomeDashboard from './pages/JobSeekerWelcomeDashboard';
+import JobSeekerReviewProfile from './pages/JobSeekerReviewProfile';
+import CareerSwitcherBackground from './pages/CareerSwitcherBackground';
+import CareerSwitcherRole from './pages/CareerSwitcherRole';
+import CareerSwitcherTechnicalExposure from './pages/CareerSwitcherTechnicalExposure';
+import CareerSwitcherTimeCommitment from './pages/CareerSwitcherTimeCommitment';
+import CareerSwitcherConcerns from './pages/CareerSwitcherConcerns';
+import CareerSwitcherReview from './pages/CareerSwitcherReview';
+import CareerSwitcherWelcomeDashboard from './pages/CareerSwitcherWelcomeDashboard';
 import DashboardWelcome from './pages/DashboardWelcome';
 import DashboardMain from './pages/DashboardMain'; 
 import RoadmapOverview from './pages/RoadmapOverview'; 
@@ -36,6 +50,20 @@ import LmsPracticeGround from './pages/LmsPracticeGround';
 import LmsCodingPractice from './pages/LmsCodingPractice';
 import LmsCodingPlatform from './pages/LmsCodingPlatform';
 import LmsCodingResult from './pages/LmsCodingResult';
+import Settings from './pages/Settings';
+import ProfileScreen from './pages/ProfileScreen';
+import EditProfile from './pages/EditProfile';
+
+// ... inside <Routes>
+
+
+
+
+
+
+
+
+
 
 
 function App() {
@@ -52,7 +80,20 @@ function App() {
         <Route path="/onboarding/step-1" element={<OnboardingStep1 />} />
         <Route path="/onboarding/step-2" element={<OnboardingStep2 />}/>
         <Route path="/onboarding/step-3" element={<OnboardingStep3 />} />
-
+        <Route path="/onboarding/role" element={<OnboardJobSeekerRole />} />
+        <Route path="/onboarding/jobseekexperience" element={<OnboardJobSeekerExperienceLevel />} />
+        <Route path="/onboarding/role-challenge" element={<JobSeekerRoleChallenge />} />
+        <Route path="/onboarding/skill-assessment" element={<JobSeekerSkillAssessment />} />
+        <Route path="/onboarding/preferences" element={<JobSeekerPreferences />} />
+        <Route path="/onboarding/review" element={<JobSeekerReviewProfile />} />
+        <Route path="/onboarding/welcome-dashboard" element={<JobSeekerWelcomeDashboard />} />
+        <Route path="/onboarding/switcher/background" element={<CareerSwitcherBackground />} />
+        <Route path="/onboarding/switcher/role" element={<CareerSwitcherRole />} />
+        <Route path="/onboarding/switcher/exposure" element={<CareerSwitcherTechnicalExposure />} />
+        <Route path="/onboarding/switcher/time-commitment" element={<CareerSwitcherTimeCommitment />} />
+        <Route path="/onboarding/switcher/concerns" element={<CareerSwitcherConcerns />} />
+        <Route path="/onboarding/switcher/review" element={<CareerSwitcherReview />} />
+        <Route path="/onboarding/switcher/welcome-dashboard" element={<CareerSwitcherWelcomeDashboard />} />
         {/* Dashboard & Roadmap Sections */}
         <Route path="/dashboard" element={<Navigate to="/dashboard/main" replace />} />
         <Route path="/dashboard/main" element={<DashboardMain />} />
@@ -93,6 +134,10 @@ function App() {
         <Route path="/coding-practice" element={<LmsCodingPractice />} />
         <Route path="/coding-platform" element={<LmsCodingPlatform />} />
         <Route path="/coding-result" element={<LmsCodingResult />} />
+        <Route path="/settings" element={<Settings />} />
+        <Route path="/profile" element={<ProfileScreen />} />
+        <Route path="/edit-profile" element={<EditProfile />} />
+        
 
         {/* Catch-all to prevent blank screens on typos */}
         <Route path="*" element={<Navigate to="/dashboard/main" replace />} />

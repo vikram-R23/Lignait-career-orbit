@@ -67,7 +67,18 @@ const OnboardingStep1 = () => {
     try {
       await saveStep1Data(step1Data);
       localStorage.setItem('onboarding_step1', JSON.stringify(step1Data));
-      navigate('/onboarding/step-2');
+      
+      // --- NAVIGATION LOGIC UPDATE ---
+      if (selectedRole === 'job-seeker') {
+        navigate('/onboarding/role');
+      } else if (selectedRole === 'career-switcher') {
+        // Navigate to the Career Switcher Background page
+        navigate('/onboarding/switcher/background');
+      } else {
+        // Default for Student or others
+        navigate('/onboarding/step-2');
+      }
+      
     } catch (err) {
       console.error("Failed to save", err);
     } finally {

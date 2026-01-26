@@ -17,6 +17,7 @@ const DashboardMain = () => {
   // --------------------------------
   // Initialize state using the session cache variable
   const [isRoadmapReady, setIsRoadmapReady] = useState(sessionRoadmapStatus);
+  const [showRoadmapModal, setShowRoadmapModal] = useState(false); // Controls the full screen overlay
 
   const [userName, setUserName] = useState("Baskar");
   
@@ -73,7 +74,10 @@ const DashboardMain = () => {
       setPhaseProgress(15);
       setAiInsight("Roadmap generated! Focus on mastering Data Structures this week.");
       
-      return "I've generated your personalized roadmap! Your dashboard has been updated. You can now access the 'Career Roadmap' section.";
+      // Trigger the Full Screen Modal
+      setTimeout(() => setShowRoadmapModal(true), 1000);
+
+      return "I've generated your personalized roadmap! Opening it for you now...";
     }
 
     if (lowerInput.includes('start') || lowerInput.includes('journey')) {
@@ -117,6 +121,11 @@ const DashboardMain = () => {
     else if(overrideText === 'Practice Ground' || lowerText.includes('practice')) {
         setTimeout(() => { navigate('/practice-ground'); setIsTyping(false); }, 1500);
     }
+    else if(overrideText === 'View Roadmap' && isRoadmapReady) {
+        setShowRoadmapModal(true);
+        setIsTyping(false);
+        return; // Don't process LLM response for view action
+    }
 
     try {
         const aiResponseText = await mockLlmResponse(textToSend);
@@ -125,7 +134,7 @@ const DashboardMain = () => {
     } catch (error) {
         console.error("Chat Error", error);
     } finally {
-        const navKeywords = ['Resume Builder', 'Find a Mentor', 'Mock Interview', 'LMS Courses', 'Practice Ground'];
+        const navKeywords = ['Resume Builder', 'Find a Mentor', 'Mock Interview', 'LMS Courses', 'Practice Ground', 'View Roadmap'];
         if (!navKeywords.includes(overrideText)) {
             setIsTyping(false); 
         }
@@ -141,7 +150,7 @@ const DashboardMain = () => {
       setShowToast(true);
       setTimeout(() => setShowToast(false), 3000); 
     } else {
-      navigate('/dashboard/roadmap');
+      setShowRoadmapModal(true); // Open Modal instead of navigating
     }
   };
 
@@ -169,6 +178,7 @@ const DashboardMain = () => {
 
       <style dangerouslySetInnerHTML={{ __html: `
         @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
         .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
         .fill-1 { font-variation-settings: 'FILL' 1; }
         ::-webkit-scrollbar { width: 8px; }
@@ -183,7 +193,197 @@ const DashboardMain = () => {
         .typing-dot { animation: blink 1.4s infinite both; }
         .typing-dot:nth-child(2) { animation-delay: 0.2s; }
         .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+        
+        /* Roadmap specific styles */
+        .roadmap-modal-bg { background: radial-gradient(circle at 50% 50%, #06457F 0%, #042D52 45%, #020B1A 100%); }
+        .path-glow { filter: drop-shadow(0 0 8px rgba(34, 211, 238, 0.6)) drop-shadow(0 0 15px rgba(168, 85, 247, 0.4)); }
+        .node-pulse-active { box-shadow: 0 0 0 0 rgba(34, 211, 238, 0.7); animation: pulse-glow 3s infinite; }
+        @keyframes pulse-glow { 0% { box-shadow: 0 0 0 0 rgba(34, 211, 238, 0.7); transform: scale(1); } 70% { box-shadow: 0 0 0 25px rgba(34, 211, 238, 0); transform: scale(1.05); } 100% { box-shadow: 0 0 0 0 rgba(34, 211, 238, 0); transform: scale(1); } }
+        .glass-morphism { background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(24px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .floating-particle { position: absolute; background: white; border-radius: 50%; filter: blur(1px); pointer-events: none; opacity: 0.3; }
       `}} />
+
+      {/* ======================================================= */}
+      {/* FULL SCREEN ROADMAP MODAL */}
+      {/* ======================================================= */}
+      {showRoadmapModal && (
+        <div className="fixed inset-0 z-[300] roadmap-modal-bg flex flex-col animate-in fade-in zoom-in duration-300 font-['Inter']">
+            
+            {/* Header */}
+            <header className="w-full px-8 py-6 flex items-center justify-between z-50">
+                <div className="flex items-center gap-4">
+                    <button 
+                        onClick={() => setShowRoadmapModal(false)}
+                        className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 transition-all group"
+                    >
+                        <span className="material-symbols-outlined text-white/70 group-hover:text-white transition-colors">arrow_back</span>
+                        <span className="text-sm font-semibold text-white/70 group-hover:text-white">Back to Dashboard</span>
+                    </button>
+                </div>
+                <div className="text-center">
+                    <h1 className="text-2xl font-extrabold tracking-tight text-white">Your Career Roadmap</h1>
+                    <p className="text-blue-100/60 text-sm mt-0.5">A step-by-step path from beginner to professional</p>
+                </div>
+                <div className="flex items-center gap-4">
+                    <div className="w-10 h-10 rounded-full border border-white/20 overflow-hidden shadow-lg bg-[#06457F]">
+                         {/* Avatar Placeholder */}
+                         <span className="material-symbols-outlined text-white text-2xl flex items-center justify-center h-full">person</span>
+                    </div>
+                </div>
+            </header>
+
+            {/* Main Content */}
+            <main className="flex-1 relative w-full flex items-center justify-center overflow-hidden">
+                <div className="floating-particle w-1.5 h-1.5 top-1/4 left-1/4"></div>
+                <div className="floating-particle w-1 h-1 bottom-1/3 right-1/4"></div>
+                <div className="floating-particle w-2 h-2 top-1/2 right-1/3"></div>
+                <div className="floating-particle w-0.5 h-0.5 bottom-1/4 left-1/3"></div>
+                
+                <div className="relative w-[90%] h-[70%] max-w-6xl">
+                    {/* SVG Path */}
+                    <svg className="absolute inset-0 w-full h-full path-glow pointer-events-none z-10" preserveAspectRatio="none" viewBox="0 0 1000 400">
+                        <defs>
+                            <linearGradient id="pathGradient" x1="0%" x2="100%" y1="0%" y2="0%">
+                                <stop offset="0%" stopColor="#22D3EE"></stop>
+                                <stop offset="100%" stopColor="#A855F7"></stop>
+                            </linearGradient>
+                        </defs>
+                        <path className="opacity-80" d="M 100 300 C 200 300, 200 100, 300 100 C 400 100, 400 300, 500 300 C 600 300, 600 100, 700 100 C 800 100, 800 300, 900 300" fill="none" stroke="url(#pathGradient)" strokeLinecap="round" strokeWidth="6"></path>
+                    </svg>
+
+                    {/* NODE 1: Phase 01 */}
+                    <div className="absolute left-[10%] top-[75%] -translate-x-1/2 -translate-y-1/2 flex flex-col items-center group cursor-pointer z-20">
+                        <div className="w-16 h-16 rounded-full bg-green-500 flex items-center justify-center border-4 border-white/20 shadow-[0_0_20px_rgba(34,197,94,0.5)] transition-transform group-hover:scale-110">
+                            <span className="material-symbols-outlined text-white text-3xl font-bold">check</span>
+                        </div>
+                        <div className="absolute top-20 text-center w-32">
+                            <div className="text-[10px] font-bold text-green-400 uppercase tracking-widest">Phase 01</div>
+                            <div className="text-sm font-bold text-white/90 whitespace-nowrap">🌱 Foundations</div>
+                        </div>
+                    </div>
+
+                    {/* NODE 2: Phase 02 (Active) */}
+                    <div className="absolute left-[30%] top-[25%] -translate-x-1/2 -translate-y-1/2 flex flex-col items-center group z-30">
+                        <div className="w-20 h-20 rounded-full bg-[#0474C4] flex items-center justify-center border-4 border-cyan-400/50 node-pulse-active transition-transform cursor-pointer">
+                            <span className="material-symbols-outlined text-white text-4xl">rocket_launch</span>
+                        </div>
+                        <div className="absolute top-24 text-center w-32">
+                            <div className="text-[10px] font-black text-cyan-400 uppercase tracking-widest">Phase 02</div>
+                            <div className="text-sm font-extrabold text-white whitespace-nowrap">🚀 Core Frontend</div>
+                        </div>
+                        {/* Info Card for Active Node */}
+                        <div className="absolute top-36 left-0 w-80 glass-morphism rounded-2xl p-6 shadow-2xl animate-in fade-in zoom-in duration-300 pointer-events-auto">
+                            <div className="flex justify-between items-start mb-4">
+                                <div className="flex flex-col gap-1.5">
+                                    <span className="w-fit bg-cyan-500/20 text-cyan-300 text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded border border-cyan-500/30">Current Phase</span>
+                                    <h3 className="text-xl font-bold text-white">JavaScript Mastery</h3>
+                                </div>
+                                <button onClick={() => setShowRoadmapModal(false)} className="w-8 h-8 flex items-center justify-center rounded-full text-white/60 hover:text-white transition-all hover:bg-white/10">
+                                    <span className="material-symbols-outlined text-[18px]">close</span>
+                                </button>
+                            </div>
+                            <p className="text-sm text-gray-400 mb-5 leading-relaxed">Mastering ES6+, Async programming, and DOM manipulation basics.</p>
+                            <div className="space-y-2 mb-6">
+                                <div className="flex justify-between items-end">
+                                    <span className="text-[10px] text-white/50 font-bold uppercase tracking-widest">Completion</span>
+                                    <span className="text-xs font-bold text-cyan-400">14/22 Topics</span>
+                                </div>
+                                <div className="w-full bg-white/10 h-1.5 rounded-full overflow-hidden">
+                                    <div className="bg-gradient-to-r from-cyan-400 to-blue-500 h-full w-[65%] rounded-full shadow-[0_0_10px_rgba(34,211,238,0.3)]"></div>
+                                </div>
+                            </div>
+                            <button className="w-full bg-[#0474C4] hover:bg-[#0363A8] text-white py-3.5 rounded-xl text-xs font-black transition-all transform hover:-translate-y-0.5 shadow-lg shadow-blue-900/40">
+                                RESUME LEARNING
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* NODE 3: Phase 03 */}
+                    <div className="absolute left-[50%] top-[75%] -translate-x-1/2 -translate-y-1/2 flex flex-col items-center opacity-60 group cursor-not-allowed z-20">
+                        <div className="relative">
+                            <div className="w-16 h-16 rounded-full bg-white/10 flex items-center justify-center border-4 border-white/20 backdrop-blur-md">
+                                <span className="material-symbols-outlined text-white/50 text-3xl">psychology</span>
+                            </div>
+                            <div className="absolute -top-1 -right-1 w-6 h-6 bg-slate-900 rounded-full flex items-center justify-center border border-white/10">
+                                <span className="material-symbols-outlined text-[14px] text-white/40">lock</span>
+                            </div>
+                        </div>
+                        <div className="absolute top-20 text-center w-40">
+                            <div className="text-[10px] font-bold text-white/30 uppercase tracking-widest">Phase 03</div>
+                            <div className="text-sm font-bold text-white/40 whitespace-nowrap">🧠 Advanced Frontend</div>
+                        </div>
+                    </div>
+
+                    {/* NODE 4: Phase 04 */}
+                    <div className="absolute left-[70%] top-[25%] -translate-x-1/2 -translate-y-1/2 flex flex-col items-center opacity-40 group cursor-not-allowed z-20">
+                        <div className="relative">
+                            <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center border-4 border-white/10 backdrop-blur-md">
+                                <span className="material-symbols-outlined text-white/50 text-3xl">science</span>
+                            </div>
+                            <div className="absolute -top-1 -right-1 w-6 h-6 bg-slate-900 rounded-full flex items-center justify-center border border-white/10">
+                                <span className="material-symbols-outlined text-[14px] text-white/40">lock</span>
+                            </div>
+                        </div>
+                        <div className="absolute top-20 text-center w-40">
+                            <div className="text-[10px] font-bold text-white/30 uppercase tracking-widest">Phase 04</div>
+                            <div className="text-sm font-bold text-white/40 whitespace-nowrap">🧪 Practice & Interview</div>
+                        </div>
+                    </div>
+
+                    {/* NODE 5: Final */}
+                    <div className="absolute left-[90%] top-[75%] -translate-x-1/2 -translate-y-1/2 flex flex-col items-center opacity-30 group cursor-not-allowed z-20">
+                        <div className="relative">
+                            <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center border-4 border-white/10 backdrop-blur-md">
+                                <span className="material-symbols-outlined text-white/50 text-3xl">emoji_events</span>
+                            </div>
+                            <div className="absolute -top-1 -right-1 w-6 h-6 bg-slate-900 rounded-full flex items-center justify-center border border-white/10">
+                                <span className="material-symbols-outlined text-[14px] text-white/40">lock</span>
+                            </div>
+                        </div>
+                        <div className="absolute top-20 text-center w-32">
+                            <div className="text-[10px] font-bold text-white/30 uppercase tracking-widest">Final</div>
+                            <div className="text-sm font-bold text-white/40 whitespace-nowrap">🏆 Growth</div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+
+            {/* Footer */}
+            <footer className="w-full px-12 pb-10 flex flex-col items-center z-50">
+                <div className="w-full max-w-4xl glass-morphism rounded-2xl px-10 py-5 flex items-center justify-between shadow-2xl mb-6">
+                    <div className="flex items-center gap-12">
+                        <div className="flex items-center gap-4">
+                            <div className="w-10 h-10 rounded-lg bg-green-500/10 flex items-center justify-center border border-green-500/20">
+                                <span className="material-symbols-outlined text-green-500">verified</span>
+                            </div>
+                            <div>
+                                <div className="text-xl font-black text-white leading-none">01/05</div>
+                                <div className="text-[9px] uppercase font-bold text-white/40 tracking-widest mt-1">Phases Done</div>
+                            </div>
+                        </div>
+                        <div className="h-8 w-px bg-white/10"></div>
+                        <div className="flex items-center gap-4">
+                            <div className="w-10 h-10 rounded-lg bg-cyan-500/10 flex items-center justify-center border border-cyan-500/20">
+                                <span className="material-symbols-outlined text-cyan-400">trending_up</span>
+                            </div>
+                            <div>
+                                <div className="text-xl font-black text-white leading-none">28%</div>
+                                <div className="text-[9px] uppercase font-bold text-white/40 tracking-widest mt-1">Overall Path</div>
+                            </div>
+                        </div>
+                    </div>
+                    <button className="bg-white/5 hover:bg-white/10 text-white border border-white/10 px-6 py-3 rounded-xl text-xs font-black transition-all flex items-center gap-2 group">
+                        EXPLORE ALL PHASES
+                        <span className="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform">arrow_forward</span>
+                    </button>
+                </div>
+                <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/5">
+                    <span className="material-symbols-outlined text-cyan-400 text-sm">auto_awesome</span>
+                    <span className="text-[10px] uppercase font-bold tracking-[0.2em] text-cyan-100/60">AI-personalized roadmap based on your profile</span>
+                </div>
+            </footer>
+        </div>
+      )}
 
       {/* LEFT SIDEBAR */}
       <aside className="w-72 flex-shrink-0 flex flex-col border-r border-slate-300 bg-white relative z-20">
@@ -245,7 +445,7 @@ const DashboardMain = () => {
         </nav>
 
         <div className="p-4 border-t border-slate-300">
-          <div className="flex items-center gap-3 px-2 py-2">
+          <div onClick={() => navigate('/profile')} className="flex items-center gap-3 px-2 py-2 cursor-pointer hover:bg-slate-50 rounded-lg transition-colors">
             <div className="size-10 rounded-full bg-cover bg-center border border-slate-300" style={{ backgroundImage: "url('https://ui-avatars.com/api/?name=B+&background=06457F&color=fff')" }}></div>
             <div className="flex flex-col">
               <span className="text-sm font-semibold text-slate-900">Baskar Manager</span>
@@ -328,7 +528,7 @@ const DashboardMain = () => {
                         <span className="material-symbols-outlined text-[20px]">auto_awesome</span>
                       </button>
                   ) : (
-                      <button onClick={() => navigate('/dashboard/roadmap')} className="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-base px-8 py-3.5 rounded-lg shadow-lg shadow-emerald-600/20 transition-all flex items-center justify-center gap-2 transform hover:-translate-y-0.5 active:translate-y-0">
+                      <button onClick={() => setShowRoadmapModal(true)} className="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-base px-8 py-3.5 rounded-lg shadow-lg shadow-emerald-600/20 transition-all flex items-center justify-center gap-2 transform hover:-translate-y-0.5 active:translate-y-0">
                         <span>Continue Learning</span>
                         <span className="material-symbols-outlined text-[20px]">arrow_forward</span>
                       </button>
