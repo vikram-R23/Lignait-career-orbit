@@ -12,7 +12,7 @@ const AiInterview = () => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [chatInput, setChatInput] = useState("");
   const [chatMessages, setChatMessages] = useState([
-    { id: 1, sender: 'ai', text: 'Hi Baskar! Not sure which domain to pick? The AI suggestion is usually a great starting point!' }
+    { id: 1, sender: 'ai', text: 'Hi Baskar! Not sure which domain to pick? The AI suggestion is usually a great starting point!...' }
   ]);
   const chatEndRef = useRef(null);
 
