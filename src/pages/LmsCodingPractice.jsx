@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 
 const LmsCodingPractice = () => {
   const navigate = useNavigate();
+  const [userName, setUserName] = useState("Baskar Manager");
   
   // Dummy state for filters (visual only for this demo)
   const [filterDifficulty, setFilterDifficulty] = useState('Difficulty');
@@ -140,7 +141,7 @@ const LmsCodingPractice = () => {
         .chat-animate { animation: slideUpFade 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
       `}} />
 
-      {/* --- SIDEBAR (Exact Baskar Manager Version) --- */}
+      {/* --- SIDEBAR --- */}
       <aside className="w-72 flex-shrink-0 flex flex-col border-r border-slate-300 bg-white relative z-50 text-[#0F172A]">
         <div className="p-6 flex items-center gap-3 select-none">
           {/* UPDATED LOGO: Square Gradient Rocket */}
@@ -181,12 +182,19 @@ const LmsCodingPractice = () => {
             <span className="font-semibold" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>My Booking</span>
           </button>
 
+          {/* Internship (Added) */}
+          <button onClick={() => navigate('/internships-jobs')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
+            <span className="material-symbols-outlined group-hover:text-[#06457F]">work</span>
+            <span className="font-semibold" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>Internship</span>
+          </button>
+
+          {/* Active State for LMS Courses */}
           <button onClick={() => navigate('/lms-courses')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
             <span className="material-symbols-outlined">menu_book</span>
             <span className="font-semibold" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>LMS Courses</span>
           </button>
 
-          {/* Active State for Practice Ground */}
+          {/* Practice Ground */}
           <button onClick={() => navigate('/practice-ground')} className="flex items-center gap-3 px-4 py-3 rounded-lg bg-[#06457F] text-white shadow-md text-left w-full">
             <span className="material-symbols-outlined fill">code</span>
             <span className="font-semibold" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>Practice Ground</span>
@@ -198,18 +206,20 @@ const LmsCodingPractice = () => {
           </button>
         </nav>
 
-        <div className="p-4 border-t border-slate-300">
-          <div className="flex items-center gap-3 px-2 py-2">
-            <div className="size-10 rounded-full bg-cover bg-center border border-slate-300" style={{ backgroundImage: "url('https://ui-avatars.com/api/?name=B+&background=06457F&color=fff')" }}></div>
-            <div className="flex flex-col overflow-hidden">
-              <span className="text-sm font-bold text-slate-900 truncate" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>Baskar Manager</span>
-              <span className="text-xs font-medium text-slate-600 truncate" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>Pro Member</span>
+        {/* --- COMPACT PROFILE SECTION (FIXED AT BOTTOM) --- */}
+        <div className="p-3 border-t border-slate-300 shrink-0 mt-auto bg-white z-20">
+          <div onClick={() => navigate('/profile')} className="flex items-center gap-3 px-2 py-1.5 rounded-lg cursor-pointer hover:bg-slate-50 transition-colors">
+            {/* Reduced size-9 */}
+            <div className="size-9 rounded-full bg-cover bg-center border border-slate-300 shrink-0" style={{ backgroundImage: "url('https://ui-avatars.com/api/?name=B+&background=06457F&color=fff')" }}></div>
+            <div className="flex flex-col min-w-0">
+              <span className="text-sm font-bold text-slate-900 truncate" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>{userName}</span>
+              <span className="text-[11px] font-medium text-slate-500 truncate" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>Pro Member</span>
             </div>
           </div>
         </div>
       </aside>
 
-      {/* --- MAIN CONTENT AREA --- */}
+      {/* --- MAIN CONTENT AREA (UNCHANGED) --- */}
       <main className="flex-1 flex flex-col h-full bg-[#06457F] overflow-hidden relative">
         {/* Top Decorative Gradient */}
         <div className="absolute top-0 left-0 w-full h-64 bg-gradient-to-b from-white/5 to-transparent pointer-events-none"></div>

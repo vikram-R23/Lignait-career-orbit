@@ -3,11 +3,12 @@ import { useNavigate } from 'react-router-dom';
 
 const LmsPracticeGround = () => {
   const navigate = useNavigate();
+  const [userName, setUserName] = useState("Baskar Manager");
   const [selectedLanguage, setSelectedLanguage] = useState('python');
   const [selectedDifficulty, setSelectedDifficulty] = useState('easy');
 
   // --------------------------------
-  // CHATBOT STATE (ADDED)
+  // CHATBOT STATE
   // --------------------------------
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
@@ -48,6 +49,11 @@ const LmsPracticeGround = () => {
     }, 1000);
   };
 
+  const handleNavigate = (page) => {
+    if (page === 'Dashboard') navigate('/dashboard/main');
+    else navigate(`/${page.toLowerCase().replace(/\s+/g, '-')}`);
+  };
+
   return (
     <div className="flex h-screen w-full overflow-hidden bg-[#06457F] text-white font-['Inter'] antialiased relative">
       <style dangerouslySetInnerHTML={{ __html: `
@@ -79,77 +85,88 @@ const LmsPracticeGround = () => {
         .chat-animate { animation: slideUpFade 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
       `}} />
 
-      {/* --- SIDEBAR (Exact Baskar Manager Version) --- */}
-      <aside className="w-72 flex-shrink-0 flex flex-col border-r border-slate-300 bg-white relative z-50 text-[#0F172A]">
-        <div className="p-6 flex items-center gap-3 select-none">
-          {/* UPDATED LOGO: Square Gradient Rocket */}
+      {/* --- SIDEBAR --- */}
+      <aside className="w-72 flex-shrink-0 flex flex-col border-r border-slate-300 bg-white relative z-50 text-[#0F172A] font-['Space_Grotesk']">
+        <div className="p-6 flex items-center gap-3 select-none shrink-0">
           <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#0474C4] to-cyan-400 flex items-center justify-center shadow-lg shadow-blue-500/30">
               <span className="material-symbols-outlined text-white text-xl">rocket_launch</span>
           </div>
-          <h1 className="text-xl font-bold tracking-tight text-slate-900" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>Career Orbit</h1>
+          <span className="text-2xl font-black tracking-tight text-[#0F172A]">
+              Career <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#0474C4] to-cyan-500">Orbit</span>
+          </span>
         </div>
+        
 
         <nav className="flex-1 px-4 py-4 flex flex-col gap-2 overflow-y-auto no-scrollbar">
-          <button onClick={() => navigate('/dashboard')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
+          <button onClick={() => handleNavigate('Dashboard')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
             <span className="material-symbols-outlined group-hover:text-[#06457F]">home</span>
-            <span className="font-semibold" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>Dashboard</span>
+            <span className="font-medium group-hover:text-[#06457F] transition-colors">Dashboard</span>
           </button>
           
-          <button onClick={() => navigate('/dashboard/roadmap')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
-            <span className="material-symbols-outlined">map</span>
-            <span className="font-semibold" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>Career Roadmap</span>
+          <button onClick={() => handleNavigate('Roadmap')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
+            <span className="material-symbols-outlined group-hover:text-[#06457F] transition-colors">map</span>
+            <span className="font-medium group-hover:text-[#06457F] transition-colors">Career Roadmap</span>
           </button>
 
-          <button onClick={() => navigate('/mentors')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
-            <span className="material-symbols-outlined">groups</span>
-            <span className="font-semibold" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>Mentorship</span>
+          <button onClick={() => handleNavigate('Mentors')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
+            <span className="material-symbols-outlined group-hover:text-[#06457F] transition-colors">groups</span>
+            <span className="font-medium group-hover:text-[#06457F] transition-colors">Mentorship</span>
           </button>
           
-          <button onClick={() => navigate('/resume')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
-            <span className="material-symbols-outlined group-hover:text-[#06457F]">description</span>
-            <span className="font-semibold" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>Resume</span>
+          <button onClick={() => handleNavigate('Resume')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
+            <span className="material-symbols-outlined group-hover:text-[#06457F] transition-colors">description</span>
+            <span className="font-medium group-hover:text-[#06457F] transition-colors">Resume</span>
           </button>
 
-          <button onClick={() => navigate('/mock-interview')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
-            <span className="material-symbols-outlined group-hover:text-[#06457F]">videocam</span>
-            <span className="font-semibold" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>Mock Interview</span>
+          <button onClick={() => handleNavigate('Mock Interview')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
+            <span className="material-symbols-outlined group-hover:text-[#06457F] transition-colors">videocam</span>
+            <span className="font-medium group-hover:text-[#06457F] transition-colors">Mock Interview</span>
           </button>
 
-          <button onClick={() => navigate('/my-bookings')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
-            <span className="material-symbols-outlined">calendar_month</span>
-            <span className="font-semibold" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>My Booking</span>
+          <button onClick={() => handleNavigate('My Bookings')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
+            <span className="material-symbols-outlined group-hover:text-[#06457F] transition-colors">calendar_month</span>
+            <span className="font-medium group-hover:text-[#06457F] transition-colors">My Booking</span>
+          </button>
+
+          {/* Internship (Added) */}
+          <button onClick={() => handleNavigate('Internships Jobs')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
+            <span className="material-symbols-outlined group-hover:text-[#06457F] transition-colors">work</span>
+            <span className="font-medium group-hover:text-[#06457F] transition-colors">Internship</span>
           </button>
 
           <button onClick={() => navigate('/lms-courses')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
-            <span className="material-symbols-outlined">menu_book</span>
-            <span className="font-semibold" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>LMS Courses</span>
+            <span className="material-symbols-outlined group-hover:text-[#06457F] transition-colors">menu_book</span>
+            <span className="font-medium group-hover:text-[#06457F] transition-colors">LMS Courses</span>
           </button>
 
           {/* Active State for Practice Ground */}
           <button onClick={() => navigate('/practice-ground')} className="flex items-center gap-3 px-4 py-3 rounded-lg bg-[#06457F] text-white shadow-md text-left w-full">
             <span className="material-symbols-outlined fill">code</span>
-            <span className="font-semibold" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>Practice Ground</span>
+            <span className="font-medium">Practice Ground</span>
           </button>
 
-          <button onClick={() => navigate('/settings')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
-            <span className="material-symbols-outlined">settings</span>
-            <span className="font-semibold" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>Settings</span>
+          <button onClick={() => handleNavigate('Settings')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
+            <span className="material-symbols-outlined group-hover:text-[#06457F] transition-colors">settings</span>
+            <span className="font-medium group-hover:text-[#06457F] transition-colors">Settings</span>
           </button>
         </nav>
 
-        <div className="p-4 border-t border-slate-300">
-          <div className="flex items-center gap-3 px-2 py-2">
-            <div className="size-10 rounded-full bg-cover bg-center border border-slate-300" style={{ backgroundImage: "url('https://ui-avatars.com/api/?name=B+&background=06457F&color=fff')" }}></div>
-            <div className="flex flex-col overflow-hidden">
-              <span className="text-sm font-bold text-slate-900 truncate" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>Baskar Manager</span>
-              <span className="text-xs font-medium text-slate-600 truncate" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>Pro Member</span>
+        {/* --- COMPACT PROFILE SECTION (FIXED AT BOTTOM) --- */}
+        <div className="p-3 border-t border-slate-300 shrink-0 mt-auto bg-white z-20">
+          <div onClick={() => navigate('/profile')} className="flex items-center gap-3 px-2 py-1.5 rounded-lg cursor-pointer hover:bg-slate-50 transition-colors">
+            {/* Reduced size-9 */}
+            <div className="size-9 rounded-full bg-cover bg-center border border-slate-300 shrink-0" style={{ backgroundImage: "url('https://ui-avatars.com/api/?name=B+&background=06457F&color=fff')" }}></div>
+            <div className="flex flex-col min-w-0">
+              <span className="text-sm font-bold text-slate-900 truncate">{userName}</span>
+              {/* FIXED: Text size updated to 11px and slate-500 to match main dashboard */}
+              <span className="text-[11px] text-slate-500 truncate">Pro Member</span>
             </div>
           </div>
         </div>
       </aside>
 
       {/* --- MAIN CONTENT AREA --- */}
-      <main className="flex-1 h-full overflow-y-auto relative z-10 smooth-scroll">
+      <main className="flex-1 h-full overflow-y-auto relative z-10 smooth-scroll bg-[#06457F] bg-gradient-to-br from-[#06457F] via-[#094b85] to-[#04284d]">
         
         {/* Background Decorative Blobs */}
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#0474C4] opacity-10 blur-[100px] rounded-full pointer-events-none"></div>
@@ -254,7 +271,7 @@ const LmsPracticeGround = () => {
               </button>
             </div>
 
-            {/* Main CTA Button - NAVIGATION ADDED HERE */}
+            {/* Main CTA Button - NAVIGATION */}
             <button 
               onClick={() => navigate('/coding-practice')}
               className="w-full md:w-auto min-w-[240px] px-8 py-4 bg-[#0474C4] hover:bg-[#035a9a] text-white font-bold text-lg rounded-lg shadow-lg hover:shadow-[#0474C4]/40 hover:-translate-y-0.5 transition-all duration-200 flex items-center justify-center gap-2"
@@ -269,7 +286,7 @@ const LmsPracticeGround = () => {
       </main>
 
       {/* ======================================================= */}
-      {/* EXPANDABLE CHATBOT CART (EXACT MATCH) */}
+      {/* EXPANDABLE CHATBOT CART */}
       {/* ======================================================= */}
       <div 
         className={
@@ -286,10 +303,9 @@ const LmsPracticeGround = () => {
                 ? "w-full max-w-5xl h-[85vh] bg-[#06457F] rounded-2xl border border-white/30 shadow-[0_0_50px_rgba(4,116,196,0.5)] flex flex-col overflow-hidden chat-animate"
                 : "w-[380px] h-[550px] bg-[#06457F] rounded-2xl border border-white/20 ring-1 ring-cyan-500/40 shadow-2xl flex flex-col overflow-hidden chat-animate origin-bottom-right"
             }>
-                {/* Header - Separate Color for 'Cart' feel */}
+                {/* Header */}
                 <div className="p-4 bg-[#0B3D91] flex items-center justify-between border-b border-white/10 shrink-0">
                     <div className="flex items-center gap-3">
-                        {/* Professional Chatbot Icon in Header */}
                         <div className="h-10 w-10 rounded-full bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center shadow-lg">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 text-white">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12.375m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 01-2.555-.337A5.972 5.972 0 015.41 20.97a5.969 5.969 0 01-.474-.065 4.48 4.48 0 00.978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.159 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25z" />
@@ -303,11 +319,9 @@ const LmsPracticeGround = () => {
                         </div>
                     </div>
                     <div className="flex items-center gap-1">
-                        {/* EXPAND/COLLAPSE BUTTON */}
                         <button onClick={() => setIsExpanded(!isExpanded)} className="text-white/70 hover:text-white p-2 rounded-lg hover:bg-white/10 transition-colors" title={isExpanded ? "Collapse" : "Expand"}>
                             <span className="material-symbols-outlined text-[20px]">{isExpanded ? 'close_fullscreen' : 'open_in_full'}</span>
                         </button>
-                        {/* CLOSE BUTTON */}
                         <button onClick={() => { setIsChatOpen(false); setIsExpanded(false); }} className="text-white/70 hover:text-white p-2 rounded-lg hover:bg-white/10 transition-colors">
                             <span className="material-symbols-outlined text-[20px]">close</span>
                         </button>
@@ -346,7 +360,7 @@ const LmsPracticeGround = () => {
             </div>
         )}
 
-        {/* Toggle Button (FAB) - Hide when Expanded to avoid clutter */}
+        {/* Toggle Button (FAB) */}
         {!isExpanded && (
             <button 
                 onClick={() => setIsChatOpen(!isChatOpen)}
@@ -356,7 +370,6 @@ const LmsPracticeGround = () => {
                     <span className="material-symbols-outlined text-[32px]">keyboard_arrow_down</span>
                 ) : (
                     <div className="relative">
-                        {/* CUSTOM SVG ICON - Professional Robot Face */}
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12.375m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 01-2.555-.337A5.972 5.972 0 015.41 20.97a5.969 5.969 0 01-.474-.065 4.48 4.48 0 00.978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.159 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25z" />
                         </svg>
