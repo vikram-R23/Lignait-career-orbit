@@ -20,7 +20,16 @@ const Settings = () => {
         .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
         .fill-1 { font-variation-settings: 'FILL' 1; }
         
-        /* Custom Scrollbar */
+        /* --- UNIVERSAL NO SCROLLBAR --- */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+
+        /* Custom Main Content Scrollbar (Visible but styled) */
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: #06457F; }
         ::-webkit-scrollbar-thumb { background: #0A4F8F; border-radius: 4px; }
@@ -40,9 +49,9 @@ const Settings = () => {
         .hover-orange:hover { border-color: rgba(251, 146, 60, 0.4); box-shadow: 0 0 25px rgba(251, 146, 60, 0.1); }
       `}} />
 
-      {/* --- LEFT SIDEBAR (Consistent with DashboardMain) --- */}
-      <aside className="w-72 flex-shrink-0 flex flex-col border-r border-slate-300 bg-white relative z-20">
-        <div className="p-6 flex items-center gap-3 select-none">
+      {/* --- LEFT SIDEBAR --- */}
+      <aside className="w-72 flex-shrink-0 flex flex-col border-r border-slate-300 bg-white relative z-20 shadow-xl h-full">
+        <div className="p-6 flex items-center gap-3 select-none shrink-0">
           <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#0474C4] to-cyan-400 flex items-center justify-center shadow-lg shadow-blue-500/30">
             <span className="material-symbols-outlined text-white text-xl">rocket_launch</span>
           </div>
@@ -51,7 +60,8 @@ const Settings = () => {
           </span>
         </div>
 
-        <nav className="flex-1 px-4 py-4 flex flex-col gap-2 overflow-y-auto">
+        {/* Navigation - No Scrollbar applied here */}
+        <nav className="flex-1 px-4 py-4 flex flex-col gap-2 overflow-y-auto no-scrollbar">
           <button onClick={() => handleNavigate('Dashboard')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
             <span className="material-symbols-outlined group-hover:text-[#06457F] transition-colors">home</span>
             <span className="font-medium group-hover:text-[#06457F] transition-colors">Dashboard</span>
@@ -78,6 +88,13 @@ const Settings = () => {
             <span className="material-symbols-outlined group-hover:text-[#06457F] transition-colors">calendar_month</span>
             <span className="font-medium group-hover:text-[#06457F] transition-colors">My Booking</span>
           </button>
+
+          {/* --- INTERNSHIP OPPORTUNITIES --- */}
+          <button onClick={() => handleNavigate('Internships Jobs')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
+            <span className="material-symbols-outlined group-hover:text-[#06457F] transition-colors">work</span>
+            <span className="font-medium group-hover:text-[#06457F] transition-colors">Internships & Jobs</span>
+          </button>
+
           <button onClick={() => handleNavigate('LMS Courses')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
             <span className="material-symbols-outlined group-hover:text-[#06457F] transition-colors">book</span>
             <span className="font-medium group-hover:text-[#06457F] transition-colors">LMS Courses</span>
@@ -94,16 +111,17 @@ const Settings = () => {
           </button>
         </nav>
 
-        {/* --- MODIFIED PROFILE SECTION --- */}
-        <div className="p-4 border-t border-slate-300">
+        {/* --- PROFILE SECTION (COMPACT & FIXED) --- */}
+        <div className="p-3 border-t border-slate-300 shrink-0 mt-auto bg-white z-20">
           <div 
             onClick={() => navigate('/profile')} 
-            className="flex items-center gap-3 px-2 py-2 rounded-lg cursor-pointer hover:bg-slate-50 transition-colors"
+            className="flex items-center gap-3 px-2 py-1.5 rounded-lg cursor-pointer hover:bg-slate-50 transition-colors"
           >
-            <div className="size-10 rounded-full bg-cover bg-center border border-slate-300" style={{ backgroundImage: "url('https://ui-avatars.com/api/?name=B+&background=06457F&color=fff')" }}></div>
-            <div className="flex flex-col">
-              <span className="text-sm font-semibold text-slate-900">{userName}</span>
-              <span className="text-xs text-slate-600">Pro Member</span>
+            {/* Reduced size from size-10 to size-9 */}
+            <div className="size-9 rounded-full bg-cover bg-center border border-slate-300 shrink-0" style={{ backgroundImage: "url('https://ui-avatars.com/api/?name=B+&background=06457F&color=fff')" }}></div>
+            <div className="flex flex-col min-w-0">
+              <span className="text-sm font-semibold text-slate-900 truncate">{userName}</span>
+              <span className="text-[11px] text-slate-600 truncate">Pro Member</span>
             </div>
           </div>
         </div>
@@ -125,7 +143,8 @@ const Settings = () => {
             </div>
         </header>
 
-        <div className="flex-1 overflow-y-auto pb-32">
+        {/* Content Area */}
+        <div className="flex-1 overflow-y-auto pb-32 no-scrollbar">
             <div className="max-w-4xl mx-auto px-8 py-12">
                 <div className="mb-10">
                     <h2 className="text-4xl font-black tracking-tight mb-2 text-white">Preferences</h2>

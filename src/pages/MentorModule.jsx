@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 const MentorModule = () => {
   const navigate = useNavigate();
   const [mentors, setMentors] = useState([]);
+  const [userName, setUserName] = useState("Baskar Manager");
 
   // --------------------------------
   // CHATBOT STATE (ADDED)
@@ -16,8 +17,12 @@ const MentorModule = () => {
   ]);
   const chatEndRef = useRef(null);
 
+  const handleNavigate = (page) => {
+    if (page === 'Dashboard') navigate('/dashboard/main');
+    else navigate(`/${page.toLowerCase().replace(/\s+/g, '-')}`);
+  };
+
   useEffect(() => {
-    // RESTORED ORIGINAL DATA (Exact images as requested)
     const data = [
       { id: 0, name: "Ananya Gupta", role: "Sr. Product Manager @ TechFlow", exp: "8 Yrs Exp", domain: "Technology", rating: "4.9", color: "purple", tags: ["Product Strategy", "Leadership"], available: true, img: "https://lh3.googleusercontent.com/aida-public/AB6AXuD3eP1UOs-rw6ryNDDFqDaS_iI8THcUI_ak7NihTirQld8Iq3_qSVg61Qo0zNxAwUR8aDAvkluo8jj1cJE_9x1DUUafuE-HbATcDd8IGM4hRgfCXmbJujeWWeDf2l41tSL7mN8SirPiP6SHnNA83BveGgAKVk7xSjSZqfsy8wQStXMFlSLYKVjJRlb9HbI78JxxCl1axelzyFT44-oYyeu0c2HkoRRfN9g7Bcxxqg7UcR7vHukT80C1qRwuhT0Dr7PcqSgXqHupE-k", btnColor: "bg-purple-600", hoverBtn: "hover:bg-purple-500", textColor: "text-purple-400", tagBg: "bg-purple-900/30", tagText: "text-purple-300", tagBorder: "border-purple-500/30" },
       { id: 1, name: "Sundar Rajan", role: "Staff Engineer @ Google", exp: "12 Yrs Exp", domain: "Technology", rating: "5.0", color: "blue", tags: ["System Design", "Backend"], available: false, img: "https://lh3.googleusercontent.com/aida-public/AB6AXuA3zqTVImfU49x31AcuC9BrpxJAOsETiG7T08-L5mg9_9Yo5wfuOWi4PoqF-c10e2djynKIeqwJphy4zMu-xREXj-4KXRErsSOuY45qHHRRxeieF5-JZt_9rDKJPK_ofXE7C5oeCbC8MXe1QZyCq4fCJ6PDRPy6oCcFaMpR6LCeapH6XhiSddmxOeD_AlAziSU9ggr9AohhWDYHynXmTnSfRnHEp48MItjIi7LqQhyd_zDuVEAbn_NEaewlXALuZWdvyvzmm8JxHB0", btnColor: "bg-blue-600", hoverBtn: "hover:bg-blue-500", textColor: "text-blue-400", tagBg: "bg-blue-900/30", tagText: "text-blue-300", tagBorder: "border-blue-500/30" },
@@ -49,7 +54,8 @@ const MentorModule = () => {
   };
 
   return (
-    <div className="bg-[#A8C4EC] text-[#0F172A] font-['Space_Grotesk'] overflow-hidden antialiased relative">
+    <div className="bg-[#A8C4EC] text-[#0F172A] font-['Space_Grotesk'] overflow-hidden antialiased relative h-screen w-full flex">
+      
       <style dangerouslySetInnerHTML={{ __html: `
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: #A8C4EC; }
@@ -57,6 +63,11 @@ const MentorModule = () => {
         ::-webkit-scrollbar-thumb:hover { background: #04325e; }
         .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
         .material-symbols-outlined.fill { font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .fill-1 { font-variation-settings: 'FILL' 1; }
+        
+        /* --- UNIVERSAL NO SCROLLBAR --- */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         
         .shadow-glow-purple:hover { box-shadow: 0 0 20px rgba(168, 85, 247, 0.5); border-color: #c084fc; }
         .shadow-glow-blue:hover { box-shadow: 0 0 20px rgba(59, 130, 246, 0.5); border-color: #60a5fa; }
@@ -73,163 +84,167 @@ const MentorModule = () => {
         .chat-animate { animation: slideUpFade 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
       `}} />
 
-      <div className="relative flex h-screen w-full flex-row overflow-hidden">
-        
-        {/* --- SIDEBAR --- */}
-        <aside className="w-72 flex-shrink-0 flex flex-col border-r border-slate-300 bg-white relative z-20">
-          <div className="p-6 flex items-center gap-3 select-none">
-            {/* UPDATED LOGO: Square Gradient Rocket */}
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#0474C4] to-cyan-400 flex items-center justify-center shadow-lg shadow-blue-500/30">
-                <span className="material-symbols-outlined text-white text-xl">rocket_launch</span>
-            </div>
-            <span className="text-2xl font-black tracking-tight text-[#0F172A]">
-                Career <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#0474C4] to-cyan-500">Orbit</span>
-            </span>
+      {/* --- SIDEBAR (Updated with Compact Profile & No Scrollbar) --- */}
+      <aside className="w-72 flex-shrink-0 flex flex-col border-r border-slate-300 bg-white relative z-20 shadow-xl h-full">
+        <div className="p-6 flex items-center gap-3 select-none shrink-0">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#0474C4] to-cyan-400 flex items-center justify-center shadow-lg shadow-blue-500/30">
+            <span className="material-symbols-outlined text-white text-xl">rocket_launch</span>
           </div>
+          <span className="text-2xl font-black tracking-tight text-[#0F172A]">
+            Career <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#0474C4] to-cyan-500">Orbit</span>
+          </span>
+        </div>
 
-          <nav className="flex-1 px-4 py-4 flex flex-col gap-2 overflow-y-auto">
-            <button onClick={() => navigate('/dashboard/main')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
-              <span className="material-symbols-outlined group-hover:text-[#06457F]">home</span>
-              <span className="font-medium">Dashboard</span>
-            </button>
-            
-            <button onClick={() => navigate('/dashboard/roadmap')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
-              <span className="material-symbols-outlined">map</span>
-              <span className="font-medium">Career Roadmap</span>
-            </button>
+        {/* Navigation - No Scrollbar Class Applied */}
+        <nav className="flex-1 px-4 py-4 flex flex-col gap-2 overflow-y-auto no-scrollbar">
+          <button onClick={() => handleNavigate('Dashboard')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
+            <span className="material-symbols-outlined group-hover:text-[#06457F] transition-colors">home</span>
+            <span className="font-medium group-hover:text-[#06457F] transition-colors">Dashboard</span>
+          </button>
+          
+          <button onClick={() => handleNavigate('Roadmap')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
+            <span className="material-symbols-outlined group-hover:text-[#06457F] transition-colors">map</span>
+            <span className="font-medium group-hover:text-[#06457F] transition-colors">Career Roadmap</span>
+          </button>
 
-            <button onClick={() => navigate('/mentors')} className="flex items-center gap-3 px-4 py-3 rounded-lg bg-[#06457F] text-white shadow-md text-left w-full">
-              <span className="material-symbols-outlined fill">groups</span>
-              <span className="font-medium">Mentorship</span>
-            </button>
-            
-            <button onClick={() => navigate('/resume')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
-              <span className="material-symbols-outlined">description</span>
-              <span className="font-medium">Resume</span>
-            </button>
-            
-            <button onClick={() => navigate('/mock-interview')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
-              <span className="material-symbols-outlined">videocam</span>
-              <span className="font-medium">Mock Interview</span>
-            </button>
+          {/* Mentorship (Active State) */}
+          <button className="flex items-center gap-3 px-4 py-3 rounded-lg bg-[#06457F] text-white shadow-md text-left w-full">
+            <span className="material-symbols-outlined fill-1">groups</span>
+            <span className="font-medium">Mentorship</span>
+          </button>
 
-            {/* MY BOOKING (ADDED) */}
-            <button onClick={() => navigate('/my-bookings')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
-              <span className="material-symbols-outlined group-hover:text-[#06457F]">calendar_month</span>
-              <span className="font-medium group-hover:text-[#06457F]">My Booking</span>
-            </button>
+          <button onClick={() => handleNavigate('Resume')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
+            <span className="material-symbols-outlined group-hover:text-[#06457F] transition-colors">description</span>
+            <span className="font-medium group-hover:text-[#06457F] transition-colors">Resume</span>
+          </button>
+          <button onClick={() => handleNavigate('Mock Interview')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
+            <span className="material-symbols-outlined group-hover:text-[#06457F] transition-colors">videocam</span>
+            <span className="font-medium group-hover:text-[#06457F] transition-colors">Mock Interview</span>
+          </button>
+          
+          <button onClick={() => handleNavigate('My Bookings')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
+            <span className="material-symbols-outlined group-hover:text-[#06457F] transition-colors">calendar_month</span>
+            <span className="font-medium group-hover:text-[#06457F] transition-colors">My Booking</span>
+          </button>
 
-            <button onClick={() => navigate('/lms-courses')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
-              <span className="material-symbols-outlined">book</span>
-              <span className="font-medium">LMS Courses</span>
-            </button>
-            
-            <button onClick={() => navigate('/practice-ground')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
-              <span className="material-symbols-outlined">code</span>
-              <span className="font-medium">Practice Ground</span>
-            </button>
-            
-            <button onClick={() => navigate('/settings')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
-              <span className="material-symbols-outlined">settings</span>
-              <span className="font-medium">Settings</span>
-            </button>
-          </nav>
+          {/* --- INTERNSHIP OPPORTUNITIES (After My Bookings) --- */}
+          <button onClick={() => handleNavigate('Internships Jobs')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
+            <span className="material-symbols-outlined group-hover:text-[#06457F] transition-colors">work</span>
+            <span className="font-medium group-hover:text-[#06457F] transition-colors">Internships & Jobs</span>
+          </button>
 
-          <div className="p-4 border-t border-slate-300">
-            <div className="flex items-center gap-3 px-2 py-2">
-              <div className="size-10 rounded-full bg-cover bg-center border border-slate-300" style={{ backgroundImage: "url('https://ui-avatars.com/api/?name=B+&background=06457F&color=fff')" }}></div>
-              <div className="flex flex-col overflow-hidden">
-                <span className="text-sm font-semibold text-slate-900 truncate">Baskar Manager</span>
-                <span className="text-xs text-slate-600 truncate">Pro Member</span>
-              </div>
+          <button onClick={() => handleNavigate('LMS Courses')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
+            <span className="material-symbols-outlined group-hover:text-[#06457F] transition-colors">book</span>
+            <span className="font-medium group-hover:text-[#06457F] transition-colors">LMS Courses</span>
+          </button>
+          <button onClick={() => handleNavigate('Practice Ground')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
+            <span className="material-symbols-outlined group-hover:text-[#06457F] transition-colors">code</span>
+            <span className="font-medium group-hover:text-[#06457F] transition-colors">Practice Ground</span>
+          </button>
+          <button onClick={() => handleNavigate('Settings')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
+            <span className="material-symbols-outlined group-hover:text-[#06457F] transition-colors">settings</span>
+            <span className="font-medium group-hover:text-[#06457F] transition-colors">Settings</span>
+          </button>
+        </nav>
+
+        {/* --- COMPACT PROFILE SECTION (FIXED) --- */}
+        <div className="p-3 border-t border-slate-300 shrink-0 mt-auto bg-white z-20">
+          <div 
+            onClick={() => navigate('/profile')} 
+            className="flex items-center gap-3 px-2 py-1.5 rounded-lg cursor-pointer hover:bg-slate-50 transition-colors"
+          >
+            <div className="size-9 rounded-full bg-cover bg-center border border-slate-300 shrink-0" style={{ backgroundImage: "url('https://ui-avatars.com/api/?name=B+&background=06457F&color=fff')" }}></div>
+            <div className="flex flex-col min-w-0">
+              <span className="text-sm font-semibold text-slate-900 truncate">{userName}</span>
+              <span className="text-[11px] text-slate-600 truncate">Pro Member</span>
             </div>
           </div>
-        </aside>
+        </div>
+      </aside>
 
-        {/* --- MAIN PANEL --- */}
-        <main className="flex-1 flex flex-col h-full overflow-y-auto bg-[#06457F] relative">
-          <div className="flex-1 max-w-7xl mx-auto w-full p-6 lg:p-10 flex flex-col gap-8">
-            <header className="flex flex-col gap-2">
-              <h1 className="text-3xl lg:text-4xl font-black text-white tracking-tight">Choose Your Domain</h1>
-              <p className="text-[#D1D5DB] text-base lg:text-lg">Available mentors for <span className="text-[#0474C4] font-semibold">Technology</span> interviews.</p>
-            </header>
+      {/* --- MAIN PANEL --- */}
+      <main className="flex-1 flex flex-col h-full overflow-y-auto bg-[#06457F] relative">
+        <div className="flex-1 max-w-7xl mx-auto w-full p-6 lg:p-10 flex flex-col gap-8">
+          <header className="flex flex-col gap-2">
+            <h1 className="text-3xl lg:text-4xl font-black text-white tracking-tight">Choose Your Domain</h1>
+            <p className="text-[#D1D5DB] text-base lg:text-lg">Available mentors for <span className="text-[#0474C4] font-semibold">Technology</span> interviews.</p>
+          </header>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {mentors.map((m) => (
-                <div key={m.id} className={`group flex flex-col bg-[#262B40] rounded-xl border border-white/10 overflow-hidden transition-all duration-300 transform hover:-translate-y-1 shadow-lg shadow-glow-${m.color}`}>
-                  <div className="relative h-48 w-full overflow-hidden">
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#262B40] to-transparent z-10 opacity-80"></div>
-                    <img alt={m.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" src={m.img} />
-                    {m.available && (
-                      <div className="absolute top-3 right-3 z-20">
-                        <span className="inline-flex items-center gap-1 bg-green-500/90 text-white border border-green-600/50 backdrop-blur-md px-2 py-1 rounded-md text-xs font-semibold">
-                          <span className="w-2 h-2 rounded-full bg-green-300 animate-pulse"></span>
-                          Available Today
-                        </span>
-                      </div>
-                    )}
-                  </div>
-
-                  <div className="p-5 flex flex-col flex-1 gap-4">
-                    <div>
-                      <div className="flex justify-between items-start mb-1">
-                        <h3 className="text-lg font-bold text-white">{m.name}</h3>
-                        <div className="flex items-center gap-1 text-yellow-400">
-                          <span className="material-symbols-outlined fill text-[16px]">star</span>
-                          <span className="text-sm font-bold text-white">{m.rating}</span>
-                        </div>
-                      </div>
-                      <p className={`${m.textColor} text-sm font-semibold`}>{m.role}</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {mentors.map((m) => (
+              <div key={m.id} className={`group flex flex-col bg-[#262B40] rounded-xl border border-white/10 overflow-hidden transition-all duration-300 transform hover:-translate-y-1 shadow-lg shadow-glow-${m.color}`}>
+                <div className="relative h-48 w-full overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#262B40] to-transparent z-10 opacity-80"></div>
+                  <img alt={m.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" src={m.img} />
+                  {m.available && (
+                    <div className="absolute top-3 right-3 z-20">
+                      <span className="inline-flex items-center gap-1 bg-green-500/90 text-white border border-green-600/50 backdrop-blur-md px-2 py-1 rounded-md text-xs font-semibold">
+                        <span className="w-2 h-2 rounded-full bg-green-300 animate-pulse"></span>
+                        Available Today
+                      </span>
                     </div>
-
-                    <div className="flex flex-wrap gap-2 mt-auto">
-                      {m.tags.map(tag => (
-                        <span key={tag} className={`px-2 py-1 rounded ${m.tagBg} ${m.tagText} border ${m.tagBorder} text-xs font-medium`}>{tag}</span>
-                      ))}
-                    </div>
-
-                    <div className="flex items-center gap-4 text-sm text-gray-300 pt-3 border-t border-white/10">
-                      <div className="flex items-center gap-1.5">
-                        <span className="material-symbols-outlined text-[18px]">work_history</span>
-                        <span>{m.exp}</span>
-                      </div>
-                      <div className="flex items-center gap-1.5">
-                        <span className="material-symbols-outlined text-[18px]">domain</span>
-                        <span>{m.domain}</span>
-                      </div>
-                    </div>
-
-                    <button 
-                      onClick={() => navigate('/mentor-profile')} 
-                      className={`mt-2 w-full py-2.5 rounded-lg ${m.btnColor} ${m.hoverBtn} text-white text-sm font-semibold transition-colors flex items-center justify-center gap-2 shadow-md`}
-                    >
-                      <span>View Profile</span>
-                      <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
-                    </button>
-                  </div>
+                  )}
                 </div>
-              ))}
-            </div>
 
-            <div className="flex flex-col items-center gap-4 mt-6 mb-10">
-              <button className="px-6 py-2 rounded-lg border border-white/10 text-white hover:bg-white/5 transition-colors text-sm font-medium">
-                Show More Mentors
-              </button>
-              
-              <button 
-                onClick={() => navigate('/my-bookings')} 
-                className="flex items-center gap-2 bg-[#0474C4] text-white px-8 py-3 rounded-lg font-bold shadow-xl hover:bg-[#0361a3] transition-colors"
-              >
-                <span className="material-symbols-outlined">calendar_month</span>
-                <span>My Booking</span>
-              </button>
-            </div>
+                <div className="p-5 flex flex-col flex-1 gap-4">
+                  <div>
+                    <div className="flex justify-between items-start mb-1">
+                      <h3 className="text-lg font-bold text-white">{m.name}</h3>
+                      <div className="flex items-center gap-1 text-yellow-400">
+                        <span className="material-symbols-outlined fill text-[16px]">star</span>
+                        <span className="text-sm font-bold text-white">{m.rating}</span>
+                      </div>
+                    </div>
+                    <p className={`${m.textColor} text-sm font-semibold`}>{m.role}</p>
+                  </div>
+
+                  <div className="flex flex-wrap gap-2 mt-auto">
+                    {m.tags.map(tag => (
+                      <span key={tag} className={`px-2 py-1 rounded ${m.tagBg} ${m.tagText} border ${m.tagBorder} text-xs font-medium`}>{tag}</span>
+                    ))}
+                  </div>
+
+                  <div className="flex items-center gap-4 text-sm text-gray-300 pt-3 border-t border-white/10">
+                    <div className="flex items-center gap-1.5">
+                      <span className="material-symbols-outlined text-[18px]">work_history</span>
+                      <span>{m.exp}</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <span className="material-symbols-outlined text-[18px]">domain</span>
+                      <span>{m.domain}</span>
+                    </div>
+                  </div>
+
+                  <button 
+                    onClick={() => navigate('/mentor-profile')} 
+                    className={`mt-2 w-full py-2.5 rounded-lg ${m.btnColor} ${m.hoverBtn} text-white text-sm font-semibold transition-colors flex items-center justify-center gap-2 shadow-md`}
+                  >
+                    <span>View Profile</span>
+                    <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
+                  </button>
+                </div>
+              </div>
+            ))}
           </div>
-        </main>
-      </div>
+
+          <div className="flex flex-col items-center gap-4 mt-6 mb-10">
+            <button className="px-6 py-2 rounded-lg border border-white/10 text-white hover:bg-white/5 transition-colors text-sm font-medium">
+              Show More Mentors
+            </button>
+            
+            <button 
+              onClick={() => navigate('/my-bookings')} 
+              className="flex items-center gap-2 bg-[#0474C4] text-white px-8 py-3 rounded-lg font-bold shadow-xl hover:bg-[#0361a3] transition-colors"
+            >
+              <span className="material-symbols-outlined">calendar_month</span>
+              <span>My Booking</span>
+            </button>
+          </div>
+        </div>
+      </main>
 
       {/* ======================================================= */}
-      {/* EXPANDABLE CHATBOT CART (EXACT MATCH) */}
+      {/* EXPANDABLE CHATBOT CART */}
       {/* ======================================================= */}
       <div 
         className={
@@ -262,11 +277,9 @@ const MentorModule = () => {
                         </div>
                     </div>
                     <div className="flex items-center gap-1">
-                        {/* EXPAND/COLLAPSE BUTTON */}
                         <button onClick={() => setIsExpanded(!isExpanded)} className="text-white/70 hover:text-white p-2 rounded-lg hover:bg-white/10 transition-colors" title={isExpanded ? "Collapse" : "Expand"}>
                             <span className="material-symbols-outlined text-[20px]">{isExpanded ? 'close_fullscreen' : 'open_in_full'}</span>
                         </button>
-                        {/* CLOSE BUTTON */}
                         <button onClick={() => { setIsChatOpen(false); setIsExpanded(false); }} className="text-white/70 hover:text-white p-2 rounded-lg hover:bg-white/10 transition-colors">
                             <span className="material-symbols-outlined text-[20px]">close</span>
                         </button>

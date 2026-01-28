@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 
 const ResumeScore = () => {
   const navigate = useNavigate();
+  const [userName, setUserName] = useState("Baskar Manager");
 
   // --------------------------------
   // CHATBOT STATE
@@ -46,8 +47,13 @@ const ResumeScore = () => {
     }, 1000);
   };
 
+  const handleNavigate = (page) => {
+    if (page === 'Dashboard') navigate('/dashboard/main');
+    else navigate(`/${page.toLowerCase().replace(/\s+/g, '-')}`);
+  };
+
   return (
-    <div className="bg-[#06457F] text-white font-['Inter'] h-screen w-full flex overflow-hidden antialiased relative">
+    <div className="bg-[#06457F] text-white font-['Space_Grotesk'] h-screen w-full flex overflow-hidden antialiased relative">
       <style dangerouslySetInnerHTML={{ __html: `
         @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
@@ -62,6 +68,7 @@ const ResumeScore = () => {
 
         .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
         .material-symbols-outlined.fill { font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .fill-1 { font-variation-settings: 'FILL' 1; }
         
         /* FIX: Changed aspect-ratio to min-height so background expands */
         .a4-paper {
@@ -81,10 +88,9 @@ const ResumeScore = () => {
         .chat-animate { animation: slideUpFade 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
       `}} />
 
-      {/* --- LEFT SIDEBAR (Standard White) --- */}
-      <aside className="w-72 flex-shrink-0 flex flex-col border-r border-slate-300 bg-white relative z-50 text-[#0F172A]">
-        <div className="p-6 flex items-center gap-3">
-          {/* UPDATED LOGO: Square Gradient Rocket */}
+      {/* --- SIDEBAR --- */}
+      <aside className="w-72 flex-shrink-0 flex flex-col border-r border-slate-300 bg-white relative z-50 text-[#0F172A] shadow-xl h-full">
+        <div className="p-6 flex items-center gap-3 select-none shrink-0">
           <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#0474C4] to-cyan-400 flex items-center justify-center shadow-lg shadow-blue-500/30">
               <span className="material-symbols-outlined text-white text-xl">rocket_launch</span>
           </div>
@@ -93,88 +99,89 @@ const ResumeScore = () => {
           </span>
         </div>
 
+        {/* Navigation - No Scrollbar */}
         <nav className="flex-1 px-4 py-4 flex flex-col gap-2 overflow-y-auto no-scrollbar">
-          <button onClick={() => navigate('/dashboard')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
+          <button onClick={() => handleNavigate('Dashboard')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
             <span className="material-symbols-outlined group-hover:text-[#06457F]">home</span>
-            <span className="font-semibold" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>Dashboard</span>
+            <span className="font-medium group-hover:text-[#06457F] transition-colors">Dashboard</span>
           </button>
           
-          <button onClick={() => navigate('/dashboard/roadmap')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
-            <span className="material-symbols-outlined">map</span>
-            <span className="font-semibold" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>Career Roadmap</span>
+          <button onClick={() => handleNavigate('Roadmap')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
+            <span className="material-symbols-outlined group-hover:text-[#06457F] transition-colors">map</span>
+            <span className="font-medium group-hover:text-[#06457F] transition-colors">Career Roadmap</span>
           </button>
 
-          <button onClick={() => navigate('/mentors')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
-            <span className="material-symbols-outlined">groups</span>
-            <span className="font-semibold" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>Mentorship</span>
+          <button onClick={() => handleNavigate('Mentors')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
+            <span className="material-symbols-outlined group-hover:text-[#06457F] transition-colors">groups</span>
+            <span className="font-medium group-hover:text-[#06457F] transition-colors">Mentorship</span>
           </button>
           
           {/* Active State for Resume */}
           <button onClick={() => navigate('/resume')} className="flex items-center gap-3 px-4 py-3 rounded-lg bg-[#06457F] text-white shadow-md text-left w-full">
-            <span className="material-symbols-outlined fill">description</span>
-            <span className="font-semibold" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>Resume</span>
+            <span className="material-symbols-outlined fill-1">description</span>
+            <span className="font-medium">Resume</span>
           </button>
 
-          <button onClick={() => navigate('/mock-interview')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
-            <span className="material-symbols-outlined">videocam</span>
-            <span className="font-semibold" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>Mock Interview</span>
+          <button onClick={() => handleNavigate('Mock Interview')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
+            <span className="material-symbols-outlined group-hover:text-[#06457F] transition-colors">videocam</span>
+            <span className="font-medium group-hover:text-[#06457F] transition-colors">Mock Interview</span>
           </button>
 
-          <button onClick={() => navigate('/my-bookings')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
-            <span className="material-symbols-outlined">calendar_month</span>
-            <span className="font-semibold" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>My Booking</span>
+          <button onClick={() => handleNavigate('My Bookings')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
+            <span className="material-symbols-outlined group-hover:text-[#06457F] transition-colors">calendar_month</span>
+            <span className="font-medium group-hover:text-[#06457F] transition-colors">My Booking</span>
           </button>
 
-          <button onClick={() => navigate('/lms-courses')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
-            <span className="material-symbols-outlined">book</span>
-            <span className="font-semibold" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>LMS Courses</span>
+          {/* Internship (Labeled as Requested) */}
+          <button onClick={() => handleNavigate('Internships Jobs')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
+            <span className="material-symbols-outlined group-hover:text-[#06457F] transition-colors">work</span>
+            <span className="font-medium group-hover:text-[#06457F] transition-colors">Internship</span>
           </button>
 
-          <button onClick={() => navigate('/practice-ground')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
-            <span className="material-symbols-outlined">code</span>
-            <span className="font-semibold" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>Practice Ground</span>
+          <button onClick={() => handleNavigate('LMS Courses')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
+            <span className="material-symbols-outlined group-hover:text-[#06457F] transition-colors">book</span>
+            <span className="font-medium group-hover:text-[#06457F] transition-colors">LMS Courses</span>
           </button>
 
-          <button onClick={() => navigate('/settings')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
-            <span className="material-symbols-outlined">settings</span>
-            <span className="font-semibold" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>Settings</span>
+          <button onClick={() => handleNavigate('Practice Ground')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
+            <span className="material-symbols-outlined group-hover:text-[#06457F] transition-colors">code</span>
+            <span className="font-medium group-hover:text-[#06457F] transition-colors">Practice Ground</span>
+          </button>
+
+          <button onClick={() => handleNavigate('Settings')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
+            <span className="material-symbols-outlined group-hover:text-[#06457F] transition-colors">settings</span>
+            <span className="font-medium group-hover:text-[#06457F] transition-colors">Settings</span>
           </button>
         </nav>
 
-        <div className="p-4 border-t border-slate-300">
-          <div className="flex items-center gap-3 px-2 py-2">
-            <div className="size-10 rounded-full bg-cover bg-center border border-slate-300" style={{ backgroundImage: "url('https://ui-avatars.com/api/?name=B+&background=06457F&color=fff')" }}></div>
-            <div className="flex flex-col overflow-hidden">
-              <span className="text-sm font-bold text-slate-900 truncate" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>Baskar Manager</span>
-              <span className="text-xs font-medium text-slate-600 truncate" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>Pro Member</span>
+        {/* --- COMPACT PROFILE SECTION (FIXED AT BOTTOM) --- */}
+        <div className="p-3 border-t border-slate-300 shrink-0 mt-auto bg-white z-20">
+          <div onClick={() => navigate('/profile')} className="flex items-center gap-3 px-2 py-1.5 rounded-lg cursor-pointer hover:bg-slate-50 transition-colors">
+            {/* Reduced size to size-9 */}
+            <div className="size-9 rounded-full bg-cover bg-center border border-slate-300 shrink-0" style={{ backgroundImage: "url('https://ui-avatars.com/api/?name=B+&background=06457F&color=fff')" }}></div>
+            <div className="flex flex-col min-w-0">
+              <span className="text-sm font-semibold text-slate-900 truncate">{userName}</span>
+              <span className="text-[11px] text-slate-600 truncate">Pro Member</span>
             </div>
           </div>
         </div>
       </aside>
 
-      {/* --- MAIN CONTENT AREA --- */}
+      {/* --- MAIN CONTENT (Score Page) --- */}
       <main className="flex-1 flex overflow-hidden">
         
-        {/* Center: Preview Canvas */}
+        {/* Center: Preview Canvas (Visual Context) */}
         <section className="flex-1 relative bg-[#06457F] flex flex-col min-w-0">
           <div className="h-16 flex items-center justify-between px-8 border-b border-white/10 shrink-0 bg-[#06457F]/95 backdrop-blur z-10">
             <div className="flex flex-col">
               <h2 className="text-white text-lg font-bold">Resume Preview</h2>
-              <p className="text-[#D1D5DB] text-xs">Generated from your profile data</p>
-            </div>
-            <div className="flex items-center gap-2 bg-black/20 rounded-lg p-1">
-              <button className="p-1.5 hover:bg-white/10 rounded text-white/70 hover:text-white transition-colors" title="Zoom Out">
-                <span className="material-symbols-outlined text-[20px]">remove</span>
-              </button>
-              <span className="text-xs font-medium px-2 text-white/90">100%</span>
-              <button className="p-1.5 hover:bg-white/10 rounded text-white/70 hover:text-white transition-colors" title="Zoom In">
-                <span className="material-symbols-outlined text-[20px]">add</span>
-              </button>
+              <p className="text-[#D1D5DB] text-xs">Analysis based on this version</p>
             </div>
           </div>
 
           <div className="flex-1 overflow-y-auto custom-scrollbar p-8 sm:p-12 flex justify-center bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]">
-            <div className="a4-paper flex flex-col text-slate-800 p-12 sm:p-16 relative">
+            <div className="a4-paper flex flex-col text-slate-800 p-12 sm:p-16 relative opacity-90 hover:opacity-100 transition-opacity">
+              {/* Resume Header */}
               <div className="border-b-2 border-slate-800 pb-6 mb-8 flex justify-between items-start">
                 <div>
                   <h1 className="text-4xl font-serif font-bold tracking-tight text-slate-900 mb-2">Alex Morgan</h1>
@@ -187,7 +194,10 @@ const ResumeScore = () => {
                 </div>
               </div>
 
+              {/* Resume Content (Full Content Restored) */}
               <div className="flex flex-col gap-8">
+                
+                {/* Summary */}
                 <div className="flex gap-4">
                   <div className="w-32 shrink-0">
                     <h3 className="font-bold text-slate-900 uppercase tracking-wider text-sm">Summary</h3>
@@ -197,6 +207,7 @@ const ResumeScore = () => {
                   </div>
                 </div>
 
+                {/* Experience */}
                 <div className="flex gap-4">
                   <div className="w-32 shrink-0">
                     <h3 className="font-bold text-slate-900 uppercase tracking-wider text-sm">Experience</h3>
@@ -228,6 +239,7 @@ const ResumeScore = () => {
                   </div>
                 </div>
 
+                {/* Education */}
                 <div className="flex gap-4">
                   <div className="w-32 shrink-0">
                     <h3 className="font-bold text-slate-900 uppercase tracking-wider text-sm">Education</h3>
@@ -243,6 +255,7 @@ const ResumeScore = () => {
                   </div>
                 </div>
 
+                {/* Skills */}
                 <div className="flex gap-4">
                   <div className="w-32 shrink-0">
                     <h3 className="font-bold text-slate-900 uppercase tracking-wider text-sm">Skills</h3>
@@ -253,15 +266,51 @@ const ResumeScore = () => {
                     ))}
                   </div>
                 </div>
+
+                {/* Projects (Highlighted for Context) */}
+                <div className="flex gap-4">
+                  <div className="w-32 shrink-0">
+                    <h3 className="font-bold text-slate-900 uppercase tracking-wider text-sm">Projects</h3>
+                  </div>
+                  <div className="flex-1 flex flex-col gap-4">
+                    <div>
+                       <div className="flex justify-between items-baseline mb-1">
+                            <h4 className="font-bold text-slate-800">Fintech Dashboard</h4>
+                            <span className="text-[10px] text-[#0474C4] font-semibold uppercase">React, Node.js, AWS</span>
+                        </div>
+                        <p className="text-sm text-slate-700 leading-relaxed">Developed an end-to-end investment portal used by 50k users. Integrated real-time data visualization and secure OAuth2 authentication flow.</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Certifications (Added) */}
+                <div className="flex gap-4">
+                  <div className="w-32 shrink-0">
+                    <h3 className="font-bold text-slate-900 uppercase tracking-wider text-sm">Certifications</h3>
+                  </div>
+                  <div className="flex-1 flex flex-col gap-4">
+                    <div>
+                        <div className="flex justify-between items-baseline mb-1">
+                            <h4 className="font-bold text-slate-800">AWS Certified Solutions Architect</h4>
+                            <span className="text-xs font-medium text-slate-500">Mar 2023</span>
+                        </div>
+                        <p className="text-sm font-medium text-slate-600">Amazon Web Services (ID: AWS-123456789)</p>
+                    </div>
+                  </div>
+                </div>
               </div>
-              <div className="absolute bottom-4 right-4 opacity-10 pointer-events-none">
-                <span className="text-xs font-bold uppercase tracking-widest text-slate-900">Career Orbit Preview</span>
+              
+              {/* Overlay Badge */}
+              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                 <div className="bg-[#0474C4]/90 text-white px-6 py-3 rounded-full font-bold shadow-2xl backdrop-blur-sm border border-white/20">
+                    Preview Mode
+                 </div>
               </div>
             </div>
           </div>
         </section>
 
-        {/* --- RIGHT SIDEBAR (Light Blue #A8C4EC) --- */}
+        {/* --- RIGHT SIDEBAR (Scoring & Analysis) --- */}
         <aside className="w-[400px] bg-[#A8C4EC] shrink-0 flex flex-col border-l border-white/20 shadow-2xl relative z-20">
           <div className="p-8 flex flex-col h-full overflow-y-auto custom-scrollbar">
             <div className="mb-8">
@@ -294,8 +343,8 @@ const ResumeScore = () => {
             <div className="flex flex-col gap-4 mb-8">
               <h3 className="text-[#06457F] font-bold uppercase tracking-wider text-xs px-1">Section Checklist</h3>
               <div className="flex flex-col gap-2">
-                {['Personal Information', 'Education', 'Skills'].map((item, i) => (
-                  // Checklist Item - SOLID WHITE BG
+                {/* Updated Checklist to include Certifications and Projects */}
+                {['Personal Information', 'Education', 'Skills', 'Certifications', 'Projects'].map((item, i) => (
                   <div key={i} className="flex items-center justify-between p-3 bg-white rounded-lg border-none shadow-sm">
                     <div className="flex items-center gap-3">
                       <div className="bg-[#0474C4]/10 rounded-full p-1">
@@ -305,27 +354,16 @@ const ResumeScore = () => {
                     </div>
                   </div>
                 ))}
-                
-                {/* Missing Project Warning - SOLID WHITE BG */}
-                <div className="flex items-center justify-between p-3 bg-white rounded-lg border-l-4 border-amber-500 shadow-sm">
-                  <div className="flex items-center gap-3">
-                    <div className="bg-amber-100 rounded-full p-1">
-                      <span className="material-symbols-outlined text-amber-600 text-[20px]">warning</span>
-                    </div>
-                    <span className="text-slate-800 font-medium text-sm">Projects</span>
-                  </div>
-                  <span className="text-[10px] font-bold text-amber-600 bg-amber-100 px-2 py-0.5 rounded">MISSING</span>
-                </div>
               </div>
             </div>
 
-            {/* Improvement Tip - SOLID WHITE BG */}
+            {/* Improvement Tip */}
             <div className="bg-white rounded-xl p-4 border border-[#06457F]/10 mb-8 shadow-sm">
               <div className="flex gap-3">
                 <span className="material-symbols-outlined text-[#0474C4]">lightbulb</span>
                 <div className="flex flex-col gap-1">
                   <h4 className="text-sm font-bold text-[#06457F]">Improvement Tip</h4>
-                  <p className="text-sm text-[#06457F]/80 leading-relaxed">Add at least one project to strengthen your resume and demonstrate practical application of your skills.</p>
+                  <p className="text-sm text-[#06457F]/80 leading-relaxed">Quantify your impact in the "Projects" section with specific metrics (e.g., "Improved load time by 20%").</p>
                 </div>
               </div>
             </div>
@@ -348,7 +386,7 @@ const ResumeScore = () => {
       </main>
 
       {/* ======================================================= */}
-      {/* EXPANDABLE CHATBOT CART (EXACT MATCH) */}
+      {/* EXPANDABLE CHATBOT CART */}
       {/* ======================================================= */}
       <div 
         className={
@@ -357,7 +395,6 @@ const ResumeScore = () => {
             : "fixed bottom-6 right-6 z-50 flex flex-col items-end gap-4 transition-all duration-300"
         }
       >
-        
         {/* Chat Interface Window */}
         {isChatOpen && (
             <div className={
@@ -365,10 +402,9 @@ const ResumeScore = () => {
                 ? "w-full max-w-5xl h-[85vh] bg-[#06457F] rounded-2xl border border-white/30 shadow-[0_0_50px_rgba(4,116,196,0.5)] flex flex-col overflow-hidden chat-animate"
                 : "w-[380px] h-[550px] bg-[#06457F] rounded-2xl border border-white/20 ring-1 ring-cyan-500/40 shadow-2xl flex flex-col overflow-hidden chat-animate origin-bottom-right"
             }>
-                {/* Header - Separate Color for 'Cart' feel */}
+                {/* Header */}
                 <div className="p-4 bg-[#0B3D91] flex items-center justify-between border-b border-white/10 shrink-0">
                     <div className="flex items-center gap-3">
-                        {/* Professional Chatbot Icon in Header */}
                         <div className="h-10 w-10 rounded-full bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center shadow-lg">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 text-white">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12.375m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 01-2.555-.337A5.972 5.972 0 015.41 20.97a5.969 5.969 0 01-.474-.065 4.48 4.48 0 00.978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.159 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25z" />
@@ -382,11 +418,9 @@ const ResumeScore = () => {
                         </div>
                     </div>
                     <div className="flex items-center gap-1">
-                        {/* EXPAND/COLLAPSE BUTTON */}
                         <button onClick={() => setIsExpanded(!isExpanded)} className="text-white/70 hover:text-white p-2 rounded-lg hover:bg-white/10 transition-colors" title={isExpanded ? "Collapse" : "Expand"}>
                             <span className="material-symbols-outlined text-[20px]">{isExpanded ? 'close_fullscreen' : 'open_in_full'}</span>
                         </button>
-                        {/* CLOSE BUTTON */}
                         <button onClick={() => { setIsChatOpen(false); setIsExpanded(false); }} className="text-white/70 hover:text-white p-2 rounded-lg hover:bg-white/10 transition-colors">
                             <span className="material-symbols-outlined text-[20px]">close</span>
                         </button>
@@ -425,7 +459,7 @@ const ResumeScore = () => {
             </div>
         )}
 
-        {/* Toggle Button (FAB) - Hide when Expanded to avoid clutter */}
+        {/* Toggle Button (FAB) */}
         {!isExpanded && (
             <button 
                 onClick={() => setIsChatOpen(!isChatOpen)}
@@ -435,7 +469,6 @@ const ResumeScore = () => {
                     <span className="material-symbols-outlined text-[32px]">keyboard_arrow_down</span>
                 ) : (
                     <div className="relative">
-                        {/* CUSTOM SVG ICON - Professional Robot Face */}
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12.375m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 01-2.555-.337A5.972 5.972 0 015.41 20.97a5.969 5.969 0 01-.474-.065 4.48 4.48 0 00.978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.159 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25z" />
                         </svg>

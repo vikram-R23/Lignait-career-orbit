@@ -1,127 +1,188 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 /**
- * Career Orbit - Dashboard Welcome Page
+ * Career Orbit - Dashboard Welcome Page (Student AI Loading State)
+ * Adjusted: Equalized spacing between Ring, Text, and Progress Bar.
  */
 const DashboardWelcome = () => {
   const navigate = useNavigate();
-  const [isLoading, setIsLoading] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [statusText, setStatusText] = useState("Initializing AI Engine...");
 
-  // --- FIXED CONFIGURATION ---
-  const API_CONFIG = {
-    apiBaseUrl: 'https://api.careerorbit.com/v1', 
-    sessionId: 'temp-session-123',
-    userId: 'user-default',
-    llmProvider: 'gemini', 
-  };
+  // --- SIMULATE AI LOADING PROCESS ---
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setProgress((prev) => {
+        const increment = Math.floor(Math.random() * 10) + 1;
+        const newProgress = Math.min(prev + increment, 100);
+        
+        if (newProgress > 10 && newProgress < 40) setStatusText("Analyzing academic profile...");
+        if (newProgress >= 40 && newProgress < 70) setStatusText("Mapping skill gaps...");
+        if (newProgress >= 70 && newProgress < 90) setStatusText("Curating learning path...");
+        if (newProgress >= 90 && newProgress < 100) setStatusText("Finalizing roadmap...");
+        if (newProgress === 100) setStatusText("Ready to launch!");
 
-  const fetchUserCareerRoadmap = async () => {
-    // Placeholder for future LLM API call
-    console.log("Connecting to AI...");
-    return new Promise((resolve) => setTimeout(resolve, 1500)); 
-  };
+        return newProgress;
+      });
+    }, 600);
 
-  const handleContinue = async () => {
-    setIsLoading(true);
-    try {
-      await fetchUserCareerRoadmap();
-      navigate('/dashboard'); 
-    } catch (error) {
-      console.error("Navigation error:", error);
-    } finally {
-      setIsLoading(false);
+    if (progress === 100) {
+      clearInterval(interval);
+      setTimeout(() => {
+        navigate('/dashboard/main');
+      }, 1000); 
     }
-  };
+
+    return () => clearInterval(interval);
+  }, [progress, navigate]);
 
   return (
-    <div className="font-display antialiased text-white">
-      <div className="relative flex min-h-screen w-full flex-col bg-[#06457F] overflow-hidden justify-center items-center pb-32">
+    <div className="bg-[#06457F] h-screen w-full flex flex-col items-center justify-center overflow-hidden font-['Space_Grotesk'] text-white relative">
+      
+      {/* --- CSS & FONTS INJECTION --- */}
+      <style dangerouslySetInnerHTML={{ __html: `
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Noto+Sans:wght@400;500&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap');
         
-        {/* BACKGROUND EFFECTS */}
-        <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
-          <div className="absolute top-[-20%] left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-[#0474C4] opacity-[0.25] blur-[120px] rounded-full"></div>
-          <div className="absolute bottom-[-20%] left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-[#A8C4EC] opacity-[0.1] blur-[100px] rounded-full"></div>
-        </div>
+        .material-symbols-outlined { font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
 
-        {/* --- TOP LEFT LOGO (ADDED) --- */}
-        <div className="absolute top-8 left-8 z-20 flex items-center gap-3 select-none">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#0474C4] to-cyan-400 flex items-center justify-center shadow-lg shadow-blue-500/30">
-            <span className="material-symbols-outlined text-white text-xl">rocket_launch</span>
-          </div>
-          <span className="text-2xl font-black tracking-tight text-white">
-            Career <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 to-blue-200">Orbit</span>
-          </span>
-        </div>
+        @keyframes orbit { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        @keyframes orbit-reverse { from { transform: rotate(0deg); } to { transform: rotate(-360deg); } }
+        @keyframes pulse-glow {
+            0%, 100% { opacity: 0.7; transform: scale(1); box-shadow: 0 0 30px 5px rgba(43, 173, 238, 0.4); }
+            50% { opacity: 1; transform: scale(1.05); box-shadow: 0 0 50px 15px rgba(43, 173, 238, 0.6); }
+        }
+        
+        .orbit-container {
+            position: relative;
+            width: 400px; 
+            height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .orbit-ring {
+            position: absolute;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: inset 0 0 8px rgba(43, 173, 238, 0.05), 0 0 8px rgba(43, 173, 238, 0.05);
+        }
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            top: 0;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        .animate-orbit-slow { animation: orbit 25s linear infinite; }
+        .animate-orbit-med { animation: orbit-reverse 18s linear infinite; }
+        .animate-orbit-fast { animation: orbit 12s linear infinite; }
+        .animate-orbit-extra-slow { animation: orbit-reverse 35s linear infinite; }
+        
+        .glow-node {
+            background: #2badee;
+            animation: pulse-glow 4s ease-in-out infinite;
+        }
+        .animate-spin-slow { animation: orbit 3s linear infinite; }
+      `}} />
 
-        {/* CONTENT CONTAINER */}
-        <div className="layout-container flex h-full w-full max-w-[640px] flex-col z-10 p-6 md:p-12">
-          <div className="layout-content-container flex flex-col flex-1 justify-center items-center text-center">
-            
-            {/* CENTER LOGO & ORBIT ANIMATION */}
-            <div className="mb-12 h-64 relative flex items-center justify-center">
-              <div className="w-64 h-64 rounded-full border border-[#A8C4EC]/20 absolute animate-[spin_20s_linear_infinite]"></div>
-              <div className="w-48 h-48 rounded-full border border-[#A8C4EC]/40 absolute animate-[spin_15s_linear_infinite_reverse]" style={{ borderStyle: 'dashed' }}></div>
-              
-              <div className="w-32 h-32 rounded-full overflow-hidden relative border border-[#A8C4EC]/60 bg-white/10 flex items-center justify-center z-10 backdrop-blur-sm shadow-inner animate-logo-pulse">
-                <span className="material-symbols-outlined text-white !text-[64px] drop-shadow-lg">
-                  smart_toy
-                </span>
-              </div>
+      {/* --- BACKGROUND GLOW --- */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[#2badee]/10 rounded-full blur-[100px] pointer-events-none"></div>
+
+      {/* --- LOGO (Top Left) --- */}
+      <div className="absolute top-6 left-6 z-50 select-none">
+        <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-[#0473c3] to-cyan-400 flex items-center justify-center shadow-lg shadow-blue-500/30">
+                <span className="material-symbols-outlined text-white text-lg">rocket_launch</span>
             </div>
-
-            {/* TEXT CONTENT */}
-            <h1 className="text-white tracking-tight text-[32px] md:text-[48px] font-bold leading-[1.1] mb-4">
-              Welcome to Career Orbit
-            </h1>
-            <p className="text-[#A8C4EC] text-lg md:text-xl font-normal leading-relaxed max-w-[480px] mb-12">
-              Your AI-powered career guidance platform. We've analyzed your profile and calculated your trajectory.
-            </p>
-
-            {/* ACTION AREA */}
-            <div className="w-full max-w-[320px]">
-              <button 
-                onClick={handleContinue}
-                disabled={isLoading}
-                className="group relative flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-lg h-14 px-8 bg-[#0474C4] text-white text-lg font-bold leading-normal tracking-wide transition-all duration-300 hover:shadow-[0_0_20px_rgba(168,196,236,0.4)] hover:scale-[1.02] disabled:opacity-70"
-              >
-                <span className="truncate mr-2">
-                  {isLoading ? 'Processing...' : 'Continue'}
-                </span>
-                {!isLoading && (
-                  <span className="material-symbols-outlined text-lg transition-transform group-hover:translate-x-1">
-                    arrow_forward
-                  </span>
-                )}
-              </button>
-
-              <div className="mt-6 flex items-center justify-center gap-2 text-[#A8C4EC]/70 text-sm">
-                <span className="material-symbols-outlined !text-[16px]">lock</span>
-                <span>Secure & Private Session</span>
-              </div>
-            </div>
-          </div>
+            <span className="text-xl font-black tracking-tight text-white">
+                Career <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 to-blue-400">Orbit</span>
+            </span>
         </div>
       </div>
 
-      <style dangerouslySetInnerHTML={{ __html: `
-        @keyframes pulse-glow {
-          0%, 100% { 
-            box-shadow: 0 0 20px rgba(168, 196, 236, 0.1); 
-            transform: scale(1);
-          }
-          50% { 
-            box-shadow: 0 0 45px rgba(168, 196, 236, 0.35); 
-            transform: scale(1.03);
-          }
-        }
-        .animate-logo-pulse {
-          animation: pulse-glow 4s infinite ease-in-out;
-        }
-        .material-symbols-outlined {
-          font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-        }
-      `}} />
+      {/* --- CENTRAL CONTENT --- */}
+      {/* 1. Used 'flex-col gap-10' to create equal vertical spacing.
+          2. Scaled the whole container to fit viewport perfectly.
+      */}
+      <div className="relative z-10 flex flex-col items-center justify-center transform scale-[0.6] sm:scale-[0.75] md:scale-[0.85] lg:scale-[0.9] transition-transform duration-500 gap-8">
+        
+        {/* 1. ORBIT VISUALIZATION */}
+        <div className="orbit-container">
+            <div className="absolute w-12 h-12 rounded-full z-30 glow-node flex items-center justify-center">
+                <span className="material-symbols-outlined text-white text-xl">auto_awesome</span>
+            </div>
+            <div className="orbit-ring w-[110px] h-[110px] animate-orbit-fast">
+                <div className="particle w-2 h-2 bg-[#2badee] shadow-[0_0_10px_#2badee]"></div>
+            </div>
+            <div className="orbit-ring w-[190px] h-[190px] animate-orbit-med">
+                <div className="particle w-2.5 h-2.5 bg-[#a855f7] shadow-[0_0_12px_#a855f7]"></div>
+                <div className="absolute bottom-0 left-50 transform translate-y-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-[#2badee] shadow-[0_0_8px_#2badee]"></div>
+            </div>
+            <div className="orbit-ring w-[270px] h-[270px] animate-orbit-slow">
+                <div className="particle w-1.5 h-1.5 bg-white shadow-[0_0_10px_white]"></div>
+                <div className="absolute top-1/2 left-0 transform -translate-x-1/2 -translate-y-1/2 w-2.5 h-2.5 bg-cyan-400 shadow-[0_0_12px_#22d3ee]"></div>
+            </div>
+            <div className="orbit-ring w-[350px] h-[350px] opacity-60 animate-orbit-extra-slow">
+                <div className="particle w-1.5 h-1.5 bg-[#2badee]/80"></div>
+            </div>
+        </div>
+
+        {/* 2. TEXT CONTENT */}
+        <div className="flex flex-col items-center text-center max-w-[700px]">
+            <h1 className="text-white tracking-tight text-[28px] md:text-[36px] font-bold leading-tight pb-3 drop-shadow-md">
+                We’re building a transition-ready roadmap just for you…
+            </h1>
+            <p className="text-[#D1D5DB] text-base font-normal leading-relaxed max-w-xl">
+                Our AI is analyzing your transferable skills and mapping them to your new career path.
+            </p>
+        </div>
+
+        {/* 3. PROGRESS CARD */}
+        <div className="w-full max-w-sm bg-[#262B40] backdrop-blur-md border border-white/10 p-5 rounded-xl shadow-2xl">
+            <div className="flex flex-col gap-2">
+                <div className="flex gap-6 justify-between items-end">
+                    <div className="flex items-center gap-2">
+                        <span className="material-symbols-outlined text-[#2badee] text-sm animate-spin-slow">sync</span>
+                        <p className="text-white text-sm font-medium leading-normal">{statusText}</p>
+                    </div>
+                    <p className="text-[#2badee] text-lg font-bold leading-normal">{progress}%</p>
+                </div>
+                
+                {/* Progress Bar Track */}
+                <div className="w-full h-2 rounded-full bg-white/10 overflow-hidden">
+                    <div 
+                        className="h-full rounded-full bg-[#2badee] shadow-[0_0_15px_rgba(43,173,238,0.6)] transition-all duration-300 ease-out" 
+                        style={{ width: `${progress}%` }}
+                    ></div>
+                </div>
+
+                {/* Footer of Card */}
+                <div className="flex justify-between items-center mt-1">
+                    <p className="text-[#92b7c9] text-[10px] font-medium uppercase tracking-wider">AI Processing Engine</p>
+                    <div className="flex gap-1">
+                        <span className="w-1 h-1 bg-[#2badee] rounded-full animate-pulse"></span>
+                        <span className="w-1 h-1 bg-[#2badee] rounded-full animate-pulse [animation-delay:200ms]"></span>
+                        <span className="w-1 h-1 bg-[#2badee] rounded-full animate-pulse [animation-delay:400ms]"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {/* 4. FOOTER BADGE */}
+        <div className="flex items-center gap-2 opacity-60">
+            <span className="material-symbols-outlined text-[#92b7c9] text-xs">verified_user</span>
+            <p className="text-[#92b7c9] text-xs font-normal leading-normal">Career Orbit AI Engine • Secure Analysis</p>
+        </div>
+
+      </div>
+
+      {/* --- DECORATIVE BOTTOM GRADIENT --- */}
+      <div className="absolute bottom-0 left-0 w-full h-1/4 bg-gradient-to-t from-black/20 to-transparent pointer-events-none"></div>
     </div>
   );
 };

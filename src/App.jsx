@@ -53,8 +53,10 @@ import LmsCodingResult from './pages/LmsCodingResult';
 import Settings from './pages/Settings';
 import ProfileScreen from './pages/ProfileScreen';
 import EditProfile from './pages/EditProfile';
+import InternshipOpportunities from './pages/InternshipOpportunities';
+import InternshipApplyRole from './pages/InternshipApplyRole';
+import InternshipSaveOpportunity from './pages/InternshipSaveOpportunity';
 
-// ... inside <Routes>
 
 
 
@@ -137,8 +139,9 @@ function App() {
         <Route path="/settings" element={<Settings />} />
         <Route path="/profile" element={<ProfileScreen />} />
         <Route path="/edit-profile" element={<EditProfile />} />
-        
-
+        <Route path="/internships-jobs" element={<InternshipOpportunities />} />
+        <Route path="/internship/apply" element={<InternshipApplyRole />} />
+        <Route path="/internship/saved" element={<InternshipSaveOpportunity />} />
         {/* Catch-all to prevent blank screens on typos */}
         <Route path="*" element={<Navigate to="/dashboard/main" replace />} />
       </Routes>

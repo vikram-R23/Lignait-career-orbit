@@ -3,9 +3,6 @@ import { useNavigate } from 'react-router-dom';
 
 // ====================================================================
 // SESSION CACHE VARIABLE
-// defined OUTSIDE the component.
-// 1. Persists when navigating between pages (Client-side routing).
-// 2. Resets to 'false' automatically when the user Refreshes or Re-logins.
 // ====================================================================
 let sessionRoadmapStatus = false; 
 
@@ -15,13 +12,10 @@ const DashboardMain = () => {
   // --------------------------------
   // DASHBOARD STATE
   // --------------------------------
-  // Initialize state using the session cache variable
   const [isRoadmapReady, setIsRoadmapReady] = useState(sessionRoadmapStatus);
-  const [showRoadmapModal, setShowRoadmapModal] = useState(false); // Controls the full screen overlay
-
+  const [showRoadmapModal, setShowRoadmapModal] = useState(false);
   const [userName, setUserName] = useState("Baskar");
   
-  // Set initial UI based on the cached status
   const [currentPhase, setCurrentPhase] = useState(
     isRoadmapReady ? "Phase 1: Foundations" : "Career Roadmap"
   );
@@ -37,7 +31,7 @@ const DashboardMain = () => {
   const [showToast, setShowToast] = useState(false);
 
   // --------------------------------
-  // CHATBOT STATE & LOGIC
+  // CHATBOT STATE
   // --------------------------------
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
@@ -62,19 +56,14 @@ const DashboardMain = () => {
 
     const lowerInput = userText.toLowerCase();
 
-    // 1. GENERATE ROADMAP LOGIC
-    // Strict check: Only generates if specifically asked
     if (!isRoadmapReady && lowerInput.includes('generate my roadmap')) {
-      
-      // *** CRITICAL FIX: Update both State AND the Session Variable ***
-      sessionRoadmapStatus = true; // Saves status for navigation
-      setIsRoadmapReady(true);     // Updates current screen
+      sessionRoadmapStatus = true; 
+      setIsRoadmapReady(true);     
       
       setCurrentPhase("Phase 1: Foundations");
       setPhaseProgress(15);
       setAiInsight("Roadmap generated! Focus on mastering Data Structures this week.");
       
-      // Trigger the Full Screen Modal
       setTimeout(() => setShowRoadmapModal(true), 1000);
 
       return "I've generated your personalized roadmap! Opening it for you now...";
@@ -102,10 +91,8 @@ const DashboardMain = () => {
     setChatInput("");
     setIsTyping(true); 
 
-    // --- NAVIGATION LOGIC ---
     const lowerText = textToSend.toLowerCase();
     
-    // Other Navigations
     if(overrideText === 'Resume Builder' || lowerText.includes('resume')) {
         setTimeout(() => { navigate('/resume'); setIsTyping(false); }, 1500);
     }
@@ -124,7 +111,7 @@ const DashboardMain = () => {
     else if(overrideText === 'View Roadmap' && isRoadmapReady) {
         setShowRoadmapModal(true);
         setIsTyping(false);
-        return; // Don't process LLM response for view action
+        return; 
     }
 
     try {
@@ -141,23 +128,18 @@ const DashboardMain = () => {
     }
   };
 
-  // --------------------------------
-  // HANDLERS
-  // --------------------------------
-  
   const handleRoadmapNavigation = () => {
     if (!isRoadmapReady) {
       setShowToast(true);
       setTimeout(() => setShowToast(false), 3000); 
     } else {
-      setShowRoadmapModal(true); // Open Modal instead of navigating
+      setShowRoadmapModal(true);
     }
   };
 
   const handleGenerateClick = () => {
     setIsChatOpen(true);
     setIsExpanded(true); 
-    // Does NOT auto-send message anymore. User must type.
   };
 
   const handleNavigate = (page) => {
@@ -168,7 +150,7 @@ const DashboardMain = () => {
   return (
     <div className="bg-[#06457F] h-screen w-full flex overflow-hidden font-['Space_Grotesk'] antialiased text-white selection:bg-[#0474C4] selection:text-white relative">
       
-      {/* Toast Alert Component */}
+      {/* Toast Alert */}
       <div className={`fixed top-6 left-1/2 -translate-x-1/2 z-[200] transition-all duration-300 ${showToast ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4 pointer-events-none'}`}>
         <div className="bg-red-500 text-white px-6 py-3 rounded-lg shadow-2xl flex items-center gap-3 border border-red-400">
             <span className="material-symbols-outlined text-[20px]">warning</span>
@@ -181,10 +163,16 @@ const DashboardMain = () => {
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
         .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
         .fill-1 { font-variation-settings: 'FILL' 1; }
+        
+        /* --- UNIVERSAL NO SCROLLBAR --- */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: #06457F; }
         ::-webkit-scrollbar-thumb { background: #0A4F8F; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #0474C4; }
+        
         @keyframes slideUpFade { from { transform: translateY(20px) scale(0.95); opacity: 0; } to { transform: translateY(0) scale(1); opacity: 1; } }
         .chat-animate { animation: slideUpFade 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
         .message-bubble-ai { background-color: rgba(4, 116, 196, 0.25); box-shadow: 0 0 10px rgba(4, 116, 196, 0.4), inset 0 0 4px rgba(255, 255, 255, 0.2); border: 1.5px solid rgba(255, 255, 255, 0.4); color: white; }
@@ -194,7 +182,6 @@ const DashboardMain = () => {
         .typing-dot:nth-child(2) { animation-delay: 0.2s; }
         .typing-dot:nth-child(3) { animation-delay: 0.4s; }
         
-        /* Roadmap specific styles */
         .roadmap-modal-bg { background: radial-gradient(circle at 50% 50%, #06457F 0%, #042D52 45%, #020B1A 100%); }
         .path-glow { filter: drop-shadow(0 0 8px rgba(34, 211, 238, 0.6)) drop-shadow(0 0 15px rgba(168, 85, 247, 0.4)); }
         .node-pulse-active { box-shadow: 0 0 0 0 rgba(34, 211, 238, 0.7); animation: pulse-glow 3s infinite; }
@@ -203,13 +190,9 @@ const DashboardMain = () => {
         .floating-particle { position: absolute; background: white; border-radius: 50%; filter: blur(1px); pointer-events: none; opacity: 0.3; }
       `}} />
 
-      {/* ======================================================= */}
-      {/* FULL SCREEN ROADMAP MODAL */}
-      {/* ======================================================= */}
+      {/* --- ROADMAP MODAL --- */}
       {showRoadmapModal && (
         <div className="fixed inset-0 z-[300] roadmap-modal-bg flex flex-col animate-in fade-in zoom-in duration-300 font-['Inter']">
-            
-            {/* Header */}
             <header className="w-full px-8 py-6 flex items-center justify-between z-50">
                 <div className="flex items-center gap-4">
                     <button 
@@ -226,13 +209,11 @@ const DashboardMain = () => {
                 </div>
                 <div className="flex items-center gap-4">
                     <div className="w-10 h-10 rounded-full border border-white/20 overflow-hidden shadow-lg bg-[#06457F]">
-                         {/* Avatar Placeholder */}
                          <span className="material-symbols-outlined text-white text-2xl flex items-center justify-center h-full">person</span>
                     </div>
                 </div>
             </header>
 
-            {/* Main Content */}
             <main className="flex-1 relative w-full flex items-center justify-center overflow-hidden">
                 <div className="floating-particle w-1.5 h-1.5 top-1/4 left-1/4"></div>
                 <div className="floating-particle w-1 h-1 bottom-1/3 right-1/4"></div>
@@ -240,7 +221,6 @@ const DashboardMain = () => {
                 <div className="floating-particle w-0.5 h-0.5 bottom-1/4 left-1/3"></div>
                 
                 <div className="relative w-[90%] h-[70%] max-w-6xl">
-                    {/* SVG Path */}
                     <svg className="absolute inset-0 w-full h-full path-glow pointer-events-none z-10" preserveAspectRatio="none" viewBox="0 0 1000 400">
                         <defs>
                             <linearGradient id="pathGradient" x1="0%" x2="100%" y1="0%" y2="0%">
@@ -251,7 +231,6 @@ const DashboardMain = () => {
                         <path className="opacity-80" d="M 100 300 C 200 300, 200 100, 300 100 C 400 100, 400 300, 500 300 C 600 300, 600 100, 700 100 C 800 100, 800 300, 900 300" fill="none" stroke="url(#pathGradient)" strokeLinecap="round" strokeWidth="6"></path>
                     </svg>
 
-                    {/* NODE 1: Phase 01 */}
                     <div className="absolute left-[10%] top-[75%] -translate-x-1/2 -translate-y-1/2 flex flex-col items-center group cursor-pointer z-20">
                         <div className="w-16 h-16 rounded-full bg-green-500 flex items-center justify-center border-4 border-white/20 shadow-[0_0_20px_rgba(34,197,94,0.5)] transition-transform group-hover:scale-110">
                             <span className="material-symbols-outlined text-white text-3xl font-bold">check</span>
@@ -262,7 +241,6 @@ const DashboardMain = () => {
                         </div>
                     </div>
 
-                    {/* NODE 2: Phase 02 (Active) */}
                     <div className="absolute left-[30%] top-[25%] -translate-x-1/2 -translate-y-1/2 flex flex-col items-center group z-30">
                         <div className="w-20 h-20 rounded-full bg-[#0474C4] flex items-center justify-center border-4 border-cyan-400/50 node-pulse-active transition-transform cursor-pointer">
                             <span className="material-symbols-outlined text-white text-4xl">rocket_launch</span>
@@ -271,7 +249,6 @@ const DashboardMain = () => {
                             <div className="text-[10px] font-black text-cyan-400 uppercase tracking-widest">Phase 02</div>
                             <div className="text-sm font-extrabold text-white whitespace-nowrap">🚀 Core Frontend</div>
                         </div>
-                        {/* Info Card for Active Node */}
                         <div className="absolute top-36 left-0 w-80 glass-morphism rounded-2xl p-6 shadow-2xl animate-in fade-in zoom-in duration-300 pointer-events-auto">
                             <div className="flex justify-between items-start mb-4">
                                 <div className="flex flex-col gap-1.5">
@@ -298,7 +275,6 @@ const DashboardMain = () => {
                         </div>
                     </div>
 
-                    {/* NODE 3: Phase 03 */}
                     <div className="absolute left-[50%] top-[75%] -translate-x-1/2 -translate-y-1/2 flex flex-col items-center opacity-60 group cursor-not-allowed z-20">
                         <div className="relative">
                             <div className="w-16 h-16 rounded-full bg-white/10 flex items-center justify-center border-4 border-white/20 backdrop-blur-md">
@@ -314,7 +290,6 @@ const DashboardMain = () => {
                         </div>
                     </div>
 
-                    {/* NODE 4: Phase 04 */}
                     <div className="absolute left-[70%] top-[25%] -translate-x-1/2 -translate-y-1/2 flex flex-col items-center opacity-40 group cursor-not-allowed z-20">
                         <div className="relative">
                             <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center border-4 border-white/10 backdrop-blur-md">
@@ -330,7 +305,6 @@ const DashboardMain = () => {
                         </div>
                     </div>
 
-                    {/* NODE 5: Final */}
                     <div className="absolute left-[90%] top-[75%] -translate-x-1/2 -translate-y-1/2 flex flex-col items-center opacity-30 group cursor-not-allowed z-20">
                         <div className="relative">
                             <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center border-4 border-white/10 backdrop-blur-md">
@@ -348,7 +322,6 @@ const DashboardMain = () => {
                 </div>
             </main>
 
-            {/* Footer */}
             <footer className="w-full px-12 pb-10 flex flex-col items-center z-50">
                 <div className="w-full max-w-4xl glass-morphism rounded-2xl px-10 py-5 flex items-center justify-between shadow-2xl mb-6">
                     <div className="flex items-center gap-12">
@@ -386,8 +359,8 @@ const DashboardMain = () => {
       )}
 
       {/* LEFT SIDEBAR */}
-      <aside className="w-72 flex-shrink-0 flex flex-col border-r border-slate-300 bg-white relative z-20">
-        <div className="p-6 flex items-center gap-3 select-none">
+      <aside className="w-72 flex-shrink-0 flex flex-col border-r border-slate-300 bg-white relative z-20 shadow-xl h-full">
+        <div className="p-6 flex items-center gap-3 select-none shrink-0">
           <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#0474C4] to-cyan-400 flex items-center justify-center shadow-lg shadow-blue-500/30">
             <span className="material-symbols-outlined text-white text-xl">rocket_launch</span>
           </div>
@@ -396,13 +369,12 @@ const DashboardMain = () => {
           </span>
         </div>
 
-        <nav className="flex-1 px-4 py-4 flex flex-col gap-2 overflow-y-auto">
+        <nav className="flex-1 px-4 py-4 flex flex-col gap-2 overflow-y-auto no-scrollbar">
           <button className="flex items-center gap-3 px-4 py-3 rounded-lg bg-[#06457F] text-white shadow-md text-left w-full">
             <span className="material-symbols-outlined fill-1">home</span>
             <span className="font-medium">Dashboard</span>
           </button>
           
-          {/* GATED LINK */}
           <button onClick={handleRoadmapNavigation} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
             <span className={`material-symbols-outlined group-hover:text-[#06457F] transition-colors ${!isRoadmapReady ? 'opacity-50' : ''}`}>map</span>
             <div className="flex justify-between items-center w-full">
@@ -424,10 +396,15 @@ const DashboardMain = () => {
             <span className="font-medium group-hover:text-[#06457F] transition-colors">Mock Interview</span>
           </button>
 
-          {/* NEW SECTION ADDED HERE */}
           <button onClick={() => handleNavigate('My Bookings')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
             <span className="material-symbols-outlined group-hover:text-[#06457F] transition-colors">calendar_month</span>
             <span className="font-medium group-hover:text-[#06457F] transition-colors">My Booking</span>
+          </button>
+
+          {/* Internships & Jobs Navigation */}
+          <button onClick={() => handleNavigate('Internships Jobs')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
+            <span className="material-symbols-outlined group-hover:text-[#06457F] transition-colors">work</span>
+            <span className="font-medium group-hover:text-[#06457F] transition-colors">Internships & Jobs</span>
           </button>
 
           <button onClick={() => handleNavigate('LMS Courses')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
@@ -444,12 +421,16 @@ const DashboardMain = () => {
           </button>
         </nav>
 
-        <div className="p-4 border-t border-slate-300">
-          <div onClick={() => navigate('/profile')} className="flex items-center gap-3 px-2 py-2 cursor-pointer hover:bg-slate-50 rounded-lg transition-colors">
-            <div className="size-10 rounded-full bg-cover bg-center border border-slate-300" style={{ backgroundImage: "url('https://ui-avatars.com/api/?name=B+&background=06457F&color=fff')" }}></div>
-            <div className="flex flex-col">
-              <span className="text-sm font-semibold text-slate-900">Baskar Manager</span>
-              <span className="text-xs text-slate-600">Pro Member</span>
+        {/* --- COMPACT PROFILE SECTION (FIXED) --- */}
+        <div className="p-3 border-t border-slate-300 shrink-0 mt-auto bg-white z-20">
+          <div 
+            onClick={() => navigate('/profile')} 
+            className="flex items-center gap-3 px-2 py-1.5 rounded-lg cursor-pointer hover:bg-slate-50 transition-colors"
+          >
+            <div className="size-9 rounded-full bg-cover bg-center border border-slate-300 shrink-0" style={{ backgroundImage: "url('https://ui-avatars.com/api/?name=B+&background=06457F&color=fff')" }}></div>
+            <div className="flex flex-col min-w-0">
+              <span className="text-sm font-semibold text-slate-900 truncate">{userName}</span>
+              <span className="text-[11px] text-slate-600 truncate">Pro Member</span>
             </div>
           </div>
         </div>
@@ -496,7 +477,6 @@ const DashboardMain = () => {
                     </span>
                   </div>
                   
-                  {/* Updates Text dynamically based on State */}
                   <h2 className="text-3xl font-bold text-white tracking-tight">{currentPhase}</h2>
                   
                   <div className="w-full max-w-xl space-y-2">
@@ -521,7 +501,6 @@ const DashboardMain = () => {
                   </div>
                 </div>
                 <div className="shrink-0 flex items-end">
-                  {/* CONDITIONAL BUTTON: Generate vs View */}
                   {!isRoadmapReady ? (
                       <button onClick={handleGenerateClick} className="w-full sm:w-auto bg-[#0474C4] hover:bg-[#0360a3] text-white font-bold text-base px-8 py-3.5 rounded-lg shadow-lg shadow-[#0474C4]/20 transition-all flex items-center justify-center gap-2 transform hover:-translate-y-0.5 active:translate-y-0">
                         <span>Generate Roadmap</span>
@@ -544,7 +523,6 @@ const DashboardMain = () => {
               </h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 
-                {/* 1. Roadmap (Gated) */}
                 <button onClick={handleRoadmapNavigation} className="flex flex-col items-start gap-4 p-5 rounded-xl bg-blue-600/10 hover:bg-blue-600/20 border border-blue-500/20 hover:border-blue-500/50 transition-all group text-left h-full">
                   <div className="p-2.5 rounded-lg bg-blue-500/20 group-hover:bg-blue-500 group-hover:text-white text-blue-400 transition-colors duration-300 shadow-sm shadow-blue-500/10">
                       <span className="material-symbols-outlined text-[28px]">{isRoadmapReady ? 'map' : 'lock'}</span>
@@ -642,9 +620,7 @@ const DashboardMain = () => {
         </aside>
       </div>
 
-      {/* ======================================================= */}
-      {/* EXPANDABLE CHATBOT CART (UPDATED CONTENT & STYLE) */}
-      {/* ======================================================= */}
+      {/* EXPANDABLE CHATBOT CART */}
       <div 
         className={
             isExpanded 
@@ -663,7 +639,6 @@ const DashboardMain = () => {
                 {/* Header */}
                 <div className="p-4 bg-[#0B3D91] flex items-center justify-between border-b border-white/10 shrink-0">
                     <div className="flex items-center gap-3">
-                        {/* Professional Chatbot Icon in Header */}
                         <div className="h-10 w-10 rounded-full bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center shadow-lg">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 text-white">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12.375m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 01-2.555-.337A5.972 5.972 0 015.41 20.97a5.969 5.969 0 01-.474-.065 4.48 4.48 0 00.978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.159 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25z" />
@@ -677,18 +652,16 @@ const DashboardMain = () => {
                         </div>
                     </div>
                     <div className="flex items-center gap-1">
-                        {/* EXPAND/COLLAPSE BUTTON */}
                         <button onClick={() => setIsExpanded(!isExpanded)} className="text-white/70 hover:text-white p-2 rounded-lg hover:bg-white/10 transition-colors" title={isExpanded ? "Collapse" : "Expand"}>
                             <span className="material-symbols-outlined text-[20px]">{isExpanded ? 'close_fullscreen' : 'open_in_full'}</span>
                         </button>
-                        {/* CLOSE BUTTON */}
                         <button onClick={() => { setIsChatOpen(false); setIsExpanded(false); }} className="text-white/70 hover:text-white p-2 rounded-lg hover:bg-white/10 transition-colors">
                             <span className="material-symbols-outlined text-[20px]">close</span>
                         </button>
                     </div>
                 </div>
 
-                {/* Messages Area with Custom Styles */}
+                {/* Messages Area */}
                 <div className="flex-1 bg-[#06457F] overflow-y-auto p-4 space-y-4">
                     {chatMessages.map((msg) => (
                         <div key={msg.id} className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
@@ -702,7 +675,6 @@ const DashboardMain = () => {
                         </div>
                     ))}
                     
-                    {/* Typing Indicator */}
                     {isTyping && (
                         <div className="flex justify-start">
                             <div className="message-bubble-ai rounded-2xl rounded-bl-none px-4 py-3 flex items-center gap-1">
@@ -713,10 +685,8 @@ const DashboardMain = () => {
                         </div>
                     )}
                     
-                    {/* Suggestion Chips (Only if not typing) */}
                     {!isTyping && chatMessages[chatMessages.length - 1]?.sender === 'ai' && (
                         <div className="flex flex-wrap gap-2 pt-2">
-                            {/* DYNAMIC CHIPS: Roadmap is only shown if NOT ready yet, or as View if ready */}
                             <button onClick={(e) => handleChatSubmit(e, 'View Roadmap')} className="text-xs bg-white/10 hover:bg-white/20 border border-white/20 rounded-full px-3 py-1.5 text-white transition-colors">
                                 {isRoadmapReady ? 'View Roadmap' : 'Generate Roadmap'}
                             </button>
