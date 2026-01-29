@@ -25,10 +25,13 @@ const ProfileScreen = () => {
         ::-webkit-scrollbar-track { background: #06457F; }
         ::-webkit-scrollbar-thumb { background: #0A4F8F; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #0474C4; }
+
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
       `}} />
 
-      {/* --- LEFT SIDEBAR (Consistent with DashboardMain) --- */}
-      <aside className="w-72 flex-shrink-0 flex flex-col border-r border-slate-300 bg-white relative z-20">
+      {/* --- SIDEBAR --- */}
+      <aside className="w-72 flex-shrink-0 flex flex-col border-r border-slate-300 bg-white relative z-20 font-['Space_Grotesk']">
         <div className="p-6 flex items-center gap-3 select-none">
           <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#0474C4] to-cyan-400 flex items-center justify-center shadow-lg shadow-blue-500/30">
             <span className="material-symbols-outlined text-white text-xl">rocket_launch</span>
@@ -38,7 +41,8 @@ const ProfileScreen = () => {
           </span>
         </div>
 
-        <nav className="flex-1 px-4 py-4 flex flex-col gap-2 overflow-y-auto">
+        {/* Added no-scrollbar here to hide the scrollbar */}
+        <nav className="flex-1 px-4 py-4 flex flex-col gap-2 overflow-y-auto no-scrollbar">
           <button onClick={() => handleNavigate('Dashboard')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
             <span className="material-symbols-outlined group-hover:text-[#06457F] transition-colors">home</span>
             <span className="font-medium group-hover:text-[#06457F] transition-colors">Dashboard</span>
@@ -53,38 +57,52 @@ const ProfileScreen = () => {
             <span className="material-symbols-outlined group-hover:text-[#06457F] transition-colors">groups</span>
             <span className="font-medium group-hover:text-[#06457F] transition-colors">Mentorship</span>
           </button>
+          
           <button onClick={() => handleNavigate('Resume')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
             <span className="material-symbols-outlined group-hover:text-[#06457F] transition-colors">description</span>
             <span className="font-medium group-hover:text-[#06457F] transition-colors">Resume</span>
           </button>
+
           <button onClick={() => handleNavigate('Mock Interview')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
             <span className="material-symbols-outlined group-hover:text-[#06457F] transition-colors">videocam</span>
             <span className="font-medium group-hover:text-[#06457F] transition-colors">Mock Interview</span>
           </button>
+
           <button onClick={() => handleNavigate('My Bookings')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
             <span className="material-symbols-outlined group-hover:text-[#06457F] transition-colors">calendar_month</span>
             <span className="font-medium group-hover:text-[#06457F] transition-colors">My Booking</span>
           </button>
+
+          {/* Internship (Added) */}
+          <button onClick={() => handleNavigate('Internships Jobs')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
+            <span className="material-symbols-outlined group-hover:text-[#06457F] transition-colors">work</span>
+            <span className="font-medium group-hover:text-[#06457F] transition-colors">Internship</span>
+          </button>
+
           <button onClick={() => handleNavigate('LMS Courses')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
-            <span className="material-symbols-outlined group-hover:text-[#06457F] transition-colors">book</span>
+            <span className="material-symbols-outlined group-hover:text-[#06457F] transition-colors">menu_book</span>
             <span className="font-medium group-hover:text-[#06457F] transition-colors">LMS Courses</span>
           </button>
+
           <button onClick={() => handleNavigate('Practice Ground')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
             <span className="material-symbols-outlined group-hover:text-[#06457F] transition-colors">code</span>
             <span className="font-medium group-hover:text-[#06457F] transition-colors">Practice Ground</span>
           </button>
+
           <button onClick={() => handleNavigate('Settings')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
             <span className="material-symbols-outlined group-hover:text-[#06457F] transition-colors">settings</span>
             <span className="font-medium group-hover:text-[#06457F] transition-colors">Settings</span>
           </button>
         </nav>
 
-        <div className="p-4 border-t border-slate-300">
-          <div className="flex items-center gap-3 px-2 py-2 cursor-pointer bg-slate-50 rounded-lg">
-            <div className="size-10 rounded-full bg-cover bg-center border border-slate-300" style={{ backgroundImage: "url('https://ui-avatars.com/api/?name=B+&background=06457F&color=fff')" }}></div>
-            <div className="flex flex-col">
-              <span className="text-sm font-semibold text-slate-900">{userName}</span>
-              <span className="text-xs text-slate-600">Pro Member</span>
+        {/* --- COMPACT PROFILE SECTION (FIXED AT BOTTOM) --- */}
+        <div className="p-3 border-t border-slate-300 shrink-0 mt-auto bg-white z-20">
+          <div onClick={() => navigate('/profile')} className="flex items-center gap-3 px-2 py-1.5 rounded-lg cursor-pointer hover:bg-slate-50 transition-colors">
+            {/* Reduced size-9 */}
+            <div className="size-9 rounded-full bg-cover bg-center border border-slate-300 shrink-0" style={{ backgroundImage: "url('https://ui-avatars.com/api/?name=B+&background=06457F&color=fff')" }}></div>
+            <div className="flex flex-col min-w-0">
+              <span className="text-sm font-bold text-slate-900 truncate">{userName}</span>
+              <span className="text-[11px] font-medium text-slate-500 truncate">Pro Member</span>
             </div>
           </div>
         </div>

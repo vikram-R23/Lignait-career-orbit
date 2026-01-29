@@ -107,28 +107,33 @@ const InternshipApplyRole = () => {
   };
 
   return (
-    <div className="bg-[#06457F] h-screen w-full flex overflow-hidden font-['Inter'] antialiased text-white selection:bg-[#0474C4] selection:text-white relative">
+    <div className="bg-[#06457F] h-screen w-full flex overflow-hidden font-['Space_Grotesk'] antialiased text-white selection:bg-[#0474C4] selection:text-white relative">
       
       {/* Styles Injection */}
       <style dangerouslySetInnerHTML={{ __html: `
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-        @import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
         .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
         .fill-1 { font-variation-settings: 'FILL' 1; }
         
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-
+        /* Custom Scrollbar */
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: #06457F; }
-        ::-webkit-scrollbar-thumb { background: #0A5596; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb { background: #0A4F8F; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #0474C4; }
+
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
       `}} />
 
       {/* --- SIDEBAR --- */}
-      <aside className="w-72 flex-shrink-0 flex flex-col border-r border-slate-300 bg-white relative z-20 shadow-xl">
+      {/* Applied font-['Space_Grotesk'] explicitly to match Dashboard Main */}
+      <aside className="w-72 flex-shrink-0 flex flex-col border-r border-slate-300 bg-white relative z-20 font-['Space_Grotesk']">
+        
+        {/* LOGO SECTION - Exact Match from Dashboard Main */}
         <div className="p-6 flex items-center gap-3 select-none">
           <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#0474C4] to-cyan-400 flex items-center justify-center shadow-lg shadow-blue-500/30">
+            {/* Small rocket icon inside */}
             <span className="material-symbols-outlined text-white text-xl">rocket_launch</span>
           </div>
           <span className="text-2xl font-black tracking-tight text-[#0F172A]">
@@ -136,7 +141,7 @@ const InternshipApplyRole = () => {
           </span>
         </div>
 
-        <nav className="flex-1 px-4 py-4 flex flex-col gap-2 overflow-hidden no-scrollbar">
+        <nav className="flex-1 px-4 py-4 flex flex-col gap-2 overflow-y-auto no-scrollbar">
           <button onClick={() => handleNavigate('Dashboard')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
             <span className="material-symbols-outlined group-hover:text-[#06457F] transition-colors">home</span>
             <span className="font-medium group-hover:text-[#06457F] transition-colors">Dashboard</span>
@@ -151,53 +156,58 @@ const InternshipApplyRole = () => {
             <span className="material-symbols-outlined group-hover:text-[#06457F] transition-colors">groups</span>
             <span className="font-medium group-hover:text-[#06457F] transition-colors">Mentorship</span>
           </button>
+          
           <button onClick={() => handleNavigate('Resume')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
             <span className="material-symbols-outlined group-hover:text-[#06457F] transition-colors">description</span>
             <span className="font-medium group-hover:text-[#06457F] transition-colors">Resume</span>
           </button>
+
           <button onClick={() => handleNavigate('Mock Interview')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
             <span className="material-symbols-outlined group-hover:text-[#06457F] transition-colors">videocam</span>
             <span className="font-medium group-hover:text-[#06457F] transition-colors">Mock Interview</span>
           </button>
-          
+
           <button onClick={() => handleNavigate('My Bookings')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
             <span className="material-symbols-outlined group-hover:text-[#06457F] transition-colors">calendar_month</span>
             <span className="font-medium group-hover:text-[#06457F] transition-colors">My Booking</span>
           </button>
 
-          {/* --- INTERNSHIP OPPORTUNITIES (Moved After My Bookings) --- */}
-          <button onClick={() => handleNavigate('Internships Jobs')} className="flex items-center gap-3 px-4 py-3 rounded-lg bg-[#06457F] text-white shadow-md text-left w-full">
+          {/* Internship (Active State) */}
+          <button onClick={() => navigate('/internships-jobs')} className="flex items-center gap-3 px-4 py-3 rounded-lg bg-[#06457F] text-white shadow-md text-left w-full">
             <span className="material-symbols-outlined fill-1">work</span>
-            <span className="font-medium">Internships & Jobs</span>
+            <span className="font-medium">Internship</span>
           </button>
 
           <button onClick={() => handleNavigate('LMS Courses')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
             <span className="material-symbols-outlined group-hover:text-[#06457F] transition-colors">book</span>
             <span className="font-medium group-hover:text-[#06457F] transition-colors">LMS Courses</span>
           </button>
+
           <button onClick={() => handleNavigate('Practice Ground')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
             <span className="material-symbols-outlined group-hover:text-[#06457F] transition-colors">code</span>
             <span className="font-medium group-hover:text-[#06457F] transition-colors">Practice Ground</span>
           </button>
+
           <button onClick={() => handleNavigate('Settings')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
             <span className="material-symbols-outlined group-hover:text-[#06457F] transition-colors">settings</span>
             <span className="font-medium group-hover:text-[#06457F] transition-colors">Settings</span>
           </button>
         </nav>
 
-        {/* --- Profile Section --- */}
-        <div className="p-4 border-t border-slate-300">
-          <div onClick={() => navigate('/profile')} className="flex items-center gap-3 px-2 py-2 cursor-pointer hover:bg-slate-50 rounded-lg transition-colors">
-            <div className="size-10 rounded-full bg-cover bg-center border border-slate-300" style={{ backgroundImage: "url('https://ui-avatars.com/api/?name=B+&background=06457F&color=fff')" }}></div>
-            <div className="flex flex-col">
-              <span className="text-sm font-semibold text-slate-900">{userProfile.name}</span>
-              <span className="text-xs text-slate-600">{userProfile.role}</span>
+        {/* --- COMPACT PROFILE SECTION (FIXED AT BOTTOM) --- */}
+        <div className="p-3 border-t border-slate-300 shrink-0 mt-auto bg-white z-20">
+          <div onClick={() => navigate('/profile')} className="flex items-center gap-3 px-2 py-1.5 rounded-lg cursor-pointer hover:bg-slate-50 transition-colors">
+            {/* Reduced size-9 */}
+            <div className="size-9 rounded-full bg-cover bg-center border border-slate-300 shrink-0" style={{ backgroundImage: "url('https://ui-avatars.com/api/?name=B+&background=06457F&color=fff')" }}></div>
+            <div className="flex flex-col min-w-0">
+              <span className="text-sm font-bold text-slate-900 truncate">{userProfile.name}</span>
+              <span className="text-[11px] font-medium text-slate-500 truncate">Pro Member</span>
             </div>
           </div>
         </div>
       </aside>
 
-      {/* --- MAIN CONTENT --- */}
+      {/* --- MAIN CONTENT AREA --- */}
       <main className="flex-1 flex flex-col h-full overflow-hidden relative">
         <div className="flex-1 overflow-y-auto p-8">
             {loading ? (
@@ -241,7 +251,7 @@ const InternshipApplyRole = () => {
                                 </div>
                             </div>
 
-                            {/* AI Insight Box (Dynamically Loaded) */}
+                            {/* AI Insight Box */}
                             <div className="bg-gradient-to-r from-indigo-900/60 to-purple-900/60 rounded-xl p-5 border border-indigo-400/30 relative overflow-hidden group">
                                 <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
                                     <span className="material-symbols-outlined text-[100px] text-white">auto_awesome</span>

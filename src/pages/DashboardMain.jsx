@@ -14,7 +14,7 @@ const DashboardMain = () => {
   // --------------------------------
   const [isRoadmapReady, setIsRoadmapReady] = useState(sessionRoadmapStatus);
   const [showRoadmapModal, setShowRoadmapModal] = useState(false);
-  const [userName, setUserName] = useState("Baskar");
+  const [userName, setUserName] = useState("Baskar Manager");
   
   const [currentPhase, setCurrentPhase] = useState(
     isRoadmapReady ? "Phase 1: Foundations" : "Career Roadmap"
@@ -404,7 +404,7 @@ const DashboardMain = () => {
           {/* Internships & Jobs Navigation */}
           <button onClick={() => handleNavigate('Internships Jobs')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
             <span className="material-symbols-outlined group-hover:text-[#06457F] transition-colors">work</span>
-            <span className="font-medium group-hover:text-[#06457F] transition-colors">Internships & Jobs</span>
+            <span className="font-medium group-hover:text-[#06457F] transition-colors">Internship</span>
           </button>
 
           <button onClick={() => handleNavigate('LMS Courses')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">

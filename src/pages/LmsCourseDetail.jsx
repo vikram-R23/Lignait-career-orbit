@@ -46,6 +46,11 @@ const LmsCourseDetail = () => {
     }, 1000);
   };
 
+  const handleNavigate = (page) => {
+    if (page === 'Dashboard') navigate('/dashboard/main');
+    else navigate(`/${page.toLowerCase().replace(/\s+/g, '-')}`);
+  };
+
   return (
     <div className="bg-[#06457F] text-white font-['Inter'] h-screen w-full flex overflow-hidden antialiased relative">
       <style dangerouslySetInnerHTML={{ __html: `
@@ -73,9 +78,9 @@ const LmsCourseDetail = () => {
         .chat-animate { animation: slideUpFade 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
       `}} />
 
-      {/* --- SIDEBAR (Exact Replica of LmsCourses Page) --- */}
-      <aside className="w-72 flex-shrink-0 flex flex-col border-r border-slate-300 bg-white relative z-50 text-[#0F172A]">
-        <div className="p-6 flex items-center gap-3 select-none">
+      {/* --- SIDEBAR --- */}
+      <aside className="w-72 flex-shrink-0 flex flex-col border-r border-slate-300 bg-white relative z-50 text-[#0F172A] shadow-xl h-full">
+        <div className="p-6 flex items-center gap-3 select-none shrink-0">
           {/* UPDATED LOGO: Square Gradient Rocket */}
           <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#0474C4] to-cyan-400 flex items-center justify-center shadow-lg shadow-blue-500/30">
               <span className="material-symbols-outlined text-white text-xl">rocket_launch</span>
@@ -84,17 +89,17 @@ const LmsCourseDetail = () => {
         </div>
 
         <nav className="flex-1 px-4 py-4 flex flex-col gap-2 overflow-y-auto no-scrollbar">
-          <button onClick={() => navigate('/dashboard')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
+          <button onClick={() => handleNavigate('Dashboard')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
             <span className="material-symbols-outlined group-hover:text-[#06457F]">home</span>
             <span className="font-semibold" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>Dashboard</span>
           </button>
           
-          <button onClick={() => navigate('/dashboard/roadmap')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
+          <button onClick={() => handleNavigate('Roadmap')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
             <span className="material-symbols-outlined">map</span>
             <span className="font-semibold" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>Career Roadmap</span>
           </button>
 
-          <button onClick={() => navigate('/mentors')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
+          <button onClick={() => handleNavigate('Mentors')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
             <span className="material-symbols-outlined">groups</span>
             <span className="font-semibold" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>Mentorship</span>
           </button>
@@ -114,6 +119,12 @@ const LmsCourseDetail = () => {
             <span className="font-semibold" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>My Booking</span>
           </button>
 
+          {/* Internship (Added) */}
+          <button onClick={() => handleNavigate('Internships Jobs')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
+            <span className="material-symbols-outlined group-hover:text-[#06457F]">work</span>
+            <span className="font-semibold" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>Internship</span>
+          </button>
+
           {/* Active State for LMS Courses */}
           <button onClick={() => navigate('/lms-courses')} className="flex items-center gap-3 px-4 py-3 rounded-lg bg-[#06457F] text-white shadow-md text-left w-full">
             <span className="material-symbols-outlined fill">menu_book</span>
@@ -131,12 +142,14 @@ const LmsCourseDetail = () => {
           </button>
         </nav>
 
-        <div className="p-4 border-t border-slate-300">
-          <div className="flex items-center gap-3 px-2 py-2">
-            <div className="size-10 rounded-full bg-cover bg-center border border-slate-300" style={{ backgroundImage: "url('https://ui-avatars.com/api/?name=B+&background=06457F&color=fff')" }}></div>
-            <div className="flex flex-col overflow-hidden">
-              <span className="text-sm font-bold text-slate-900 truncate" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>Baskar Manager</span>
-              <span className="text-xs font-medium text-slate-600 truncate" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>Pro Member</span>
+        {/* --- COMPACT PROFILE SECTION (FIXED AT BOTTOM) --- */}
+        <div className="p-3 border-t border-slate-300 shrink-0 mt-auto bg-white z-20">
+          <div onClick={() => navigate('/profile')} className="flex items-center gap-3 px-2 py-1.5 rounded-lg cursor-pointer hover:bg-slate-50 transition-colors">
+            {/* Reduced size-9 */}
+            <div className="size-9 rounded-full bg-cover bg-center border border-slate-300 shrink-0" style={{ backgroundImage: "url('https://ui-avatars.com/api/?name=B+&background=06457F&color=fff')" }}></div>
+            <div className="flex flex-col min-w-0">
+              <span className="text-sm font-semibold text-slate-900 truncate" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>Baskar Manager</span>
+              <span className="text-[11px] text-slate-600 truncate" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>Pro Member</span>
             </div>
           </div>
         </div>

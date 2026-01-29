@@ -1,8 +1,9 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const LmsCodingPlatform = () => {
   const navigate = useNavigate();
+  const [userName, setUserName] = useState("Baskar Manager");
 
   // --- API / LLM Initialization Logic ---
   useEffect(() => {
@@ -15,6 +16,11 @@ const LmsCodingPlatform = () => {
     };
     fetchProblemData();
   }, []);
+
+  const handleNavigate = (page) => {
+    if (page === 'Dashboard') navigate('/dashboard/main');
+    else navigate(`/${page.toLowerCase().replace(/\s+/g, '-')}`);
+  };
 
   return (
     <div className="flex h-screen w-full overflow-hidden bg-[#06457F] text-white font-['Inter'] antialiased">
@@ -49,51 +55,55 @@ const LmsCodingPlatform = () => {
         .syntax-class { color: #4EC9B0; }
       `}} />
 
-      {/* --- SIDEBAR (Exact Baskar Manager Version) --- */}
+      {/* --- SIDEBAR --- */}
       <aside className="w-72 flex-shrink-0 flex flex-col border-r border-slate-300 bg-white relative z-50 text-[#0F172A]">
-        <div className="p-6 flex items-center gap-3">
-          <div className="size-10 rounded-full bg-gradient-to-tr from-[#06457F] to-[#0474C4] p-[1px]">
-            <div className="h-full w-full rounded-full bg-white flex items-center justify-center">
-              <span className="material-symbols-outlined text-[#06457F]">rocket_launch</span>
-            </div>
+        <div className="p-6 flex items-center gap-3 select-none">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#0474C4] to-cyan-400 flex items-center justify-center shadow-lg shadow-blue-500/30">
+              <span className="material-symbols-outlined text-white text-xl">rocket_launch</span>
           </div>
           <h1 className="text-xl font-bold tracking-tight text-slate-900" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>Career Orbit</h1>
         </div>
 
         <nav className="flex-1 px-4 py-4 flex flex-col gap-2 overflow-y-auto no-scrollbar">
-          <button onClick={() => navigate('/dashboard')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
+          <button onClick={() => handleNavigate('Dashboard')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
             <span className="material-symbols-outlined group-hover:text-[#06457F]">home</span>
-            <span className="font-semibold" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>Dashboard</span>
+            <span className="font-medium" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>Dashboard</span>
           </button>
           
-          <button onClick={() => navigate('/dashboard/roadmap')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
+          <button onClick={() => handleNavigate('Roadmap')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
             <span className="material-symbols-outlined">map</span>
-            <span className="font-semibold" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>Career Roadmap</span>
+            <span className="font-medium" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>Career Roadmap</span>
           </button>
 
-          <button onClick={() => navigate('/mentors')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
+          <button onClick={() => handleNavigate('Mentors')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
             <span className="material-symbols-outlined">groups</span>
-            <span className="font-semibold" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>Mentorship</span>
+            <span className="font-medium" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>Mentorship</span>
           </button>
           
-          <button onClick={() => navigate('/resume')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
+          <button onClick={() => handleNavigate('Resume')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
             <span className="material-symbols-outlined group-hover:text-[#06457F]">description</span>
-            <span className="font-semibold" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>Resume</span>
+            <span className="font-medium" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>Resume</span>
           </button>
 
-          <button onClick={() => navigate('/mock-interview')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
+          <button onClick={() => handleNavigate('Mock Interview')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
             <span className="material-symbols-outlined group-hover:text-[#06457F]">videocam</span>
-            <span className="font-semibold" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>Mock Interview</span>
+            <span className="font-medium" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>Mock Interview</span>
           </button>
 
-          <button onClick={() => navigate('/my-bookings')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
+          <button onClick={() => handleNavigate('My Bookings')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
             <span className="material-symbols-outlined">calendar_month</span>
-            <span className="font-semibold" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>My Booking</span>
+            <span className="font-medium" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>My Booking</span>
+          </button>
+
+          {/* Internship (Added) */}
+          <button onClick={() => handleNavigate('Internships Jobs')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
+            <span className="material-symbols-outlined group-hover:text-[#06457F]">work</span>
+            <span className="font-medium" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>Internship</span>
           </button>
 
           <button onClick={() => navigate('/lms-courses')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
             <span className="material-symbols-outlined">menu_book</span>
-            <span className="font-semibold" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>LMS Courses</span>
+            <span className="font-medium" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>LMS Courses</span>
           </button>
 
           {/* Active State for Practice Ground */}
@@ -102,18 +112,21 @@ const LmsCodingPlatform = () => {
             <span className="font-semibold" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>Practice Ground</span>
           </button>
 
-          <button onClick={() => navigate('/settings')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
+          <button onClick={() => handleNavigate('Settings')} className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors group text-left w-full">
             <span className="material-symbols-outlined">settings</span>
-            <span className="font-semibold" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>Settings</span>
+            <span className="font-medium" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>Settings</span>
           </button>
         </nav>
 
-        <div className="p-4 border-t border-slate-300">
-          <div className="flex items-center gap-3 px-2 py-2">
-            <div className="size-10 rounded-full bg-cover bg-center border border-slate-300" style={{ backgroundImage: "url('https://ui-avatars.com/api/?name=B+&background=06457F&color=fff')" }}></div>
-            <div className="flex flex-col overflow-hidden">
-              <span className="text-sm font-bold text-slate-900 truncate" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>Baskar Manager</span>
-              <span className="text-xs font-medium text-slate-600 truncate" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>Pro Member</span>
+        {/* --- COMPACT PROFILE SECTION (FIXED AT BOTTOM) --- */}
+        <div className="p-3 border-t border-slate-300 shrink-0 mt-auto bg-white z-20">
+          <div onClick={() => navigate('/profile')} className="flex items-center gap-3 px-2 py-1.5 rounded-lg cursor-pointer hover:bg-slate-50 transition-colors">
+            {/* Reduced size-9 */}
+            <div className="size-9 rounded-full bg-cover bg-center border border-slate-300 shrink-0" style={{ backgroundImage: "url('https://ui-avatars.com/api/?name=B+&background=06457F&color=fff')" }}></div>
+            <div className="flex flex-col min-w-0">
+              <span className="text-sm font-bold text-slate-900 truncate" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>{userName}</span>
+              {/* Text size updated to 11px and slate-500 */}
+              <span className="text-[11px] font-medium text-slate-500 truncate" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>Pro Member</span>
             </div>
           </div>
         </div>
