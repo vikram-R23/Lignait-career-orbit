@@ -4,7 +4,6 @@ import { useNavigate, Link } from 'react-router-dom';
 // ==========================================
 // STATIC STYLES (Extracted & Memoized)
 // ==========================================
-// Moving styles out of the main render loop prevents input glitches/lag
 const LoginStyles = React.memo(() => (
   <style dangerouslySetInnerHTML={{ __html: `
     @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
@@ -108,13 +107,13 @@ const Login = () => {
   };
 
   return (
-    <div className="font-display bg-[#06457F] text-white min-h-screen w-full flex flex-col lg:flex-row relative overflow-x-hidden selection:bg-[#0474C4] selection:text-white">
+    <div className="font-display bg-[#06457F] text-white min-h-screen w-full flex flex-col lg:flex-row relative overflow-hidden selection:bg-[#0474C4] selection:text-white">
       
       {/* Optimized Styles Component */}
       <LoginStyles />
 
       {/* ================= LEFT PANEL (CONTENT) ================= */}
-      <div className="w-full lg:w-1/2 flex flex-col relative z-20 bg-[#06457F] border-r border-[#043360] min-h-screen">
+      <div className="w-full lg:w-1/2 flex flex-col relative z-20 bg-[#06457F] border-r border-[#043360] min-h-screen shrink-0">
         
         {/* LOGO */}
         <div className="absolute top-8 left-8 sm:left-12 z-50 select-none">
@@ -238,36 +237,47 @@ const Login = () => {
       </div>
 
       {/* ================= RIGHT PANEL (ANIMATION) ================= */}
-      <div className="hidden lg:flex lg:w-1/2 bg-[#A8C4EC] relative items-center justify-center overflow-hidden h-screen sticky top-0">
-        <div className="relative w-[800px] h-[800px] flex items-center justify-center z-10 scale-[0.75] -translate-y-12 transition-transform duration-500">
-            <div className="absolute w-[300px] h-[300px] rounded-full border-[2px] border-cyan-900/90 border-dashed animate-spin-slow shadow-[0_0_20px_rgba(6,182,212,0.15)]" style={{animationDuration: '60s'}}>
+      <div className="hidden lg:flex lg:w-1/2 bg-[#A8C4EC] relative items-center justify-center overflow-hidden h-screen sticky top-0 shrink-0">
+        
+        {/* FIXED: Using percentage width/height relative to container to prevent overlap on zoom */}
+        <div className="relative w-full h-full max-w-[800px] max-h-[800px] flex items-center justify-center z-10 scale-[0.75] -translate-y-12 transition-transform duration-500">
+            {/* Orbit 1 */}
+            <div className="absolute w-[40%] h-[40%] aspect-square rounded-full border-[2px] border-cyan-900/90 border-dashed animate-spin-slow shadow-[0_0_20px_rgba(6,182,212,0.15)]" style={{animationDuration: '60s'}}>
                 <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2" style={{ animation: 'spin 60s linear infinite reverse' }}>
                     <div className="float-icon-enhanced w-12 h-12 border-cyan-400 shadow-[0_0_15px_rgba(34,211,238,0.4)] bg-[#0f172a]">
                         <span className="material-symbols-outlined text-cyan-300 text-[20px]">terminal</span>
                     </div>
                 </div>
             </div>
-            <div className="absolute w-[460px] h-[460px] rounded-full border-[1.5px] border-purple-950/90 animate-spin-reverse-slow" style={{animationDuration: '80s'}}>
+            
+            {/* Orbit 2 */}
+            <div className="absolute w-[60%] h-[60%] aspect-square rounded-full border-[1.5px] border-purple-950/90 animate-spin-reverse-slow" style={{animationDuration: '80s'}}>
                  <div className="absolute top-1/2 right-0 translate-x-1/2 -translate-y-1/2" style={{ animation: 'spin 80s linear infinite' }}>
                     <div className="float-icon-enhanced w-12 h-12 border-emerald-400 shadow-[0_0_15px_rgba(52,211,153,0.4)] bg-[#0f172a]">
                         <span className="material-symbols-outlined text-emerald-400 text-[20px]">group</span>
                     </div>
                  </div>
             </div>
-            <div className="absolute w-[600px] h-[600px] rounded-full border-[2px] border-fuchsia-950/90 border-dashed animate-spin-slow shadow-[0_0_35px_rgba(217,70,239,0.15)]" style={{animationDuration: '100s'}}>
+
+            {/* Orbit 3 */}
+            <div className="absolute w-[75%] h-[75%] aspect-square rounded-full border-[2px] border-fuchsia-950/90 border-dashed animate-spin-slow shadow-[0_0_35px_rgba(217,70,239,0.15)]" style={{animationDuration: '100s'}}>
                 <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2" style={{ animation: 'spin 100s linear infinite reverse' }}>
                     <div className="float-icon-enhanced w-11 h-11 border-purple-400 shadow-[0_0_15px_rgba(192,132,252,0.4)] bg-[#0f172a]">
                         <span className="material-symbols-outlined text-purple-400 text-[20px]">emoji_events</span>
                     </div>
                 </div>
             </div>
-            <div className="absolute w-[800px] h-[800px] rounded-full border-[1.5px] border-indigo-950/90 animate-spin-reverse-slow" style={{animationDuration: '120s'}}>
+
+            {/* Orbit 4 */}
+            <div className="absolute w-[95%] h-[95%] aspect-square rounded-full border-[1.5px] border-indigo-950/90 animate-spin-reverse-slow" style={{animationDuration: '120s'}}>
                 <div className="absolute top-1/2 left-0 -translate-x-1/2 -translate-y-1/2" style={{ animation: 'spin 120s linear infinite' }}>
                     <div className="float-icon-enhanced w-12 h-12 border-pink-400 shadow-[0_0_15px_rgba(244,114,182,0.4)] bg-[#0f172a]">
                         <span className="material-symbols-outlined text-pink-400 text-[22px]">article</span>
                     </div>
                 </div>
             </div>
+
+            {/* Center Node */}
             <div className="relative z-20 animate-float">
                 <div className="absolute inset-[-40px] bg-white/30 blur-3xl rounded-full"></div>
                 <div className="relative w-24 h-24 bg-[#06457F] rounded-full border-4 border-white/20 flex items-center justify-center shadow-[0_0_50px_rgba(6,69,127,0.3)]">
@@ -275,10 +285,12 @@ const Login = () => {
                 </div>
             </div>
         </div>
-        <div className="absolute bottom-5 right-10 lg:right-16 z-50 text-right pointer-events-none">
-            <h2 className="font-display font-semibold text-3xl lg:text-4xl leading-relaxed tracking-wide drop-shadow-sm">
-                <span className="block text-[#06457F]">Build skills.</span>
-                <span className="block text-[#00E676] font-bold drop-shadow-sm">Apply for opportunities.</span>
+
+        {/* Text Container - Updated Punctuation */}
+        <div className="absolute bottom-5 right-10 lg:right-16 z-50 text-right pointer-events-none max-w-[80%]">
+            <h2 className="font-display font-semibold text-2xl lg:text-3xl xl:text-4xl leading-relaxed tracking-wide drop-shadow-sm">
+                <span className="block text-[#06457F]">Build skills,</span>
+                <span className="block text-[#00E676] font-bold drop-shadow-sm">Apply for opportunities,</span>
                 <span className="block text-black">Kickstart your career.</span>
             </h2>
         </div>
