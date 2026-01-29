@@ -126,10 +126,14 @@ const InternshipApplyRole = () => {
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
       `}} />
 
-      {/* --- SIDEBAR (Exact Match to Dashboard) --- */}
+      {/* --- SIDEBAR --- */}
+      {/* Applied font-['Space_Grotesk'] explicitly to match Dashboard Main */}
       <aside className="w-72 flex-shrink-0 flex flex-col border-r border-slate-300 bg-white relative z-20 font-['Space_Grotesk']">
+        
+        {/* LOGO SECTION - Exact Match from Dashboard Main */}
         <div className="p-6 flex items-center gap-3 select-none">
           <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#0474C4] to-cyan-400 flex items-center justify-center shadow-lg shadow-blue-500/30">
+            {/* Small rocket icon inside */}
             <span className="material-symbols-outlined text-white text-xl">rocket_launch</span>
           </div>
           <span className="text-2xl font-black tracking-tight text-[#0F172A]">
@@ -168,7 +172,7 @@ const InternshipApplyRole = () => {
             <span className="font-medium group-hover:text-[#06457F] transition-colors">My Booking</span>
           </button>
 
-          {/* Internship (Active State for this page if desired, or standard button) */}
+          {/* Internship (Active State) */}
           <button onClick={() => navigate('/internships-jobs')} className="flex items-center gap-3 px-4 py-3 rounded-lg bg-[#06457F] text-white shadow-md text-left w-full">
             <span className="material-symbols-outlined fill-1">work</span>
             <span className="font-medium">Internship</span>

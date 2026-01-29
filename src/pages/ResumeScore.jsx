@@ -179,8 +179,8 @@ const ResumeScore = () => {
             </div>
           </div>
 
-          <div className="flex-1 overflow-y-auto custom-scrollbar p-8 sm:p-12 flex justify-center bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]">
-            <div className="a4-paper flex flex-col text-slate-800 p-12 sm:p-16 relative opacity-90 hover:opacity-100 transition-opacity">
+          <div className="flex-1 overflow-y-auto custom-scrollbar p-8 sm:p-12 flex justify-center bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] relative">
+            <div className="a4-paper flex flex-col text-slate-800 p-12 sm:p-16 relative opacity-90 hover:opacity-100 transition-opacity mb-20">
               {/* Resume Header */}
               <div className="border-b-2 border-slate-800 pb-6 mb-8 flex justify-between items-start">
                 <div>
@@ -267,14 +267,14 @@ const ResumeScore = () => {
                   </div>
                 </div>
 
-                {/* Projects (Highlighted for Context) */}
+                {/* Projects */}
                 <div className="flex gap-4">
                   <div className="w-32 shrink-0">
                     <h3 className="font-bold text-slate-900 uppercase tracking-wider text-sm">Projects</h3>
                   </div>
                   <div className="flex-1 flex flex-col gap-4">
                     <div>
-                       <div className="flex justify-between items-baseline mb-1">
+                        <div className="flex justify-between items-baseline mb-1">
                             <h4 className="font-bold text-slate-800">Fintech Dashboard</h4>
                             <span className="text-[10px] text-[#0474C4] font-semibold uppercase">React, Node.js, AWS</span>
                         </div>
@@ -283,7 +283,7 @@ const ResumeScore = () => {
                   </div>
                 </div>
 
-                {/* Certifications (Added) */}
+                {/* Certifications */}
                 <div className="flex gap-4">
                   <div className="w-32 shrink-0">
                     <h3 className="font-bold text-slate-900 uppercase tracking-wider text-sm">Certifications</h3>
@@ -299,14 +299,18 @@ const ResumeScore = () => {
                   </div>
                 </div>
               </div>
-              
-              {/* Overlay Badge */}
-              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                 <div className="bg-[#0474C4]/90 text-white px-6 py-3 rounded-full font-bold shadow-2xl backdrop-blur-sm border border-white/20">
-                    Preview Mode
-                 </div>
-              </div>
             </div>
+          </div>
+
+          {/* Overlay Badge - MOVED OUTSIDE OF SCROLLABLE DIV, FIXED AT BOTTOM OF SECTION */}
+          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center justify-center z-30">
+                <div 
+                    onClick={() => navigate('/resume-editor')}
+                    className="bg-[#0474C4] text-white px-6 py-3 rounded-full font-bold shadow-2xl hover:bg-[#035a96] hover:scale-105 transition-all cursor-pointer border border-white/20 flex items-center gap-2"
+                >
+                  <span className="material-symbols-outlined text-[20px]">edit_document</span>
+                  Back to Editor
+                </div>
           </div>
         </section>
 
@@ -318,7 +322,7 @@ const ResumeScore = () => {
               <p className="text-[#06457F]/70 text-sm">Based on industry standards</p>
             </div>
 
-            {/* Score Card - SOLID WHITE BG */}
+            {/* Score Card */}
             <div className="bg-white rounded-2xl p-6 mb-8 shadow-md border-none">
               <div className="flex items-center gap-6 mb-4">
                 <div className="relative size-20 shrink-0">
