@@ -86,31 +86,33 @@ const Signup = () => {
     <div className="font-display bg-[#06457F] text-white h-screen w-screen overflow-hidden flex selection:bg-[#0474C4] selection:text-white">
       
       {/* ================= LEFT PANEL (Form) ================= */}
-      <div className="w-full lg:w-1/2 flex flex-col relative z-10 bg-[#06457F] border-r border-[#043360] h-full">
+      {/* FIXED: overflow-hidden ensures no scrollbar appears */}
+      <div className="w-full lg:w-1/2 flex flex-col relative z-10 bg-[#06457F] border-r border-[#043360] h-full overflow-hidden">
         
-        {/* LOGO AREA - Fixed Top */}
-        <div className="flex-shrink-0 pt-6 pl-8 sm:pl-12 select-none">
+        {/* LOGO AREA - Compact */}
+        <div className="flex-shrink-0 pt-4 pl-8 sm:pl-12 select-none absolute top-0 left-0 z-50">
             <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-[#0474C4] to-cyan-400 flex items-center justify-center shadow-lg shadow-blue-500/30">
-                    <span className="material-symbols-outlined text-white text-lg">rocket_launch</span>
+                <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-[#0474C4] to-cyan-400 flex items-center justify-center shadow-lg shadow-blue-500/30">
+                    <span className="material-symbols-outlined text-white text-base">rocket_launch</span>
                 </div>
-                <span className="text-xl font-black tracking-tight text-white">
+                <span className="text-lg font-black tracking-tight text-white">
                     Career <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 to-blue-400">Orbit</span>
                 </span>
             </div>
         </div>
 
         {/* FORM CONTAINER - Flex Grow to Center Vertically */}
-        <div className="flex-1 flex flex-col justify-center items-center w-full px-8 sm:px-12">
-          <div className="w-full max-w-[400px] flex flex-col gap-4"> 
+        {/* FIXED: Reduced padding and utilized justify-center to handle zoom vertical alignment */}
+        <div className="flex-1 flex flex-col justify-center items-center w-full px-8 sm:px-12 py-2">
+          <div className="w-full max-w-[400px] flex flex-col gap-2"> 
             
-            <div className="text-left w-full">
-              <h1 className="text-white text-2xl font-black leading-tight tracking-[-0.033em]">Create Account</h1>
-              <p className="text-blue-100/80 text-xs font-normal mt-1">Start your internship journey today.</p>
+            <div className="text-left w-full mb-1">
+              <h1 className="text-white text-xl font-black leading-tight tracking-[-0.033em]">Create Account</h1>
+              <p className="text-blue-100/80 text-[11px] font-normal mt-0.5">Start your internship journey today.</p>
             </div>
 
-            <button className="flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-[#0474C4] text-white gap-3 text-xs font-bold hover:brightness-110 transition-all shadow-md border border-white/5">
-              <svg className="w-4 h-4" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <button className="flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-lg h-9 px-4 bg-[#0474C4] text-white gap-3 text-xs font-bold hover:brightness-110 transition-all shadow-md border border-white/5">
+              <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"></path>
                 <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"></path>
                 <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"></path>
@@ -119,30 +121,30 @@ const Signup = () => {
               <span className="truncate">Sign up with Google</span>
             </button>
 
-            <div className="relative flex items-center py-1">
+            <div className="relative flex items-center py-0.5">
               <div className="flex-grow border-t border-blue-400/30"></div>
-              <span className="flex-shrink-0 mx-3 text-[10px] font-medium text-blue-200/60 uppercase tracking-wider">Or email</span>
+              <span className="flex-shrink-0 mx-2 text-[9px] font-medium text-blue-200/60 uppercase tracking-wider">Or email</span>
               <div className="flex-grow border-t border-blue-400/30"></div>
             </div>
 
             {status === 'success' && (
-              <div className="bg-emerald-500/20 border border-emerald-500 text-emerald-200 p-2 rounded-lg text-xs text-center animate-bounce">
+              <div className="bg-emerald-500/20 border border-emerald-500 text-emerald-200 p-1.5 rounded-lg text-[10px] text-center animate-bounce">
                 Account created! Redirecting...
               </div>
             )}
 
-            <form onSubmit={handleSignup} className="flex flex-col gap-3">
+            {/* FIXED: Reduced gap-3 to gap-2 for compact layout */}
+            <form onSubmit={handleSignup} className="flex flex-col gap-2">
               
               {/* REGISTER AS */}
-              <label className="flex flex-col w-full group gap-1">
+              <label className="flex flex-col w-full group gap-0.5">
                 <p className="text-blue-100 text-[10px] font-medium pl-1">Register As</p>
                 <div className="relative">
-                  {/* UPDATED: White bg, dark text */}
                   <select 
                       name="role"
                       value={formData.role}
                       onChange={handleChange}
-                      className="flex w-full appearance-none rounded-lg text-slate-900 border border-slate-300 bg-white h-9 px-3 text-xs outline-none focus:ring-1 focus:ring-[#0474C4] cursor-pointer"
+                      className="flex w-full appearance-none rounded-lg text-slate-900 border border-slate-300 bg-white h-8 px-3 text-xs outline-none focus:ring-1 focus:ring-[#0474C4] cursor-pointer"
                   >
                       <option value="student">Student</option>
                       <option value="professional">Professional</option>
@@ -154,90 +156,85 @@ const Signup = () => {
               </label>
 
               {/* NAME FIELDS */}
-              <div className="grid grid-cols-2 gap-3">
-                  <label className="flex flex-col w-full group gap-1">
+              <div className="grid grid-cols-2 gap-2">
+                  <label className="flex flex-col w-full group gap-0.5">
                     <p className="text-blue-100 text-[10px] font-medium pl-1">First Name</p>
-                    {/* UPDATED: White bg, dark text */}
                     <input 
                         name="firstName"
                         value={formData.firstName}
                         onChange={handleChange}
                         required
-                        className="flex w-full rounded-lg text-slate-900 border border-slate-300 bg-white h-9 placeholder:text-slate-400 px-3 text-xs outline-none focus:ring-1 focus:ring-[#0474C4]" 
+                        className="flex w-full rounded-lg text-slate-900 border border-slate-300 bg-white h-8 placeholder:text-slate-400 px-3 text-xs outline-none focus:ring-1 focus:ring-[#0474C4]" 
                         placeholder="First Name" 
                     />
                   </label>
-                  <label className="flex flex-col w-full group gap-1">
+                  <label className="flex flex-col w-full group gap-0.5">
                     <p className="text-blue-100 text-[10px] font-medium pl-1">Last Name</p>
-                    {/* UPDATED: White bg, dark text */}
                     <input 
                         name="lastName"
                         value={formData.lastName}
                         onChange={handleChange}
                         required
-                        className="flex w-full rounded-lg text-slate-900 border border-slate-300 bg-white h-9 placeholder:text-slate-400 px-3 text-xs outline-none focus:ring-1 focus:ring-[#0474C4]" 
+                        className="flex w-full rounded-lg text-slate-900 border border-slate-300 bg-white h-8 placeholder:text-slate-400 px-3 text-xs outline-none focus:ring-1 focus:ring-[#0474C4]" 
                         placeholder="Last Name" 
                     />
                   </label>
               </div>
 
               {/* EMAIL */}
-              <label className="flex flex-col w-full group gap-1">
+              <label className="flex flex-col w-full group gap-0.5">
                 <p className="text-blue-100 text-[10px] font-medium pl-1">Email Address</p>
-                {/* UPDATED: White bg, dark text */}
                 <input 
                   name="email"
                   type="email"
                   value={formData.email}
                   onChange={handleChange}
                   required
-                  className="flex w-full rounded-lg text-slate-900 border border-slate-300 bg-white h-9 placeholder:text-slate-400 px-3 text-xs outline-none focus:ring-1 focus:ring-[#0474C4]" 
+                  className="flex w-full rounded-lg text-slate-900 border border-slate-300 bg-white h-8 placeholder:text-slate-400 px-3 text-xs outline-none focus:ring-1 focus:ring-[#0474C4]" 
                   placeholder="Enter your email" 
                 />
               </label>
 
               {/* PASSWORD */}
               <div className="relative w-full group">
-                <label className="flex flex-col gap-1">
+                <label className="flex flex-col gap-0.5">
                   <p className="text-blue-100 text-[10px] font-medium pl-1">Password</p>
-                  {/* UPDATED: White bg, dark text */}
                   <input 
                     name="password"
                     value={formData.password}
                     onChange={handleChange}
                     required
-                    className="password-input flex w-full rounded-lg text-slate-900 border border-slate-300 bg-white h-9 placeholder:text-slate-400 px-3 pr-10 text-xs outline-none focus:ring-1 focus:ring-[#0474C4]" 
+                    className="password-input flex w-full rounded-lg text-slate-900 border border-slate-300 bg-white h-8 placeholder:text-slate-400 px-3 pr-10 text-xs outline-none focus:ring-1 focus:ring-[#0474C4]" 
                     placeholder="Create a password" 
                     type={showPassword ? "text" : "password"} 
                   />
                 </label>
-                <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-[28px] text-slate-400 hover:text-[#0474C4] z-20 transition-colors">
-                  <span className="material-symbols-outlined text-base">{showPassword ? 'visibility' : 'visibility_off'}</span>
+                <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-[24px] text-slate-400 hover:text-[#0474C4] z-20 transition-colors">
+                  <span className="material-symbols-outlined text-sm">{showPassword ? 'visibility' : 'visibility_off'}</span>
                 </button>
               </div>
 
               {/* CONFIRM PASSWORD */}
               <div className="relative w-full group">
-                <label className="flex flex-col gap-1">
+                <label className="flex flex-col gap-0.5">
                   <p className="text-blue-100 text-[10px] font-medium pl-1">Confirm Password</p>
-                  {/* UPDATED: White bg, dark text */}
                   <input 
                     name="confirmPassword"
                     value={formData.confirmPassword}
                     onChange={handleChange}
                     required
-                    className="password-input flex w-full rounded-lg text-slate-900 border border-slate-300 bg-white h-9 placeholder:text-slate-400 px-3 pr-10 text-xs outline-none focus:ring-1 focus:ring-[#0474C4]" 
+                    className="password-input flex w-full rounded-lg text-slate-900 border border-slate-300 bg-white h-8 placeholder:text-slate-400 px-3 pr-10 text-xs outline-none focus:ring-1 focus:ring-[#0474C4]" 
                     placeholder="Confirm password" 
                     type={showConfirmPassword ? "text" : "password"} 
                   />
                 </label>
-                <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)} className="absolute right-3 top-[28px] text-slate-400 hover:text-[#0474C4] z-20 transition-colors">
-                  <span className="material-symbols-outlined text-base">{showConfirmPassword ? 'visibility' : 'visibility_off'}</span>
+                <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)} className="absolute right-3 top-[24px] text-slate-400 hover:text-[#0474C4] z-20 transition-colors">
+                  <span className="material-symbols-outlined text-sm">{showConfirmPassword ? 'visibility' : 'visibility_off'}</span>
                 </button>
               </div>
 
               {/* TERMS */}
-              <div className="flex items-start gap-2">
+              <div className="flex items-start gap-2 mt-1">
                   <input 
                       id="terms"
                       name="termsAccepted"
@@ -262,19 +259,25 @@ const Signup = () => {
                 <button 
                   type="submit" 
                   disabled={status === 'loading'}
-                  className="flex w-full items-center justify-center rounded-lg h-10 px-4 bg-[#0474C4] text-white text-xs font-bold hover:brightness-110 transition-all shadow-[0_0_15px_rgba(4,116,196,0.3)] cursor-pointer active:scale-[0.98] disabled:opacity-50"
+                  className="flex w-full items-center justify-center rounded-lg h-9 px-4 bg-[#0474C4] text-white text-xs font-bold hover:brightness-110 transition-all shadow-[0_0_15px_rgba(4,116,196,0.3)] cursor-pointer active:scale-[0.98] disabled:opacity-50"
                 >
                   {status === 'loading' ? 'Creating...' : 'Register'}
                 </button>
                 
                 <div className="flex flex-col items-center">
-                  <p className="text-[10px] text-blue-100">
+                  <p className="text-[12px] text-blue-100">
                     Already have an account? 
                     <a className="font-semibold text-white hover:underline underline-offset-4 ml-1 cursor-pointer" href="/login">Log In</a>
                   </p>
                 </div>
               </div>
             </form>
+            
+            {/* COMPACT FOOTER */}
+            <div className="text-center mt-2">
+               <p className="text-blue-300/50 text-[9px] font-medium tracking-wide">© 2026 Career Orbit.</p>
+            </div>
+
           </div>
         </div>
       </div>
@@ -340,8 +343,8 @@ const Signup = () => {
 
         {/* Text Overlay */}
         <div className="absolute bottom-10 right-10 text-right font-bold text-3xl xl:text-5xl leading-snug z-50 pointer-events-none">
-            <p className="text-[#0056D2] block mb-2">Build skills.</p>
-            <p className="text-green-700 block mb-2">Apply for opportunities.</p>
+            <p className="text-[#0056D2] block mb-2">Build skills,</p>
+            <p className="text-green-700 block mb-2">Apply for opportunities,</p>
             <p className="text-slate-800 block">Kickstart your career.</p>
         </div>
       </div>
@@ -351,10 +354,6 @@ const Signup = () => {
         .password-input::-webkit-contacts-auto-fill-button,
         .password-input::-webkit-credentials-auto-fill-button { visibility: hidden; position: absolute; right: 0; }
         
-        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: #06457F; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #0474C4; border-radius: 4px; }
-
         .rocket-exhaust {
             background: linear-gradient(to bottom, rgba(4, 116, 196, 0.4), transparent);
             filter: blur(8px);
@@ -375,6 +374,7 @@ const Signup = () => {
         .animate-float-fast { animation: float 4s ease-in-out infinite; }
         .animate-rocket-float { animation: float 6s ease-in-out infinite; }
         .animate-spin-slow { animation: spin 20s linear infinite; }
+        .float-icon-enhanced { display: flex; align-items: center; justify-content: center; border-radius: 9999px; border-width: 2px; }
       `}} />
     </div>
   );
