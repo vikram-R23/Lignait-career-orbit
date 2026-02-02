@@ -1,8 +1,6 @@
 ﻿import React, { useState } from 'react';
-// 1. ADD useSearchParams to extract the token from the URL
-import { Link, useNavigate, useSearchParams } from 'react-router-dom';
-// 2. IMPORT the authService
-import authService from '../services/authService';
+// 1. CHANGED: Use useParams because our link is /reset-password/TOKEN
+import { Link, useNavigate, useParams } from 'react-router-dom';
 
 const ResetPassword = () => {
   const [newPassword, setNewPassword] = useState('');
@@ -13,22 +11,22 @@ const ResetPassword = () => {
   const [error, setError] = useState('');
 
   const navigate = useNavigate();
-  // 3. INITIALIZE searchParams to get the token
-  const [searchParams] = useSearchParams();
-  const token = searchParams.get('token'); 
+  
+  // 2. LOGIC FIX: Get token from URL path
+  const { resetToken } = useParams(); 
 
-  const handleUpdate = async (e) => { // 4. ADD async
+  const handleUpdate = async (e) => { 
     e.preventDefault();
     setError('');
 
     // Check if token exists
-    if (!token) {
+    if (!resetToken) {
       setError('Invalid or missing reset token. Please request a new link.');
       return;
     }
 
-    if (newPassword.length < 8) {
-      setError('Password must be at least 8 characters long.');
+    if (newPassword.length < 6) { // Backend usually expects 6+, adjusted from 8 just in case
+      setError('Password must be at least 6 characters long.');
       return;
     }
 
@@ -40,17 +38,29 @@ const ResetPassword = () => {
     setStatus('loading');
 
     try {
-      // 5. CALL the resetPassword service with token and password
-      await authService.resetPassword(token, newPassword);
+      // 3. LOGIC FIX: Direct Fetch to Backend
+      const response = await fetch(`http://localhost:5000/api/auth/resetpassword/${resetToken}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ password: newPassword }), // Backend expects "password"
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Failed to reset password');
+      }
       
       setStatus('success');
       // Redirect to login after successful reset
       setTimeout(() => navigate('/login'), 2500);
 
     } catch (err) {
-      // 6. HANDLE actual database/token errors (e.g., "Link expired")
+      // 4. HANDLE actual errors
       setStatus('error');
-      setError(err); 
+      setError(err.message || "An error occurred"); 
     }
   };
 
@@ -92,7 +102,7 @@ const ResetPassword = () => {
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
                   className="hide-browser-toggle w-full h-12 bg-white border border-white/10 rounded-xl px-5 pr-12 text-sm focus:ring-2 focus:ring-blue-500 outline-none transition-all placeholder-gray-400 text-[#06457F]"
-                  placeholder="At least 8 characters"
+                  placeholder="At least 6 characters"
                   required
                   disabled={status === 'loading' || status === 'success'}
                 />
@@ -158,13 +168,6 @@ const ResetPassword = () => {
               ) : 'Update Password'}
             </button>
           </form>
-
-          <div className="text-center">
-            <Link to="/login" className="inline-flex items-center gap-2 text-[#06457F] hover:underline text-xs font-semibold">
-              <span className="material-symbols-outlined text-sm">arrow_back</span>
-              Back to Login
-            </Link>
-          </div>
         </div>
       </div>
 

@@ -16,7 +16,7 @@ const ForgotPassword = () => {
       );
   };
 
-  const handleReset = (e) => {
+  const handleReset = async (e) => {
     e.preventDefault();
     setErrorMessage('');
 
@@ -33,13 +33,36 @@ const ForgotPassword = () => {
     }
 
     setStatus('loading');
-    
-    setTimeout(() => {
+
+    try {
+      // ==========================================
+      // ✅ REAL BACKEND LOGIC
+      // ==========================================
+      const response = await fetch('http://localhost:5000/api/auth/forgotpassword', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Something went wrong');
+      }
+
+      // Success: Show success message then redirect
       setStatus('success');
+      
       setTimeout(() => {
-        navigate('/reset-password');
-      }, 1500);
-    }, 2000);
+        // Navigate back to login so they can wait for the email
+        navigate('/login');
+      }, 2000);
+
+    } catch (error) {
+      console.error("Forgot Password Error:", error);
+      setStatus('error');
+      setErrorMessage(error.message || "Failed to send reset email.");
+    }
   };
 
   return (
@@ -105,7 +128,7 @@ const ForgotPassword = () => {
                       </div>
                       <div className="flex flex-col">
                         <p className="text-emerald-400 text-sm font-bold">Success!</p>
-                        <p className="text-emerald-400/80 text-xs">Redirecting to reset page...</p>
+                        <p className="text-emerald-400/80 text-xs">Email sent. Check your inbox.</p>
                       </div>
                     </div>
                   </div>

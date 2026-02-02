@@ -1,24 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 
-// ==========================================
-// DUMMY API & LLM LOGIC (Mock Service)
-// ==========================================
-const authService = {
-  signup: async (formData) => {
-    console.log("API: Initiating secure registration handshake...");
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    console.log("LLM: Analyzing user registration pattern for anomalies...");
-    await new Promise((resolve) => setTimeout(resolve, 800));
-
-    if (formData.password.length > 5) {
-      return { success: true };
-    } else {
-      throw new Error("Registration failed (hint: password must be > 5 chars)");
-    }
-  }
-};
-
 const Signup = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -46,37 +28,77 @@ const Signup = () => {
     });
   };
 
+  // ==========================================
+  // ✅ NEW: GOOGLE SIGNUP LOGIC
+  // ==========================================
+  const handleGoogleSignup = () => {
+    // Redirects browser to the same Backend Google route we used for Login
+    // The backend handles creating the user if they don't exist
+    window.location.href = 'http://localhost:5000/api/auth/google';
+  };
+
   const handleSignup = async (e) => {
     e.preventDefault();
     setErrorMessage('');
 
+    // --- Validation Checks ---
     if (!formData.termsAccepted) {
         setStatus('error');
         setErrorMessage("You must agree to the Terms.");
         return;
     }
-
     if (formData.password !== formData.confirmPassword) {
       setStatus('error');
       setErrorMessage("Passwords do not match");
       return;
     }
-
-    if (formData.password.length < 8) {
+    if (formData.password.length < 6) {
       setStatus('error');
-      setErrorMessage("Password must be at least 8 characters");
+      setErrorMessage("Password must be at least 6 characters");
       return;
     }
 
     setStatus('loading');
 
     try {
-      await authService.signup(formData);
+      console.log("Sending data to:", 'http://localhost:5000/api/auth/signup');
+      
+      const response = await fetch('http://localhost:5000/api/auth/signup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          email: formData.email,
+          password: formData.password,
+          role: formData.role
+        }),
+      });
+
+      // --- DEBUGGING STEP: Check if response is OK before parsing ---
+      const contentType = response.headers.get("content-type");
+      if (!contentType || !contentType.includes("application/json")) {
+        // If we get here, the backend returned HTML (Error page) instead of JSON
+        const text = await response.text();
+        console.error("Backend Error (Not JSON):", text);
+        throw new Error("Server error. Check Backend Terminal for details.");
+      }
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "Registration failed");
+      }
+
       setStatus('success');
       setTimeout(() => {
         navigate('/login');
       }, 2000);
+
     } catch (err) {
+      console.error("Signup Error:", err);
       setStatus('error');
       setErrorMessage(err.message || "Signup failed"); 
     }
@@ -86,7 +108,6 @@ const Signup = () => {
     <div className="font-display bg-[#06457F] text-white h-screen w-screen overflow-hidden flex selection:bg-[#0474C4] selection:text-white">
       
       {/* ================= LEFT PANEL (Form) ================= */}
-      {/* FIXED: overflow-hidden ensures no scrollbar appears */}
       <div className="w-full lg:w-1/2 flex flex-col relative z-10 bg-[#06457F] border-r border-[#043360] h-full overflow-hidden">
         
         {/* LOGO AREA - Compact */}
@@ -102,7 +123,6 @@ const Signup = () => {
         </div>
 
         {/* FORM CONTAINER - Flex Grow to Center Vertically */}
-        {/* FIXED: Reduced padding and utilized justify-center to handle zoom vertical alignment */}
         <div className="flex-1 flex flex-col justify-center items-center w-full px-8 sm:px-12 py-2">
           <div className="w-full max-w-[400px] flex flex-col gap-2"> 
             
@@ -111,7 +131,12 @@ const Signup = () => {
               <p className="text-blue-100/80 text-[11px] font-normal mt-0.5">Start your internship journey today.</p>
             </div>
 
-            <button className="flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-lg h-9 px-4 bg-[#0474C4] text-white gap-3 text-xs font-bold hover:brightness-110 transition-all shadow-md border border-white/5">
+            {/* ✅ FIXED: GOOGLE BUTTON NOW WORKS */}
+            <button 
+                type="button"
+                onClick={handleGoogleSignup}
+                className="flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-lg h-9 px-4 bg-[#0474C4] text-white gap-3 text-xs font-bold hover:brightness-110 transition-all shadow-md border border-white/5"
+            >
               <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"></path>
                 <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"></path>
@@ -133,7 +158,6 @@ const Signup = () => {
               </div>
             )}
 
-            {/* FIXED: Reduced gap-3 to gap-2 for compact layout */}
             <form onSubmit={handleSignup} className="flex flex-col gap-2">
               
               {/* REGISTER AS */}
@@ -236,12 +260,12 @@ const Signup = () => {
               {/* TERMS */}
               <div className="flex items-start gap-2 mt-1">
                   <input 
-                      id="terms"
-                      name="termsAccepted"
-                      type="checkbox"
-                      checked={formData.termsAccepted}
-                      onChange={handleChange}
-                      className="mt-0.5 w-3 h-3 rounded border-gray-500 text-[#0474C4] focus:ring-[#0474C4] bg-[#1F2937] cursor-pointer"
+                    id="terms"
+                    name="termsAccepted"
+                    type="checkbox"
+                    checked={formData.termsAccepted}
+                    onChange={handleChange}
+                    className="mt-0.5 w-3 h-3 rounded border-gray-500 text-[#0474C4] focus:ring-[#0474C4] bg-[#1F2937] cursor-pointer"
                   />
                   <label htmlFor="terms" className="text-[10px] text-blue-100 cursor-pointer select-none leading-tight">
                       I agree to the <span className="text-[#0474C4] hover:underline font-semibold">Terms</span> and <span className="text-[#0474C4] hover:underline font-semibold">Privacy Policy</span>.
@@ -267,13 +291,12 @@ const Signup = () => {
                 <div className="flex flex-col items-center">
                   <p className="text-[12px] text-blue-100">
                     Already have an account? 
-                    <a className="font-semibold text-white hover:underline underline-offset-4 ml-1 cursor-pointer" href="/login">Log In</a>
+                    <Link className="font-semibold text-white hover:underline underline-offset-4 ml-1 cursor-pointer" to="/login">Log In</Link>
                   </p>
                 </div>
               </div>
             </form>
             
-            {/* COMPACT FOOTER */}
             <div className="text-center mt-2">
                <p className="text-blue-300/50 text-[9px] font-medium tracking-wide">© 2026 Career Orbit.</p>
             </div>

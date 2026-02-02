@@ -1,5 +1,5 @@
-import React, { useState, useRef } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import React, { useState, useRef, useEffect } from 'react';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 
 // ==========================================
 // STATIC STYLES (Extracted & Memoized)
@@ -10,11 +10,8 @@ const LoginStyles = React.memo(() => (
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap');
     @import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap');
 
-    /* Force hide MS Edge/IE reveal button */
     .password-input::-ms-reveal,
-    .password-input::-ms-clear {
-      display: none !important;
-    }
+    .password-input::-ms-clear { display: none !important; }
 
     .float-icon-enhanced {
         display: flex; align-items: center; justify-content: center;
@@ -32,30 +29,11 @@ const LoginStyles = React.memo(() => (
     .animate-float { animation: float 3s ease-in-out infinite; }
     .animate-wave { animation: wave 1.5s ease-in-out infinite; }
     
-    /* Custom Scrollbar for Left Panel */
     .custom-scrollbar::-webkit-scrollbar { width: 6px; }
     .custom-scrollbar::-webkit-scrollbar-track { background: #06457F; }
     .custom-scrollbar::-webkit-scrollbar-thumb { background: #0474C4; border-radius: 10px; }
   `}} />
 ));
-
-// ==========================================
-// MOCK AUTH SERVICE
-// ==========================================
-const authService = {
-  login: async (formData) => {
-    console.log("API: Initiating secure handshake...");
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    console.log("LLM: Analyzing user behavior pattern...");
-    await new Promise((resolve) => setTimeout(resolve, 800));
-
-    if (formData.password.length > 5) {
-      return { success: true, token: 'mock-jwt-token-12345', user: { name: 'User', isNewUser: true } };
-    } else {
-      throw new Error("Invalid credentials");
-    }
-  }
-};
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -66,16 +44,24 @@ const Login = () => {
 
   const emailInputRef = useRef(null);
   const navigate = useNavigate();
+  const location = useLocation();
 
-  const focusEmail = () => {
+  // Focus email input on mount
+  useEffect(() => {
     emailInputRef.current?.focus();
+  }, []);
+
+  // --- GOOGLE LOGIN LOGIC ---
+  const handleGoogleLogin = () => {
+    // Redirects browser to your Backend's Google Auth route
+    window.location.href = 'http://localhost:5000/api/auth/google';
   };
 
+  // --- EMAIL/PASSWORD LOGIN LOGIC ---
   const handleLogin = async (e) => {
     e.preventDefault();
     setErrorMessage('');
 
-    // Input Validation
     if (!email.trim() || !password.trim()) {
         setStatus('error');
         setErrorMessage('Email and Password are required.');
@@ -85,31 +71,50 @@ const Login = () => {
     setStatus('loading');
 
     try {
-      const response = await authService.login({ email, password });
-      setStatus('success');
-      
-      if (response.token) {
-        localStorage.setItem('token', response.token);
-        localStorage.setItem('user', JSON.stringify(response.user));
+      // 1. Send data to Real Backend
+      const response = await fetch('http://localhost:5000/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "Login failed");
       }
 
-      setTimeout(() => {
-        navigate('/onboarding/step-1'); 
+      // 2. Login Successful: Save Token & User to Browser Storage
+      setStatus('success');
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('user', JSON.stringify({
+        firstName: data.firstName,
+        lastName: data.lastName,
+        email: data.email,
+        role: data.role
+      }));
+
+      // 3. Redirect to Dashboard (or Onboarding)
+    setTimeout(() => {
+        if (data.isOnboarded) {
+            navigate('/dashboard');         // Old User -> Dashboard
+        } else {
+            navigate('/onboarding/step-1'); // New User -> Onboarding
+        }
       }, 800);
 
     } catch (err) {
-      console.warn("Demo Mode: Redirecting to onboarding...");
-      setStatus('success'); 
-      setTimeout(() => {
-        navigate('/onboarding/step-1'); 
-      }, 800);
+      console.error("Login Error:", err);
+      setStatus('error');
+      setErrorMessage(err.message === "Failed to fetch" ? "Server not running" : err.message);
     }
   };
 
   return (
     <div className="font-display bg-[#06457F] text-white min-h-screen w-full flex flex-col lg:flex-row relative overflow-hidden selection:bg-[#0474C4] selection:text-white">
       
-      {/* Optimized Styles Component */}
       <LoginStyles />
 
       {/* ================= LEFT PANEL (CONTENT) ================= */}
@@ -140,7 +145,11 @@ const Login = () => {
             </div>
 
             {/* Social Button */}
-            <button className="flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-xl h-11 px-5 bg-[#0474C4] text-white gap-3 text-sm font-bold hover:bg-[#0360a3] transition-all shadow-md active:scale-[0.99] border border-white/5">
+            <button 
+                type="button" 
+                onClick={handleGoogleLogin} 
+                className="flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-xl h-11 px-5 bg-[#0474C4] text-white gap-3 text-sm font-bold hover:bg-[#0360a3] transition-all shadow-md active:scale-[0.99] border border-white/5"
+            >
               <div className="bg-white p-1 rounded-full flex items-center justify-center">
                 <svg className="w-4 h-4" viewBox="0 0 24 24">
                   <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
@@ -185,7 +194,7 @@ const Login = () => {
                       className="flex w-full rounded-xl text-slate-900 border border-slate-300 bg-white focus:border-[#0474C4] focus:ring-1 focus:ring-[#0474C4] h-11 placeholder:text-slate-400 px-4 text-sm transition-all outline-none" 
                       placeholder="name@example.com" 
                   />
-                  <span onClick={focusEmail} className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 text-xl cursor-pointer hover:text-[#0474C4] transition-colors">mail</span>
+                  <span className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 text-xl cursor-pointer hover:text-[#0474C4] transition-colors">mail</span>
                 </div>
               </div>
 
@@ -239,7 +248,6 @@ const Login = () => {
       {/* ================= RIGHT PANEL (ANIMATION) ================= */}
       <div className="hidden lg:flex lg:w-1/2 bg-[#A8C4EC] relative items-center justify-center overflow-hidden h-screen sticky top-0 shrink-0">
         
-        {/* FIXED: Using percentage width/height relative to container to prevent overlap on zoom */}
         <div className="relative w-full h-full max-w-[800px] max-h-[800px] flex items-center justify-center z-10 scale-[0.75] -translate-y-12 transition-transform duration-500">
             {/* Orbit 1 */}
             <div className="absolute w-[40%] h-[40%] aspect-square rounded-full border-[2px] border-cyan-900/90 border-dashed animate-spin-slow shadow-[0_0_20px_rgba(6,182,212,0.15)]" style={{animationDuration: '60s'}}>
@@ -286,7 +294,7 @@ const Login = () => {
             </div>
         </div>
 
-        {/* Text Container - Updated Punctuation */}
+        {/* Text Container */}
         <div className="absolute bottom-5 right-10 lg:right-16 z-50 text-right pointer-events-none max-w-[80%]">
             <h2 className="font-display font-semibold text-2xl lg:text-3xl xl:text-4xl leading-relaxed tracking-wide drop-shadow-sm">
                 <span className="block text-[#06457F]">Build skills,</span>
